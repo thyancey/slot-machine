@@ -1,13 +1,13 @@
-import styled from "styled-components";
-import Reel, { ReelItem } from "./reel";
-import PayTable, { PayoutItem } from "./paytable";
+import styled from 'styled-components';
+import Reel, { ReelItem } from './reel';
+import PayTable, { PayoutItem } from './paytable';
 
 const ScWrapper = styled.main`
-  border: .5rem dotted yellow;
-  text-align:center;
+  border: 0.5rem dotted yellow;
+  text-align: center;
 
-  position:absolute;
-  width: 100%;
+  position: absolute;
+  width: calc(100% - 5rem);
   height: 100%;
 
   display: grid;
@@ -18,71 +18,74 @@ const ScWrapper = styled.main`
 `;
 
 const ScReelContainer = styled.div`
-  border: .25rem solid blue;
+  border: 0.25rem solid blue;
   height: 100%;
-  >div{
-    display:inline-block;
-    margin: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    margin: 0.5rem;
   }
 `;
 const ScPayoutTray = styled.div`
-  border: .25rem solid grey;
+  border: 0.25rem solid grey;
   height: 100%;
 `;
 
 /* stick it to the side */
 const ScHandle = styled.div`
-  position:absolute;
-  border: .25rem solid white;
+  position: absolute;
+  border: 0.25rem solid white;
   width: 2rem;
   height: 12rem;
-  left:100%;
+  left: 100%;
   bottom: 50%;
   border-radius: 5rem;
 `;
 
 const reels: ReelItem[][] = [
   [
-    { label: "cherry" },
-    { label: "lemon" },
-    { label: "strawberry" },
-    { label: "lime" },
-    { label: "orange" },
+    { label: 'cherry' },
+    { label: 'lemon' },
+    { label: 'strawberry' },
+    { label: 'lime' },
+    { label: 'orange' },
   ],
   [
-    { label: "cherry" },
-    { label: "lemon" },
-    { label: "strawberry" },
-    { label: "lime" },
-    { label: "orange" },
+    { label: 'cherry' },
+    { label: 'lemon' },
+    { label: 'strawberry' },
+    { label: 'lime' },
+    { label: 'orange' },
   ],
   [
-    { label: "cherry" },
-    { label: "lemon" },
-    { label: "strawberry" },
-    { label: "lime" },
-    { label: "orange" },
+    { label: 'cherry' },
+    { label: 'lemon' },
+    { label: 'strawberry' },
+    { label: 'lime' },
+    { label: 'orange' },
   ],
 ];
 
 const payoutItems: PayoutItem[] = [
   {
     label: 'c + c + c',
-    points: 100
+    points: 100,
   },
   {
     label: 'o + c + s',
-    points: 200
+    points: 200,
   },
   {
     label: 'o + o + o',
-    points: 500
+    points: 500,
   },
   {
     label: 's + s + s',
-    points: 1000
+    points: 1000,
   },
-]
+];
 
 function SlotMachine() {
   return (
