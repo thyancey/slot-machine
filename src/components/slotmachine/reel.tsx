@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const REEL_HEIGHT = 50;
+const REEL_OVERLAP = 2;
+const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -11,7 +13,7 @@ const ScWrapper = styled.div`
   height: 10rem;
   position: relative;
 
-  /* clip-path: circle(4rem at center); */
+  clip-path: circle(4rem at center);
 `;
 
 const ScReelCenterer = styled.div`
@@ -40,17 +42,6 @@ const ScReelItem = styled.div`
   justify-content: center;
 `;
 
-export type ReelItem = {
-  label: string;
-};
-
-type Props = {
-  reelItems: ReelItem[];
-  reelIdx: number;
-};
-
-const REEL_OVERLAP = 2;
-
 // add redudant items to top and bottom of reel to make it seem continuous
 export const buildReel = (
   reelItems: any[],
@@ -78,17 +69,86 @@ export const buildReel = (
     .concat(loopAfter);
 };
 
-function SlotReel({ reelItems, reelIdx }: Props) {
+
+
+export type ReelItem = {
+  label: string;
+};
+type Props = {
+  reelItems: ReelItem[];
+  reelIdx: number;
+  onSpinComplete: Function;
+  spinning?: boolean;
+};
+
+const SPIN_VEL = 100;
+const SPIN_DRAG = .9;
+
+function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
+  const [spinAngle, setSpinAngle] = useState(0);
+  const [spinVel, setSpinVel] = useState(0);
+  const spinTimer = useRef<number | null>(null);
 
   useEffect(() => {
     setItems(buildReel(reelItems, REEL_OVERLAP));
   }, [reelItems]);
 
+  // for now, this will snap them in place, but there really should be some bounce effect
+  const alignReel = useCallback(() => {
+    const nextTop = spinAngle % (REEL_HEIGHT);
+    if(nextTop > REEL_HEIGHT / 2){
+      setSpinAngle(spinAngle + REEL_HEIGHT - nextTop);
+    }else {
+      setSpinAngle(spinAngle - nextTop);
+    }
+    onSpinComplete(reelIdx);
+  }, [ spinAngle ]);
+
+
+  const onSpin = useCallback((vel: number = 1) => {
+    setSpinAngle(spinAngle + vel);
+
+    let nextVel = vel * SPIN_DRAG;
+    if(nextVel < 1){
+      setSpinVel(0);
+    }else {
+      setSpinVel(nextVel);
+    }
+  }, [spinAngle]);
+
+  const reelTop = useMemo(() => {
+    const newAng = ((TOP_OFFSET - spinAngle) % (REEL_HEIGHT * reelItems.length)) + TOP_OFFSET
+    return newAng
+  }, [ spinAngle, reelItems ]);
+
+  useEffect(() => {
+    if(spinning){
+      setSpinVel(SPIN_VEL + Math.random() * 5);
+    }
+  }, [ spinning, spinTimer ]);
+
+  useEffect(() => {
+    return () => {
+      // @ts-ignore
+      clearTimeout(spinTimer.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if(spinVel > 0) {
+      spinTimer.current = window.setTimeout(() => {
+        onSpin(spinVel);
+      }, 30)
+    } else {
+      alignReel();
+    }
+  }, [ spinVel ]);
+
   return (
     <ScWrapper>
       <ScReelCenterer>
-        <ScReelTape>
+        <ScReelTape style={{ top: `${reelTop}px` }}>
           {items.map((reelItem, idx) => (
             <ScReelItem key={`${reelIdx}-${idx}`}>{reelItem.label}</ScReelItem>
           ))}

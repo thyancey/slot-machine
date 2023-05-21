@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Reel, { ReelItem } from './reel';
 import PayTable, { PayoutItem } from './paytable';
+import { useCallback, useState } from 'react';
 
 const ScWrapper = styled.main`
   border: 0.5rem dotted yellow;
@@ -84,17 +85,45 @@ const payoutItems: PayoutItem[] = [
   },
 ];
 
+/*
+  I could not get the async timers working with react state
+  so this variable helps keeps things up to date when they happen
+  at the same time. There is probably some better solution with
+  useRef, but I couldn't get it to work.
+*/
+let activeSpin = [ false, false, false];
+const setActiveSpin = (newSpins: boolean[]) => {
+  activeSpin = newSpins;
+}
+
 function SlotMachine() {
+  const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
+  const startSpinning = useCallback(() => {
+    if(!cachedSpinning.find(iS => iS === true)){
+      setActiveSpin([true, true, true]);
+      setCachedSpinning(activeSpin);
+    }
+  }, [ cachedSpinning ]);
+  
+  const onSpinComplete = useCallback((reelIdx: number) => {
+    const ret = activeSpin.map((iS, idx) => {
+      if(idx === reelIdx) return false;
+      return iS;
+    })
+    setActiveSpin(ret);
+    setCachedSpinning(activeSpin);
+  }, [ cachedSpinning, setCachedSpinning ]);
+  
   return (
     <ScWrapper>
       <ScReelContainer>
-        <Reel reelIdx={0} reelItems={reels[0]} />
-        <Reel reelIdx={1} reelItems={reels[1]} />
-        <Reel reelIdx={2} reelItems={reels[2]} />
+        <Reel reelIdx={0} reelItems={reels[0]} spinning={cachedSpinning[0]} onSpinComplete={onSpinComplete}/>
+        <Reel reelIdx={1} reelItems={reels[1]} spinning={cachedSpinning[1]} onSpinComplete={onSpinComplete}/>
+        <Reel reelIdx={2} reelItems={reels[2]} spinning={cachedSpinning[2]} onSpinComplete={onSpinComplete}/>
       </ScReelContainer>
       <PayTable payoutItems={payoutItems} />
       <ScPayoutTray />
-      <ScHandle />
+      <ScHandle onClick={() => startSpinning()}/>
     </ScWrapper>
   );
 }
