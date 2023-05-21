@@ -52,11 +52,11 @@ type Props = {
 const REEL_OVERLAP = 2;
 
 // add redudant items to top and bottom of reel to make it seem continuous
-const buildReel = (
-  reelItems: ReelItem[],
-  reelOverlap: number = REEL_OVERLAP
+export const buildReel = (
+  reelItems: any[],
+  reelOverlap: number
 ) => {
-  // [ 0, 1, 2 ]
+  // starting with [ 0, 1, 2 ]
 
   // [ +1, +2, 0, 1, 2 ]
   const loopBefore = [];
@@ -72,7 +72,7 @@ const buildReel = (
     loopAfter.push(reelItems[i % reelItems.length]);
   }
 
-  return ([] as ReelItem[])
+  return ([] as any[])
     .concat(loopBefore)
     .concat(reelItems.map((rI) => rI))
     .concat(loopAfter);
@@ -82,7 +82,7 @@ function SlotReel({ reelItems, reelIdx }: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
 
   useEffect(() => {
-    setItems(buildReel(reelItems));
+    setItems(buildReel(reelItems, REEL_OVERLAP));
   }, [reelItems]);
 
   return (
