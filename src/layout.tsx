@@ -4,19 +4,19 @@ import SlotMachine from './components/slotmachine';
 const ScWrapper = styled.main`
   position: absolute;
   inset: 0;
+  overflow:hidden;
 
   display: flex;
   flex-direction: column;
 `;
 
 const ScHeader = styled.header`
-  border: 0.5rem dashed orange;
+  margin: 1rem;
   text-align: center;
 `;
 
 const ScStage = styled.main`
   flex: 1;
-  border: 0.5rem dashed red;
 
   display: flex;
   align-items: center;

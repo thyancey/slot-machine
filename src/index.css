@@ -42,7 +42,7 @@ h1 {
 
 :root {
   color: var(--color-white);
-  background-color: var(--color-black);
+  background-color: var(--color-grey);
 }
 
 /* @media (prefers-color-scheme: light) {} */

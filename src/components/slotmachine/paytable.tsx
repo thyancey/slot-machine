@@ -5,6 +5,10 @@ const ScWrapper = styled.div`
   display:grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: auto;
+
+  background-color: var(--color-purple);
+  border-radius: .5rem;
+  padding: .5rem;
 `
 const ScPayoutRow = styled.div`
   top:0;

@@ -8,11 +8,10 @@ const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to
 const SPIN_VEL = 25;
 const SPIN_VEL_RANDO = 3;  // random 0 - n variance added to spin velocity for this reel
 const SPIN_DRAG = .98;
-const ALIGNMENT_SPEED = .5;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
-  border: 0.5rem solid var(--color-pink);
+  border: 0.5rem solid var(--color-white);
   width: 8rem;
   height: 12rem;
   position: relative;
@@ -41,13 +40,15 @@ const ScReelItem = styled.div`
   width: 100%;
   height: ${REEL_HEIGHT}px;
   background-color: var(--color-white);
-  color: black;
+  color: var(--color-black);
   text-align: center;
-  border-bottom: 0.5rem solid var(--color-grey);
+  border-bottom: 0.25rem solid var(--color-blue);
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  font-weight: bold;
 `;
 
 // add redudant items to top and bottom of reel to make it seem continuous
