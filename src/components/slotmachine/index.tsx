@@ -71,22 +71,28 @@ const ScHandle = styled.div`
 
 const reels: ReelItem[][] = [
   [
-    { label: 'apple' },
-    { label: 'banana' },
-    { label: 'cherry' },
-    { label: 'durian' },
+    { label: 'apple', img: 'raccoon' },
+    { label: 'banana', img: 'bar3' },
+    { label: 'cherry', img: 'bar2' },
+    { label: 'durian', img: 'bar1' },
+    { label: 'eggplant', img: 'seven' },
+    { label: 'fig', img: 'smile' },
   ],
   [
-    { label: 'apple' },
-    { label: 'banana' },
-    { label: 'cherry' },
-    { label: 'durian' },
+    { label: 'apple', img: 'raccoon' },
+    { label: 'banana', img: 'bar3' },
+    { label: 'cherry', img: 'bar2' },
+    { label: 'durian', img: 'bar1' },
+    { label: 'eggplant', img: 'seven' },
+    { label: 'fig', img: 'smile' },
   ],
   [
-    { label: 'apple' },
-    { label: 'banana' },
-    { label: 'cherry' },
-    { label: 'durian' },
+    { label: 'apple', img: 'raccoon' },
+    { label: 'banana', img: 'bar3' },
+    { label: 'cherry', img: 'bar2' },
+    { label: 'durian', img: 'bar1' },
+    { label: 'eggplant', img: 'seven' },
+    { label: 'fig', img: 'smile' },
   ],
 ];
 

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import ReelContent from './reel-content';
 
-const REEL_HEIGHT = 100;
+const REEL_HEIGHT = 120;
 const REEL_DIRECTION = 1; // nothing works well, eventually, -1 should allow the reel to go the other way.
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to make all cells appear on screen
@@ -35,22 +36,6 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
-const ScReelItem = styled.div`
-  /* width: 5rem; */
-  width: 100%;
-  height: ${REEL_HEIGHT}px;
-  background-color: var(--color-white);
-  color: var(--color-black);
-  text-align: center;
-  border-bottom: 0.25rem solid var(--color-blue);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: bold;
-`;
-
 // add redudant items to top and bottom of reel to make it seem continuous
 export const buildReel = (
   reelItems: any[],
@@ -82,6 +67,7 @@ export const buildReel = (
 
 export type ReelItem = {
   label: string;
+  img: string;
 };
 type Props = {
   reelItems: ReelItem[];
@@ -170,7 +156,7 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
       <ScReelCenterer>
         <ScReelTape style={{ top: `${reelTop}px` }}>
           {items.map((reelItem, idx) => (
-            <ScReelItem key={`${reelIdx}-${idx}`}>{reelItem.label}</ScReelItem>
+            <ReelContent key={`${reelIdx}-${idx}`} reelItem={reelItem} height={REEL_HEIGHT} />
           ))}
         </ScReelTape>
       </ScReelCenterer>
