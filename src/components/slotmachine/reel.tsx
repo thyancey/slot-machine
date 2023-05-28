@@ -2,8 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const REEL_HEIGHT = 100;
-const REEL_OVERLAP = 2;
-const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT;
+const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
+const REPLACE_AT = 0;
+const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to make all cells appear on screen
+const SPIN_VEL = 2;
+const SPIN_DRAG = .99;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -13,8 +16,7 @@ const ScWrapper = styled.div`
   position: relative;
 
   /* makes a cutout */
-  /* clip-path: circle(4rem at center); */
-  clip-path: inset(0 0 round 10px);
+  /* clip-path: inset(0 0 round 10px); */
 `;
 
 const ScReelCenterer = styled.div`
@@ -85,8 +87,6 @@ type Props = {
   spinning?: boolean;
 };
 
-const SPIN_VEL = 10;
-const SPIN_DRAG = .99;
 
 function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
@@ -102,6 +102,7 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   // for now, this will snap them in place, but there really should be some bounce effect
   const alignReel = useCallback(() => {
     const nextTop = spinAngle % (REEL_HEIGHT);
+    
     if(nextTop > REEL_HEIGHT / 2){
       setSpinAngle(spinAngle + REEL_HEIGHT - nextTop);
     }else {
@@ -123,7 +124,9 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   }, [spinAngle]);
 
   const reelTop = useMemo(() => {
+    if(reelIdx === 0) console.log(`${TOP_OFFSET - spinAngle} % ${REEL_HEIGHT * reelItems.length} + ${TOP_OFFSET}`)
     const newAng = ((TOP_OFFSET - spinAngle) % (REEL_HEIGHT * reelItems.length)) + TOP_OFFSET
+    if(reelIdx === 0) console.log('newAng: ', newAng)
     return newAng
   }, [ spinAngle, reelItems ]);
 
@@ -146,7 +149,7 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
         onSpin(spinVel);
       }, 30)
     } else {
-      alignReel();
+      //alignReel();
     }
   }, [ spinVel ]);
 
