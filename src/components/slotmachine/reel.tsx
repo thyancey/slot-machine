@@ -2,11 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const REEL_HEIGHT = 100;
+const REEL_DIRECTION = 1; // nothing works well, eventually, -1 should allow the reel to go the other way.
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
-const REPLACE_AT = 0;
 const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to make all cells appear on screen
-const SPIN_VEL = 2;
-const SPIN_DRAG = .99;
+const SPIN_VEL = 25;
+const SPIN_VEL_RANDO = 3;  // random 0 - n variance added to spin velocity for this reel
+const SPIN_DRAG = .98;
+const ALIGNMENT_SPEED = .5;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -16,7 +18,7 @@ const ScWrapper = styled.div`
   position: relative;
 
   /* makes a cutout */
-  /* clip-path: inset(0 0 round 10px); */
+  clip-path: inset(0 0 round 10px);
 `;
 
 const ScReelCenterer = styled.div`
@@ -93,12 +95,17 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   const [spinAngle, setSpinAngle] = useState(0);
   const [spinVel, setSpinVel] = useState(0);
   const spinTimer = useRef<number | null>(null);
-  if(reelIdx === 0) console.log('spinAngle', spinAngle);
 
   useEffect(() => {
     setItems(buildReel(reelItems, REEL_OVERLAP));
-  }, [reelItems]);
+    if(REEL_DIRECTION === 1){
+      setSpinAngle(-1); 
+    } else{
+      setSpinAngle(0);
+    }
+  }, [reelItems, setSpinAngle]);
 
+  // refactor this to not calc height
   // for now, this will snap them in place, but there really should be some bounce effect
   const alignReel = useCallback(() => {
     const nextTop = spinAngle % (REEL_HEIGHT);
@@ -124,15 +131,19 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   }, [spinAngle]);
 
   const reelTop = useMemo(() => {
-    if(reelIdx === 0) console.log(`${TOP_OFFSET - spinAngle} % ${REEL_HEIGHT * reelItems.length} + ${TOP_OFFSET}`)
-    const newAng = ((TOP_OFFSET - spinAngle) % (REEL_HEIGHT * reelItems.length)) + TOP_OFFSET
-    if(reelIdx === 0) console.log('newAng: ', newAng)
+    const fullHeight = REEL_HEIGHT * reelItems.length;
+    let newAng = spinAngle;
+    // if(reelIdx === 0) console.log(`sa: ${spinAngle}, fh: ${fullHeight}, TOP_OFFSET: ${TOP_OFFSET}`);
+    if(REEL_DIRECTION === 1){
+      newAng = ((spinAngle + fullHeight) % fullHeight) - fullHeight + TOP_OFFSET;
+    }
     return newAng
   }, [ spinAngle, reelItems ]);
 
   useEffect(() => {
     if(spinning){
-      setSpinVel(SPIN_VEL + Math.random() * 5);
+      // setSpinVel(SPIN_VEL);
+      setSpinVel(SPIN_VEL + Math.random() * SPIN_VEL_RANDO);
     }
   }, [ spinning, spinTimer ]);
 
@@ -149,7 +160,7 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
         onSpin(spinVel);
       }, 30)
     } else {
-      //alignReel();
+      alignReel();
     }
   }, [ spinVel ]);
 
