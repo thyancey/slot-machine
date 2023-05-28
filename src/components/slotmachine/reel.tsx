@@ -1,41 +1,45 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const REEL_HEIGHT = 50;
+const REEL_HEIGHT = 100;
 const REEL_OVERLAP = 2;
 const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
-  border: 0.5rem solid green;
-  background-color: white;
-  width: 6rem;
-  height: 10rem;
+  border: 0.5rem solid var(--color-pink);
+  width: 8rem;
+  height: 12rem;
   position: relative;
 
-  clip-path: circle(4rem at center);
+  /* makes a cutout */
+  /* clip-path: circle(4rem at center); */
+  clip-path: inset(0 0 round 10px);
 `;
 
 const ScReelCenterer = styled.div`
   position: absolute;
   top: 50%;
+  width: 100%;
   left: 0;
   margin-top: ${`-${REEL_HEIGHT / 2}`}px;
 `;
 
 const ScReelTape = styled.div`
   position: absolute;
+  width:100%;
   /* top is changed to spin the wheel */
   top: 0;
 `;
 
 const ScReelItem = styled.div`
-  width: 5rem;
+  /* width: 5rem; */
+  width: 100%;
   height: ${REEL_HEIGHT}px;
-  background-color: grey;
+  background-color: var(--color-white);
   color: black;
   text-align: center;
-  border-bottom: 0.5rem solid brown;
+  border-bottom: 0.5rem solid var(--color-grey);
 
   display: flex;
   align-items: center;
@@ -81,14 +85,15 @@ type Props = {
   spinning?: boolean;
 };
 
-const SPIN_VEL = 100;
-const SPIN_DRAG = .9;
+const SPIN_VEL = 10;
+const SPIN_DRAG = .99;
 
 function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [spinAngle, setSpinAngle] = useState(0);
   const [spinVel, setSpinVel] = useState(0);
   const spinTimer = useRef<number | null>(null);
+  if(reelIdx === 0) console.log('spinAngle', spinAngle);
 
   useEffect(() => {
     setItems(buildReel(reelItems, REEL_OVERLAP));

@@ -4,22 +4,22 @@ import PayTable, { PayoutItem } from './paytable';
 import { useCallback, useState } from 'react';
 
 const ScWrapper = styled.main`
-  border: 0.5rem dotted yellow;
+  background-color: var(--color-blue);
   text-align: center;
 
   position: absolute;
-  width: calc(100% - 5rem);
   height: 100%;
 
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto min-content 5rem;
+  grid-template-rows: min-content auto 5rem;
   justify-content: center;
   align-items: center;
 `;
 
 const ScReelContainer = styled.div`
-  border: 0.25rem solid blue;
+  background-color: var(--color-grey);
+  border: .5rem solid var(--color-white);
   height: 100%;
   display: flex;
   align-items: center;
@@ -30,8 +30,13 @@ const ScReelContainer = styled.div`
   }
 `;
 const ScPayoutTray = styled.div`
-  border: 0.25rem solid grey;
+  background-color: var(--color-grey);
+  border: .5rem solid var(--color-white);
   height: 100%;
+`;
+const ScPayTableContainer = styled.div`
+  background-color: var(--color-grey);
+  border: .5rem solid cyan;
 `;
 
 /* stick it to the side */
@@ -116,12 +121,14 @@ function SlotMachine() {
   
   return (
     <ScWrapper>
+      <ScPayTableContainer>
+        <PayTable payoutItems={payoutItems} />
+      </ScPayTableContainer>
       <ScReelContainer>
         <Reel reelIdx={0} reelItems={reels[0]} spinning={cachedSpinning[0]} onSpinComplete={onSpinComplete}/>
         <Reel reelIdx={1} reelItems={reels[1]} spinning={cachedSpinning[1]} onSpinComplete={onSpinComplete}/>
         <Reel reelIdx={2} reelItems={reels[2]} spinning={cachedSpinning[2]} onSpinComplete={onSpinComplete}/>
       </ScReelContainer>
-      <PayTable payoutItems={payoutItems} />
       <ScPayoutTray />
       <ScHandle onClick={() => startSpinning()}/>
     </ScWrapper>
