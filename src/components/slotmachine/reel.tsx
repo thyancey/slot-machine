@@ -8,6 +8,7 @@ const REEL_DIRECTION = 1; // nothing works well, eventually, -1 should allow the
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to make all cells appear on screen
 const SPIN_VEL_RANGE = [25, 80];  // RNG speed range for each reel
+// const SPIN_VEL_RANGE = [1, 2];  // RNG speed range for each reel
 const SPIN_DRAG = .98;
 
 // kinda like the cutout you can see the reel through
@@ -97,8 +98,23 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
     }else {
       setSpinAngle(spinAngle - nextTop);
     }
+
+    const item = getReelItemFromSpinAngle(spinAngle, reelItems);
+    console.log(`>>>item (${reelIdx}): `, item)
     onSpinComplete(reelIdx);
-  }, [ spinAngle ]);
+  }, [ spinAngle, reelItems, reelIdx ]);
+
+
+  // this is a litlte wacky, but it seems to work
+  const getReelItemFromSpinAngle = (spinAngle: number, reelItems:ReelItem[]) => {
+    const fullHeight = REEL_HEIGHT * reelItems.length;
+    const angler = (spinAngle - (REEL_HEIGHT / 2)) % fullHeight;
+    // the wheel spins backwards, so 70% is really 30% in terms of progress
+    const percIdx = 1 - (angler / fullHeight);
+    // ex, if you're looking 50% down the reel indexes, pick the index in the middle.
+    const idx = Math.floor(percIdx * reelItems.length);
+    return reelItems[idx];
+  }
 
 
   const onSpin = useCallback((vel: number = 1) => {

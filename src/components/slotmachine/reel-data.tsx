@@ -1,5 +1,3 @@
-import { ReelItem } from './reel';
-
 import R7 from '../../assets/reels/reel-7.gif';
 import Rbar1 from '../../assets/reels/reel-bar1.gif';
 import Rbar2 from '../../assets/reels/reel-bar2.gif';
@@ -19,58 +17,60 @@ import Rsword from '../../assets/reels/reel-sword.gif';
 export type ReelItem = {
   label: string;
   img: string;
+  effect?: string,
+  value?: number;
 };
 
 export const reels: ReelItem[][] = [
   [
-    { label: 'seven', img: R7 },
+    { label: 'seven', effect: "score", value: 7, img: R7 },
     { label: 'bar1', img: Rbar1 },
     { label: 'bar2', img: Rbar2 },
     { label: 'bar3', img: Rbar3 },
-    { label: 'bat', img: Rbat },
-    { label: 'coins', img: Rcoins },
+    { label: 'bat', effect: "life steal", value: 1, img: Rbat },
+    { label: 'coins', effect: "gold bonus", value: 5, img: Rcoins },
     { label: 'crazy', img: Rcrazy },
-    { label: 'flame', img: Rflame },
-    { label: 'halo', img: Rhalo },
-    { label: 'heart', img: Rheart },
-    { label: 'lightning', img: Rlightning },
-    { label: 'poison', img: Rpoison },
-    { label: 'shield', img: Rshield },
-    { label: 'snowflake', img: Rsnowflake },
-    { label: 'sword', img: Rsword }
+    { label: 'flame', effect: "fire damage", value: 1.1, img: Rflame },
+    { label: 'halo', effect: "extraLife", img: Rhalo },
+    { label: 'heart', effect: "health", value: 1, img: Rheart },
+    { label: 'lightning', effect: "lightning damage", value: 1.4, img: Rlightning },
+    { label: 'poison', effect: "poison damage", value: 1.5, img: Rpoison },
+    { label: 'shield', effect: "defense", value: 1, img: Rshield },
+    { label: 'snowflake', effect: "freeze damage", value: 1.2, img: Rsnowflake },
+    { label: 'sword', effect: "extra damage", value: 2, img: Rsword }
   ],
   [
-    { label: 'seven', img: R7 },
+    { label: 'seven', effect: "score", value: 7, img: R7 },
     { label: 'bar1', img: Rbar1 },
     { label: 'bar2', img: Rbar2 },
     { label: 'bar3', img: Rbar3 },
-    { label: 'bat', img: Rbat },
-    { label: 'coins', img: Rcoins },
+    { label: 'bat', effect: "life steal", value: 1, img: Rbat },
+    { label: 'coins', effect: "gold bonus", value: 5, img: Rcoins },
     { label: 'crazy', img: Rcrazy },
-    { label: 'flame', img: Rflame },
-    { label: 'halo', img: Rhalo },
-    { label: 'heart', img: Rheart },
-    { label: 'lightning', img: Rlightning },
-    { label: 'poison', img: Rpoison },
-    { label: 'shield', img: Rshield },
-    { label: 'snowflake', img: Rsnowflake },
-    { label: 'sword', img: Rsword }
+    { label: 'flame', effect: "fire damage", value: 1.1, img: Rflame },
+    { label: 'halo', effect: "extraLife", img: Rhalo },
+    { label: 'heart', effect: "health", value: 1, img: Rheart },
+    { label: 'lightning', effect: "lightning damage", value: 1.4, img: Rlightning },
+    { label: 'poison', effect: "poison damage", value: 1.5, img: Rpoison },
+    { label: 'shield', effect: "defense", value: 1, img: Rshield },
+    { label: 'snowflake', effect: "freeze damage", value: 1.2, img: Rsnowflake },
+    { label: 'sword', effect: "extra damage", value: 2, img: Rsword }
   ],
   [
-    { label: 'seven', img: R7 },
+    { label: 'seven', effect: "score", value: 7, img: R7 },
     { label: 'bar1', img: Rbar1 },
     { label: 'bar2', img: Rbar2 },
     { label: 'bar3', img: Rbar3 },
-    { label: 'bat', img: Rbat },
-    { label: 'coins', img: Rcoins },
+    { label: 'bat', effect: "life steal", value: 1, img: Rbat },
+    { label: 'coins', effect: "gold bonus", value: 5, img: Rcoins },
     { label: 'crazy', img: Rcrazy },
-    { label: 'flame', img: Rflame },
-    { label: 'halo', img: Rhalo },
-    { label: 'heart', img: Rheart },
-    { label: 'lightning', img: Rlightning },
-    { label: 'poison', img: Rpoison },
-    { label: 'shield', img: Rshield },
-    { label: 'snowflake', img: Rsnowflake },
-    { label: 'sword', img: Rsword }
+    { label: 'flame', effect: "fire damage", value: 1.1, img: Rflame },
+    { label: 'halo', effect: "extraLife", img: Rhalo },
+    { label: 'heart', effect: "health", value: 1, img: Rheart },
+    { label: 'lightning', effect: "lightning damage", value: 1.4, img: Rlightning },
+    { label: 'poison', effect: "poison damage", value: 1.5, img: Rpoison },
+    { label: 'shield', effect: "defense", value: 1, img: Rshield },
+    { label: 'snowflake', effect: "freeze damage", value: 1.2, img: Rsnowflake },
+    { label: 'sword', effect: "extra damage", value: 2, img: Rsword }
   ],
 ];
