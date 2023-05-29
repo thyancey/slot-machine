@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
+import { ReelItem } from './reel-data';
 
 const REEL_HEIGHT = 120;
 const REEL_DIRECTION = 1; // nothing works well, eventually, -1 should allow the reel to go the other way.
@@ -63,11 +64,6 @@ export const buildReel = (
 };
 
 
-
-export type ReelItem = {
-  label: string;
-  img: string;
-};
 type Props = {
   reelItems: ReelItem[];
   reelIdx: number;

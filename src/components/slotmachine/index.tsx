@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import Reel, { ReelItem } from './reel';
+import Reel from './reel';
 import PayTable, { PayoutItem } from './paytable';
 import { useCallback, useState } from 'react';
+import { reels } from './reel-data';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -68,60 +69,6 @@ const ScHandle = styled.div`
     background-color: var(--color-pink);
   }
 `;
-
-const reels: ReelItem[][] = [
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-];
 
 const payoutItems: PayoutItem[] = [
   {

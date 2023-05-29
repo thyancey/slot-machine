@@ -1,42 +1,6 @@
 import styled from 'styled-components';
-import { ReelItem } from './reel';
+import { ReelItem } from './reel-data';
 
-import R7 from '../../assets/reels/reel-7.gif';
-import Rbar1 from '../../assets/reels/reel-bar1.gif';
-import Rbar2 from '../../assets/reels/reel-bar2.gif';
-import Rbar3 from '../../assets/reels/reel-bar3.gif';
-import Rbat from '../../assets/reels/reel-bat.gif';
-import Rcoins from '../../assets/reels/reel-coins.gif';
-import Rcrazy from '../../assets/reels/reel-crazy.gif';
-import Rflame from '../../assets/reels/reel-flame.gif';
-import Rhalo from '../../assets/reels/reel-halo.gif';
-import Rheart from '../../assets/reels/reel-heart.gif';
-import Rlightning from '../../assets/reels/reel-lightning.gif';
-import Rpoison from '../../assets/reels/reel-poison.gif';
-import Rshield from '../../assets/reels/reel-shield.gif';
-import Rsnowflake from '../../assets/reels/reel-snowflake.gif';
-import Rsword from '../../assets/reels/reel-sword.gif';
-
-interface ImgMap {
-  [ key: string ] : string;
-}
-const ImgLookup = {
-  seven: R7,
-  bar1: Rbar1,
-  bar2: Rbar2,
-  bar3: Rbar3,
-  bat: Rbat,
-  coins: Rcoins,
-  crazy: Rcrazy,
-  flame: Rflame,
-  halo: Rhalo,
-  heart: Rheart,
-  lightning: Rlightning,
-  poison: Rpoison,
-  shield: Rshield,
-  snowflake: Rsnowflake,
-  sword: Rsword,
-} as ImgMap;
 
 interface ScProps {
   height: number
@@ -71,7 +35,7 @@ type Props = {
 
 function ReelContent({reelItem, height}: Props) {
   return (
-    <ScWrapper height={height}><img src={ImgLookup[reelItem.img] || ImgLookup['bar1']}/></ScWrapper>
+    <ScWrapper height={height}><img src={reelItem.img || ''}/></ScWrapper>
   );
 }
 
