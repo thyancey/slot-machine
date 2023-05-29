@@ -6,8 +6,7 @@ const REEL_HEIGHT = 120;
 const REEL_DIRECTION = 1; // nothing works well, eventually, -1 should allow the reel to go the other way.
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 const TOP_OFFSET = REEL_OVERLAP * -REEL_HEIGHT; // move the real up this much to make all cells appear on screen
-const SPIN_VEL = 25;
-const SPIN_VEL_RANDO = 3;  // random 0 - n variance added to spin velocity for this reel
+const SPIN_VEL_RANGE = [25, 80];  // RNG speed range for each reel
 const SPIN_DRAG = .98;
 
 // kinda like the cutout you can see the reel through
@@ -130,7 +129,8 @@ function SlotReel({ reelItems, reelIdx, onSpinComplete, spinning}: Props) {
   useEffect(() => {
     if(spinning){
       // setSpinVel(SPIN_VEL);
-      setSpinVel(SPIN_VEL + Math.random() * SPIN_VEL_RANDO);
+      const randSpeed = Math.random() * (SPIN_VEL_RANGE[1] - SPIN_VEL_RANGE[0]) + SPIN_VEL_RANGE[0];
+      setSpinVel(randSpeed);
     }
   }, [ spinning, spinTimer ]);
 
