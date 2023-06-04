@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './reel';
 import PayTable, { PayoutItem } from './paytable';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ReelItem, reels } from './reel-data';
 
 const ScWrapper = styled.main`
@@ -51,13 +51,13 @@ const ScPayoutTray = styled.div`
 `;
 
 const ScReelLabels = styled.div`
-  >div{
-    display:inline-block;
+  > div {
+    display: inline-block;
     width: 8rem;
-    margin: .5rem;
+    margin: 0.5rem;
 
     background-color: var(--color-grey);
-    border-radius: .5rem;
+    border-radius: 0.5rem;
   }
 `;
 
@@ -115,19 +115,49 @@ const setCReelItems = (newReelItems: (ReelItem | null)[]) => {
   cReelItems = newReelItems;
 };
 
+interface ReelDef {
+  reelItems: ReelItem[];
+}
+
+// later on, some factors should weight the "random"
+const getRandomReelIdx = (reelDef: ReelDef) =>
+  Math.floor(Math.random() * reelDef.reelItems.length);
+
+const getRandomReelTargets = (reelSet: ReelDef[]) => {
+  return reelSet.map((reelDef) => getRandomReelIdx(reelDef));
+};
+
 function SlotMachine() {
   const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
+  const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
+  const [reelTargets, setReelTargets] = useState<number[]>([-1, -1, -1]);
   const [curReelItems, setCurReelItems] = useState<(ReelItem | null)[]>([
     null,
     null,
     null,
   ]);
+
+  useEffect(() => {
+    // later on, reel should store extra properties other than the reelItems
+    setReelDefs(
+      reels.map((reel) => ({
+        reelItems: reel,
+      }))
+    );
+  }, []);
+
   const startSpinning = useCallback(() => {
-    if (!cachedSpinning.find((iS) => iS === true)) {
-      setActiveSpin([true, true, true]);
-      setCachedSpinning(activeSpin);
-    }
-  }, [cachedSpinning]);
+    // if (!cachedSpinning.find((iS) => iS === true)) {
+    //   setActiveSpin([true, true, true]);
+    //   setCachedSpinning(activeSpin);
+    // }
+    setReelTargets(getRandomReelTargets(reelDefs));
+
+    // TODO - better way to handle where if a reel had the same randomIdx two spins in a row, but still needs to know a change happened to spin around several more times
+    window.setTimeout(() => {
+      setReelTargets([-1, -1, -1]);
+    }, 1);
+  }, [reelDefs]);
 
   const onSpinComplete = useCallback(
     (reelIdx: number) => {
@@ -163,6 +193,7 @@ function SlotMachine() {
         <Reel
           reelIdx={0}
           reelItems={reels[0]}
+          reelTarget={reelTargets[0]}
           spinning={cachedSpinning[0]}
           onSpinComplete={() => onSpinComplete(0)}
           setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, 0)}
@@ -170,6 +201,7 @@ function SlotMachine() {
         <Reel
           reelIdx={1}
           reelItems={reels[1]}
+          reelTarget={reelTargets[1]}
           spinning={cachedSpinning[1]}
           onSpinComplete={() => onSpinComplete(1)}
           setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, 1)}
@@ -177,6 +209,7 @@ function SlotMachine() {
         <Reel
           reelIdx={2}
           reelItems={reels[2]}
+          reelTarget={reelTargets[2]}
           spinning={cachedSpinning[2]}
           onSpinComplete={() => onSpinComplete(2)}
           setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, 2)}
