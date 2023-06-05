@@ -32,10 +32,10 @@ export interface ReelDef {
 export const reelsData: RawReelDef[] = [
   {
     reelItems: [
+      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bar1', img: Rbar1 },
       { label: 'bar2', img: Rbar2 },
       { label: 'bar3', img: Rbar3 },
-      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
       { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
       { label: 'crazy', img: Rcrazy },
@@ -61,10 +61,10 @@ export const reelsData: RawReelDef[] = [
   },
   {
     reelItems: [
+      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bar1', img: Rbar1 },
       { label: 'bar2', img: Rbar2 },
       { label: 'bar3', img: Rbar3 },
-      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
       { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
       { label: 'crazy', img: Rcrazy },
@@ -90,10 +90,10 @@ export const reelsData: RawReelDef[] = [
   },
   {
     reelItems: [
+      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bar1', img: Rbar1 },
       { label: 'bar2', img: Rbar2 },
       { label: 'bar3', img: Rbar3 },
-      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
       { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
       { label: 'crazy', img: Rcrazy },
@@ -119,10 +119,10 @@ export const reelsData: RawReelDef[] = [
   },
   {
     reelItems: [
+      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bar1', img: Rbar1 },
       { label: 'bar2', img: Rbar2 },
       { label: 'bar3', img: Rbar3 },
-      { label: 'seven', effect: 'score', value: 7, img: R7 },
       { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
       { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
       { label: 'crazy', img: Rcrazy },

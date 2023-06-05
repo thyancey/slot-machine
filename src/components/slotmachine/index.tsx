@@ -133,7 +133,7 @@ function SlotMachine() {
       }) as ReelDef)
     );
 
-    setReelTargets(Array(reelsData.length).fill([0, 0]));
+    setReelTargets(Array(reelsData.length).fill([-1, 0]));
     setCurReelItems(Array(reelsData.length).fill(null));
   }, []);
 
