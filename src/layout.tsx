@@ -10,9 +10,12 @@ const ScWrapper = styled.main`
   flex-direction: column;
 `;
 
-const ScHeader = styled.header`
+const ScHeader = styled.h1`
   margin: 1rem;
-  text-align: center;
+  margin-left: -10rem;
+  font-size:5rem;
+  white-space:nowrap;
+  font-family: var(--font-8bit2);
 `;
 
 const ScStage = styled.main`
@@ -29,7 +32,7 @@ const ScStage = styled.main`
 function Layout() {
   return (
     <ScWrapper>
-      <ScHeader>{'A slot machine'}</ScHeader>
+      <ScHeader>{'! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS !'}</ScHeader>
       <ScStage>
         <SlotMachine />
       </ScStage>

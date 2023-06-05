@@ -1,11 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Press+Start+2P&family=Silkscreen&display=swap');
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  /* font-family: 'Press Start 2P', cursive; */
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,8 +19,20 @@
   --color-blue: #00bbf9;
   --color-teal: #00f5d4;
   --color-yellow: #fee440;
+  --color-green: #0bbf00;
+  --color-red: #f15b00;
+  --color-orange: #fe8240;
   --color-pink: #f15bb5;
   --color-purple: #9b5de5;
+
+  --font-8bit: 'Press Start 2P', cursive;
+  --font-8bit2: 'Silkscreen', cursive;
+  --font-base: 'Bubblegum Sans', cursive;
+
+  font-family: var(--font-base);
+
+  background-color: var(--color-grey);
+  color: var(--color-white);
 }
 
 *, *::before, *::after {
@@ -38,11 +50,6 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-:root {
-  color: var(--color-white);
-  background-color: var(--color-grey);
 }
 
 /* @media (prefers-color-scheme: light) {} */

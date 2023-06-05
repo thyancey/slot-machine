@@ -30,7 +30,7 @@ const ScAnimator = styled.div`
     >div{
       height:1rem;
     }
-    transition: top .2s cubic-bezier(.46,0,.78,-0.71), opacity .2s .2s;
+    transition: top .2s cubic-bezier(.46,0,.78,-0.71), opacity .2s .1s;
   }
 `;
 
@@ -45,6 +45,8 @@ const ScPill = styled.div`
 
   background-color: var(--color-grey);
   transition: background-color .2s;
+  
+  font-family: var(--font-8bit2);
 
   .lf-present & {
     background-color: var(--color-pink);
