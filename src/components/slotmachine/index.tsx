@@ -3,6 +3,7 @@ import Reel from './reel';
 import PayTable, { PayoutItem } from './paytable';
 import { useCallback, useEffect, useState } from 'react';
 import { ReelDef, ReelItem, reelsData } from './reel-data';
+import ResultLabel from './result-label';
 
 export type ReelTarget = [
   itemIdx: number,
@@ -54,14 +55,8 @@ const ScPayoutTray = styled.div`
 `;
 
 const ScReelLabels = styled.div`
-  > div {
-    display: inline-block;
-    width: 8rem;
-    margin: 0.5rem;
-
-    background-color: var(--color-grey);
-    border-radius: 0.5rem;
-  }
+  display:flex;
+  justify-content: center;
 `;
 
 /* stick it to the side */
@@ -116,13 +111,14 @@ function SlotMachine() {
   // const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
   const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
   const [reelTargets, setReelTargets] = useState<ReelTarget[]>([]);
-  const [curReelItems, setCurReelItems] = useState<(ReelItem | null)[]>([]);
+  const [curReelItems, setCurReelItems] = useState<(ReelItem | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
 
   useEffect(() => {
     // later on, reel should store extra properties other than the reelItems
     setReelDefs(
       reelsData.map((reel) => ({
+        ...reel,
         reelItems: reel.reelItems.map(
           (rI, rIdx) =>
             ({
@@ -134,7 +130,7 @@ function SlotMachine() {
     );
 
     setReelTargets(Array(reelsData.length).fill([-1, 0]));
-    setCurReelItems(Array(reelsData.length).fill(null));
+    setCurReelItems(Array(reelsData.length).fill(undefined));
   }, []);
 
   const startSpinning = useCallback(() => {
@@ -162,6 +158,7 @@ function SlotMachine() {
           <Reel
             key={`reel-${rdIdx}`}
             reelIdx={rdIdx}
+            reelDef={reelDef}
             reelItems={reelDef.reelItems}
             reelTarget={reelTargets[rdIdx]}
             setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, rdIdx)}
@@ -170,7 +167,7 @@ function SlotMachine() {
       </ScReelContainer>
       <ScReelLabels>
         {curReelItems.map((cri, idx) => (
-          <div key={idx}>{cri?.label}</div>
+          <ResultLabel key={idx} reelItem={cri} />
         ))}
       </ScReelLabels>
       <ScPayoutTray>

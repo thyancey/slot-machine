@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { ReelItem } from './reel-data';
+import { ReelDef, ReelItem } from './reel-data';
 import { MinMaxTouple, clamp, getEasing, randInRange } from '../../utils';
 import { ReelTarget } from '.';
 
@@ -12,7 +12,7 @@ import { ReelTarget } from '.';
 const REEL_HEIGHT = 120; // height of each reel cell
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
-const MIN_SPINS_RANGE: MinMaxTouple = [1, 1]; // RNG number of times to go around for each reel
+const MIN_SPINS_RANGE: MinMaxTouple = [1, 2]; // RNG number of times to go around for each reel
 const SPIN_TICK: number = 30;
 
 // kinda like the cutout you can see the reel through
@@ -108,13 +108,14 @@ const projectSpinAngle = (numItems: number, targetIdx: number, curIdx: number) =
 };
 
 type Props = {
+  reelDef: ReelDef;
   reelItems: ReelItem[];
   reelIdx: number;
   setCurReelItem: Function;
   reelTarget: ReelTarget;
 };
 
-function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
+function SlotReel({ reelDef, reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const spinTimer = useRef<number | null>(null);
@@ -155,19 +156,21 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
   }, [isSpinning]);
 
   const triggerSpin = useCallback(() => {
+    console.log('triggerSpin', reelDef)
     const nextSpinTarget = projectSpinTarget(
       reelItems.length,
       curIdx,
       reelTarget[0],
-      randInRange(MIN_SPINS_RANGE, true)
+      randInRange(reelDef.spinRange || MIN_SPINS_RANGE, true)
     );
     const projectedSpinAngle = projectSpinAngle(reelItems.length, nextSpinTarget, curIdx);
     const nextSpinAngle = spinAngle + projectedSpinAngle;
 
+    setCurReelItem(undefined);
     setSpinAngleTarget(nextSpinAngle);
     setSpinPower(randInRange(SPIN_POWER_RANGE));
     setIsSpinning(true);
-  }, [reelItems, reelTarget, spinAngle]);
+  }, [reelItems, reelTarget, spinAngle, reelDef]);
 
   // remove timer when unmounting
   useEffect(() => {
@@ -202,15 +205,12 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
     }
   }, [spinProgress]);
 
-  useEffect(() => {
-    setCurReelItem(reelItems[curIdx]);
-  }, [curIdx]);
-
+  // reset, save values, tell parent about where you landed
   const completeSpins = useCallback(() => {
     setIsSpinning(false);
-    setCurIdx(reelTarget[0]);
-    // reset stuff
     setLastSpinAngle(spinAngle);
+    setCurIdx(reelTarget[0]);
+    setCurReelItem(reelItems[reelTarget[0]]);
   }, [reelTarget, reelIdx, setCurIdx, reelItems, spinAngle]);
 
   const reelTop = useMemo(() => {

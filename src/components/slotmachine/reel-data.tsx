@@ -13,6 +13,7 @@ import Rpoison from '../../assets/reels/reel-poison.gif';
 import Rshield from '../../assets/reels/reel-shield.gif';
 import Rsnowflake from '../../assets/reels/reel-snowflake.gif';
 import Rsword from '../../assets/reels/reel-sword.gif';
+import { MinMaxTouple } from '../../utils';
 
 export type ReelItem = {
   idx: number;
@@ -23,40 +24,19 @@ export type ReelItem = {
 };
 
 export interface RawReelDef {
+  spinRange?: MinMaxTouple;
   reelItems: Partial<ReelItem>[];
 }
 export interface ReelDef {
+  spinRange?: MinMaxTouple;
   reelItems: ReelItem[];
 }
 
 export const reelsData: RawReelDef[] = [
   {
+    spinRange: [ 5, 8 ],
     reelItems: [
-      { label: 'seven', effect: 'score', value: 7, img: R7 },
-      { label: 'bar1', img: Rbar1 },
-      { label: 'bar2', img: Rbar2 },
-      { label: 'bar3', img: Rbar3 },
-      { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
-      { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
-      { label: 'crazy', img: Rcrazy },
-      { label: 'flame', effect: 'fire damage', value: 1.1, img: Rflame },
-      { label: 'halo', effect: 'extraLife', img: Rhalo },
-      { label: 'heart', effect: 'health', value: 1, img: Rheart },
-      {
-        label: 'lightning',
-        effect: 'lightning damage',
-        value: 1.4,
-        img: Rlightning,
-      },
       { label: 'poison', effect: 'poison damage', value: 1.5, img: Rpoison },
-      { label: 'shield', effect: 'defense', value: 1, img: Rshield },
-      {
-        label: 'snowflake',
-        effect: 'freeze damage',
-        value: 1.2,
-        img: Rsnowflake,
-      },
-      { label: 'sword', effect: 'extra damage', value: 2, img: Rsword },
     ],
   },
   {
@@ -144,6 +124,42 @@ export const reelsData: RawReelDef[] = [
         img: Rsnowflake,
       },
       { label: 'sword', effect: 'extra damage', value: 2, img: Rsword },
+    ],
+  },
+  {
+    reelItems: [
+      { label: 'seven', effect: 'score', value: 7, img: R7 },
+      { label: 'bar1', img: Rbar1 },
+      { label: 'bar2', img: Rbar2 },
+      { label: 'bar3', img: Rbar3 },
+      { label: 'bat', effect: 'life steal', value: 1, img: Rbat },
+      { label: 'coins', effect: 'gold bonus', value: 5, img: Rcoins },
+      { label: 'crazy', img: Rcrazy },
+      { label: 'flame', effect: 'fire damage', value: 1.1, img: Rflame },
+      { label: 'halo', effect: 'extraLife', img: Rhalo },
+      { label: 'heart', effect: 'health', value: 1, img: Rheart },
+      {
+        label: 'lightning',
+        effect: 'lightning damage',
+        value: 1.4,
+        img: Rlightning,
+      },
+      { label: 'poison', effect: 'poison damage', value: 1.5, img: Rpoison },
+      { label: 'shield', effect: 'defense', value: 1, img: Rshield },
+      {
+        label: 'snowflake',
+        effect: 'freeze damage',
+        value: 1.2,
+        img: Rsnowflake,
+      },
+      { label: 'sword', effect: 'extra damage', value: 2, img: Rsword },
+    ],
+  },
+  {
+    reelItems: [
+      { label: 'bar1', img: Rbar1 },
+      { label: 'bar2', img: Rbar2 },
+      { label: 'bar3', img: Rbar3 },
     ],
   }
 ];
