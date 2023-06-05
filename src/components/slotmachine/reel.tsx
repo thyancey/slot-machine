@@ -2,16 +2,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
 import { ReelItem } from './reel-data';
+import { MinMaxTouple, randInRange } from '../../utils';
+import { ReelTarget } from '.';
 
 // imagine the construction as a ribbon, rendering each reelItem top to bottom
-// next, additional items are rendered to assist in the looping effect:
-// the last item is repeated at the start of the reel, and then N REEL_OVERLAP items
+// to complete the looping effect, REEL_OVERLAP n of items are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const REEL_HEIGHT = 120; // height of each reel cell
 const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
-const SPIN_VEL_RANGE: MinMaxTouple = [15, 35]; // RNG speed range for each reel
-const MIN_SPINS_RANGE: MinMaxTouple = [1, 3]; // RNG speed range for each reel
+const SPIN_POWER_RANGE: MinMaxTouple = [15, 35]; // RNG speed range for each reel
+const MIN_SPINS_RANGE: MinMaxTouple = [1, 3]; // RNG number of times to go around for each reel
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -22,6 +23,10 @@ const ScWrapper = styled.div`
 
   /* makes a cutout */
   clip-path: inset(0 0 round 10px);
+
+  &.spinning{
+
+  }
 `;
 
 const ScReelCenterer = styled.div`
@@ -39,25 +44,17 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
-type MinMaxTouple = [min: number, max: number];
-export const randInRange = (range: MinMaxTouple, isIndexes = false) => {
-  const val = Math.random() * (range[1] - range[0]) + range[0];
-  return isIndexes ? Math.floor(val) : val;
-}
-  
-
 // add redudant items to top and bottom of reel to make it seem continuous
 export const buildReel = (reelItems: any[], reelOverlap: number) => {
   // starting with [ 0, 1, 2 ]
 
-  // [ +0, +1, +2, 0, 1, 2 ]
+  // [ +1, +2, 0, 1, 2 ]
   const loopBefore = [];
   // the +1 here attached the last to the top, regardless of overlap value
-  for (let i = 0; i < reelOverlap + 1; i++) {
+  for (let i = 0; i < reelOverlap; i++) {
     const offset = reelItems.length - (i % reelItems.length) - 1;
     loopBefore.push(reelItems[offset]);
   }
-  loopBefore.reverse();
 
   // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
   const loopAfter = [];
@@ -66,7 +63,7 @@ export const buildReel = (reelItems: any[], reelOverlap: number) => {
   }
 
   return ([] as any[])
-    .concat(loopBefore)
+    .concat(loopBefore.reverse())
     .concat(reelItems.map((rI) => rI))
     .concat(loopAfter);
 };
@@ -87,30 +84,26 @@ type Props = {
   reelItems: ReelItem[];
   reelIdx: number;
   setCurReelItem: Function;
-  reelTarget: number;
-  // onSpinComplete: Function;
-  // spinning?: boolean;
+  reelTarget: ReelTarget;
 };
 
 function SlotReel({
   reelItems,
   reelIdx,
   setCurReelItem,
-  reelTarget,
-  // spinning,
-  // onSpinComplete,
+  reelTarget
 }: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
-  const [spinAngle, setSpinAngle] = useState(0);
-  const [spinAngleTarget, setSpinAngleTarget] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
   const spinTimer = useRef<number | null>(null);
   const [spinPower, setSpinPower] = useState(0);
   const [curIdx, setCurIdx] = useState(0);
+  const [spinAngle, setSpinAngle] = useState(0);
+  const [spinAngleTarget, setSpinAngleTarget] = useState(0);
 
   useEffect(() => {
     console.log(`reel #${reelIdx} initialized with reelTarget: ${reelTarget}`);
   }, []);
-
 
   useEffect(() => {
     setItems(buildReel(reelItems, REEL_OVERLAP));
@@ -118,24 +111,19 @@ function SlotReel({
   }, [reelItems, setSpinAngle]);
 
   useEffect(() => {
-    if (reelTarget !== -1) {
-      //console.log(` ${reelIdx}: my new target is ${reelTarget}`);
+    if (reelTarget[0] !== -1 && !isSpinning) {
       setSpinny();
     }
   }, [reelTarget]);
 
   const setSpinny = useCallback(() => {
-    const spinTarget = projectSpinTarget(reelItems.length, reelTarget, curIdx);
-    const nextSpinAngle = spinAngle + projectSpinAngle(reelItems.length, spinTarget);
-    /*console.log(
-      'setSpinny(), spinTarget:',
-      spinTarget,
-      ', spinAngle:',
-      nextSpinAngle
-    );*/
+    const spinTarget = projectSpinTarget(reelItems.length, reelTarget[0], curIdx);
+    const nextSpinAngle =
+      spinAngle + projectSpinAngle(reelItems.length, spinTarget);
 
     setSpinAngleTarget(nextSpinAngle);
-    setSpinPower(randInRange(SPIN_VEL_RANGE));
+    setSpinPower(randInRange(SPIN_POWER_RANGE));
+    setIsSpinning(true);
   }, [reelItems, reelTarget, spinAngle]);
 
   // remove timer when unmounting
@@ -146,11 +134,6 @@ function SlotReel({
     };
   }, []);
 
-  useEffect(() => {
-    console.log('set for ', curIdx)
-    setCurReelItem(reelItems[curIdx]);
-  }, [curIdx, reelItems]);
-
   // remove timer when unmounting
   useEffect(() => {
     if (spinAngle < spinAngleTarget) {
@@ -158,40 +141,30 @@ function SlotReel({
       spinTimer.current = window.setTimeout(() => {
         setSpinAngle(spinAngle + spinPower);
       }, 30);
-    } else if(spinAngle !== spinAngleTarget) {
+    } else if (spinAngle !== spinAngleTarget) {
       //recover
       spinTimer.current = window.setTimeout(() => {
-        console.log('recover to ', spinAngleTarget)
+        // console.log('recover to ', spinAngleTarget)
         setSpinAngle(spinAngleTarget);
-        updateCurIdx()
+        completeSpins();
       }, 30);
     }
   }, [spinAngle, spinAngleTarget]);
 
-  const updateCurIdx = useCallback(() => {
-    const fullHeight = REEL_HEIGHT * reelItems.length;
-    const modAngle = (spinAngle + (REEL_HEIGHT / 2)) % fullHeight
-    if (modAngle === fullHeight) {
-      // 100%, so set to the end
-      setCurIdx(reelItems.length - 1);
-    } else {
-      const percIdx = Math.floor((modAngle / fullHeight) * reelItems.length);
-      setCurIdx(percIdx);
-    }
+  const completeSpins = useCallback(() => {
+    // console.log(`completeSpins > reelIdx:${reelIdx} at reelTarget:${reelTarget}`, reelItems)
+    setCurIdx(reelTarget[0]);
+    setCurReelItem(reelItems[reelTarget[0]]);
+    setIsSpinning(false);
+  }, [reelTarget, reelIdx, setCurIdx, reelItems]);
 
-  }, [spinAngle, reelItems]);
-
-  // everytime i rewrite this, i end up with something i dont quite get. there should be something simpler, however
-  // it has to account for small reels && varying overlap
   const reelTop = useMemo(() => {
-    // this makes no sense
-    //console.log(spinAngle)
-    const reelTop = spinAngle % (REEL_HEIGHT * reelItems.length);
-    return reelTop - REEL_HEIGHT * (reelItems.length + REEL_OVERLAP); // offset for the bottom up position
+    const reelTop = -1 * (spinAngle) % (REEL_HEIGHT * reelItems.length);
+    return reelTop - REEL_OVERLAP * REEL_HEIGHT;
   }, [spinAngle, reelItems]);
 
   return (
-    <ScWrapper>
+    <ScWrapper className={isSpinning ? 'spinning' : ''}>
       <ScReelCenterer>
         <ScReelTape style={{ top: `${reelTop}px` }}>
           {items.map((reelItem, idx) => (
