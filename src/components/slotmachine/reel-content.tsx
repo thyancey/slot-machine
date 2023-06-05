@@ -35,7 +35,10 @@ type Props = {
 
 function ReelContent({reelItem, height}: Props) {
   return (
-    <ScWrapper height={height}><img src={reelItem.img || ''}/></ScWrapper>
+    <ScWrapper height={height}>
+      <p>{reelItem.idx}</p>
+      {/* <img src={reelItem.img || ''}/> */}
+    </ScWrapper>
   );
 }
 

@@ -86,19 +86,19 @@ const projectSpinAngle = (numItems: number, targetIdx: number) => {
 type Props = {
   reelItems: ReelItem[];
   reelIdx: number;
-  onSpinComplete: Function;
-  spinning?: boolean;
   setCurReelItem: Function;
   reelTarget: number;
+  // onSpinComplete: Function;
+  // spinning?: boolean;
 };
 
 function SlotReel({
   reelItems,
   reelIdx,
-  spinning,
-  onSpinComplete,
   setCurReelItem,
   reelTarget,
+  // spinning,
+  // onSpinComplete,
 }: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [spinAngle, setSpinAngle] = useState(0);
@@ -108,13 +108,18 @@ function SlotReel({
   const [curIdx, setCurIdx] = useState(0);
 
   useEffect(() => {
+    console.log(`reel #${reelIdx} initialized with reelTarget: ${reelTarget}`);
+  }, []);
+
+
+  useEffect(() => {
     setItems(buildReel(reelItems, REEL_OVERLAP));
     setSpinAngle(0);
   }, [reelItems, setSpinAngle]);
 
   useEffect(() => {
     if (reelTarget !== -1) {
-      console.log('my new target is ', reelTarget);
+      //console.log(` ${reelIdx}: my new target is ${reelTarget}`);
       setSpinny();
     }
   }, [reelTarget]);
@@ -122,12 +127,12 @@ function SlotReel({
   const setSpinny = useCallback(() => {
     const spinTarget = projectSpinTarget(reelItems.length, reelTarget, curIdx);
     const nextSpinAngle = spinAngle + projectSpinAngle(reelItems.length, spinTarget);
-    console.log(
+    /*console.log(
       'setSpinny(), spinTarget:',
       spinTarget,
       ', spinAngle:',
       nextSpinAngle
-    );
+    );*/
 
     setSpinAngleTarget(nextSpinAngle);
     setSpinPower(randInRange(SPIN_VEL_RANGE));
