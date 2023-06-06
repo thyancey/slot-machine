@@ -58,6 +58,21 @@ const ScPill = styled.div`
   }
 `;
 
+const ScAttrPill = styled(ScPill)`
+  font-size: .5rem;
+  width: 4rem;
+  height: 1rem;
+  margin-left:2rem;
+
+  .lf-present & {
+    background-color: var(--color-purple);
+  }
+  .lf-none & {
+    height: 1rem;
+    background-color: var(--color-grey);
+  }
+`
+
 interface Props {
   reelItem?: ReelItem;
 }
@@ -81,9 +96,9 @@ function ResultLabel({ reelItem }: Props) {
         <ScPill>
           <span>{reelItem?.label.toUpperCase()}</span>
         </ScPill>
-        <ScPill>
+        <ScAttrPill>
           <span>{reelItem?.attributes?.join(',').toUpperCase()}</span>
-        </ScPill>
+        </ScAttrPill>
       </ScAnimator>
     </ScWrapper>
   );

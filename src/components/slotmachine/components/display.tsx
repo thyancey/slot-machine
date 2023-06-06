@@ -1,45 +1,45 @@
 import styled from 'styled-components';
-import { ReelCombo } from '../data';
-import { useState } from 'react';
+import { ReelCombo, ReelComboResult } from '../data';
 
 const ScWrapper = styled.div`
-  /* height: 10rem; */
   position: absolute;
   inset: 0;
   background-color: var(--color-grey);
+  color: var(--color-white);
   border-radius: 0.6rem;
   padding: 1rem;
-  /* width: calc(100% - 2rem); */
-  /* margin: 1rem auto; */
 
   font-family: var(--font-8bit2);
+  transition: background-color ease-out .2s, color ease-out .2s;
 
-  ul, li{
-    margin:0;
-    padding:0;
-    list-style:none;
+  ul,li,span,p {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.5rem;
+    line-height: 1.85rem;
+  }
+
+  &.winner {
+    background-color: var(--color-pink);
+    color: var(--color-white);
   }
 `;
 
-const ScCombos = styled.ul`
-  
-`
+const ScCombos = styled.ul``;
 
-const ScStatus = styled.span`
-  font-size: 3rem;
-  color: var(--color-white);
-`;
+const ScStatus = styled.div``;
 
 type Props = {
   numReels: number;
   reelCombos: ReelCombo[];
+  activeCombos: ReelComboResult[];
 };
-function Display({ reelCombos, numReels = 1 }: Props) {
-  const [status, setStatus] = useState('win');
-
-  if (status === 'idle') {
+function Display({ reelCombos, activeCombos, numReels = 1 }: Props) {
+  if (activeCombos.length === 0) {
     return (
       <ScWrapper>
+        <p>{'possible combos'}</p>
         <ScCombos>
           {reelCombos?.map((rC) => (
             <li key={rC.label}>{`${rC.label}: ${rC.attributes.join(',')} x ${numReels}`}</li>
@@ -47,17 +47,18 @@ function Display({ reelCombos, numReels = 1 }: Props) {
         </ScCombos>
       </ScWrapper>
     );
-  } else if (status === 'win') {
+  } else {
     return (
-      <ScWrapper>
-        <ScStatus />
-          {'YOU WIN!'}
-        <ScStatus />
+      <ScWrapper className={'winner'}>
+        <ScStatus>
+          <p>{' YOU WIN! '}</p>
+          <p>{`${activeCombos[0].label}`}</p>
+          <p>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</p>
+          <p>{`x${activeCombos[0].bonus?.multiplier} multiplier`}</p>
+        </ScStatus>
       </ScWrapper>
     );
   }
-
-  return <ScWrapper></ScWrapper>;
 }
 
 export default Display;

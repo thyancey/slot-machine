@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildReel, getActiveCombos, projectSpinTarget } from './utils';
-import { ReelItem } from './data';
+import { ReelCombo, ReelItem } from './data';
 
 describe('slotmachine', () => {
   describe('slotmachine > reel', () => {
@@ -70,7 +70,8 @@ describe('slotmachine', () => {
   });
   
   describe('#getActiveCombos', () => {
-    it('should keep reelItems the same when no reelOverlap provided', () => {
+
+    it('should match "same" reelItems', () => {
       const reelItems = [
         { label: 'fire', attributes: ['attack', 'hot'] },
         { label: 'fire', attributes: ['attack', 'hot'] },
@@ -81,15 +82,117 @@ describe('slotmachine', () => {
         {
           label: 'attack combo',
           attributes: ['attack'],
-          bonuses: {
-            any: 1.5,
-            same: 3,
-            unique: 2,
-          },
+          bonuses: [
+            { bonusType: 'same', multiplier: 3 },
+            { bonusType: 'unique', multiplier: 2 },
+            { bonusType: 'any', multiplier: 1.5 },
+          ]
         },
-      ];
+      ] as ReelCombo[];
 
-      expect(getActiveCombos(reelItems, reelCombos)).toEqual(reelCombos[0]);
+      const reelComboResult = {
+        label: 'attack combo',
+        attribute: 'attack',
+        bonus: {
+          bonusType: 'same',
+          multiplier: 3
+        }
+      }
+
+      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+    });
+
+    it('should match "unique" reelItems, and not do "any"', () => {
+      const reelItems = [
+        { label: 'fire1', attributes: ['attack'] },
+        { label: 'fire2', attributes: ['attack'] },
+        { label: 'fire3', attributes: ['attack'] },
+      ] as ReelItem[];
+
+      const reelCombos = [
+        {
+          label: 'attack combo',
+          attributes: ['attack'],
+          bonuses: [
+            { bonusType: 'same', multiplier: 3 },
+            { bonusType: 'unique', multiplier: 2 },
+            { bonusType: 'any', multiplier: 1.5 },
+          ]
+        },
+      ] as ReelCombo[];
+
+      const reelComboResult = {
+        label: 'attack combo',
+        attribute: 'attack',
+        bonus: {
+          bonusType: 'unique',
+          multiplier: 2
+        }
+      }
+
+      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+    });
+
+    it('should match "any" reelItems, if it trumps another rule', () => {
+      const reelItems = [
+        { label: 'fire1', attributes: ['attack'] },
+        { label: 'fire2', attributes: ['attack'] },
+        { label: 'fire3', attributes: ['attack'] },
+      ] as ReelItem[];
+
+      const reelCombos = [
+        {
+          label: 'attack combo',
+          attributes: ['attack'],
+          bonuses: [
+            { bonusType: 'any', multiplier: 1.5 },
+            { bonusType: 'same', multiplier: 3 },
+            { bonusType: 'unique', multiplier: 2 },
+          ]
+        },
+      ] as ReelCombo[];
+
+      const reelComboResult = {
+        label: 'attack combo',
+        attribute: 'attack',
+        bonus: {
+          bonusType: 'any',
+          multiplier: 1.5
+        }
+      }
+
+      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+    });
+
+    it('should match "any" reelItems, if other match types are bad', () => {
+      const reelItems = [
+        { label: 'fire1', attributes: ['attack'] },
+        { label: 'fire2', attributes: ['attack'] },
+        { label: 'fire2', attributes: ['attack'] },
+      ] as ReelItem[];
+
+      const reelCombos = [
+        {
+          label: 'attack combo',
+          attributes: ['attack'],
+          bonuses: [
+            { bonusType: 'same', multiplier: 3 },
+            { bonusType: 'unique', multiplier: 2 },
+            { bonusType: 'any', multiplier: 1.5 },
+          ]
+        },
+      ] as ReelCombo[];
+
+      const reelComboResult = {
+        label: 'attack combo',
+        attribute: 'attack',
+        bonus: {
+          bonusType: 'any',
+          multiplier: 1.5
+        }
+      }
+
+      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
     });
   });
 });

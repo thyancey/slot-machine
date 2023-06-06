@@ -1,5 +1,5 @@
-import { getEasing } from '../../utils';
-import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT } from './data';
+import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
+import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from './data';
 
 export type ReelTarget = [itemIdx: number, spinCount: number];
 
@@ -9,15 +9,55 @@ export const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
   return reelSet.map((reelDef) => [getRandomReelIdx(reelDef), spinCount] as ReelTarget);
 };
 
+
+export const getFirstMatchingBonus = (bonuses: BonusGroup[], reelItems: ReelItem[]) => {
+  for (var i = 0; i < bonuses.length; i++) {
+    switch (bonuses[i].bonusType) {
+      case 'same': 
+        if (checkSameStrings(reelItems.map((rI) => rI.label))) {
+          return bonuses[i];
+        } break;
+      case 'unique':
+        if (checkUniqueStrings(reelItems.map((rI) => rI.label))) {
+          return bonuses[i];
+        } break;
+      default:
+        return bonuses[i]; //any
+    }
+  }
+
+  return null;
+};
+
 export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) => {
   // loop each combo
-    // gather groups of matching attributes
-      // check labels for same or unique bonus
-  // rank combos
-  console.log('gac', reelItems, reelCombos);
-  return [];
-}
+  let activeCombos = reelCombos.reduce((combos, rC) => {
+    for (var a = 0; a < rC.attributes.length; a++) {
+      // if every item has a matching attribute
+      if (
+        reelItems.filter((rI) => {
+          return rI.attributes && rI.attributes?.indexOf(rC.attributes[a]) > -1;
+        }).length === reelItems.length
+      ) {
+        // you found one, this combo is validated
+        combos.push({
+          label: rC.label,
+          attribute: rC.attributes[a],
+          bonus: getFirstMatchingBonus(rC.bonuses, reelItems)
+        });
 
+        return combos;
+      }
+    }
+
+    return combos;
+  }, [] as ReelComboResult[]);
+  // gather groups of matching attributes
+  // check labels for same or unique bonus
+  // rank combos
+  console.log('gac', reelItems, reelCombos, activeCombos);
+  return activeCombos;
+};
 
 // add redudant items to top and bottom of reel to make it seem continuous
 export const buildReel = (reelItems: any[], reelOverlap: number) => {
@@ -46,7 +86,6 @@ export const buildReel = (reelItems: any[], reelOverlap: number) => {
 export const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastAngle: number) => {
   return getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
 };
-
 
 /*
   from an array like [ 'a', 'b' ], figure out how to do something like

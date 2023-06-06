@@ -1,9 +1,9 @@
-import R7 from '../../assets/reels/reel-7.gif';
-import Rbar1 from '../../assets/reels/reel-bar1.gif';
-import Rbar2 from '../../assets/reels/reel-bar2.gif';
-import Rbar3 from '../../assets/reels/reel-bar3.gif';
-import Rbat from '../../assets/reels/reel-bat.gif';
-import Rcoins from '../../assets/reels/reel-coins.gif';
+// import R7 from '../../assets/reels/reel-7.gif';
+// import Rbar1 from '../../assets/reels/reel-bar1.gif';
+// import Rbar2 from '../../assets/reels/reel-bar2.gif';
+// import Rbar3 from '../../assets/reels/reel-bar3.gif';
+// import Rbat from '../../assets/reels/reel-bat.gif';
+// import Rcoins from '../../assets/reels/reel-coins.gif';
 import Rcrazy from '../../assets/reels/reel-crazy.gif';
 import Rflame from '../../assets/reels/reel-flame.gif';
 import Rhalo from '../../assets/reels/reel-halo.gif';
@@ -40,56 +40,68 @@ export interface ReelDef {
 }
 
 export type MatchType = 'label' | 'attrAny' | 'attrUnique'
-export type BonusType = 'unique' | 'same';
+
+
 
 export interface ReelCombo {
   label: string,
   attributes: string[],
-  bonuses: {
-    any?: number,
-    same?: number,
-    unique?: number
-  }
+  bonuses: BonusGroup[]
+}
+
+export interface BonusGroup {
+  bonusType: BonusType,
+  multiplier?: number,
+  value?:number
+}
+
+// unique: all reels must be bar, all labels must vary
+// same: all reels must be bar, all labels must match
+// any: all reels must be bar
+// put "any" last, otherwise it could match ahead of others
+export type BonusType = 'any' | 'unique' | 'same';
+
+export interface ReelComboResult {
+  label: string,
+  attribute: string,
+  bonus: BonusGroup | null
 }
 
 export const reelComboDef: ReelCombo[] = [  
   // {
   //   label: 'default same combo',
   //   attributes: [ "*" ], // maybe * means this applies to any attribute?
-  //   bonuses: {
-  //     // all reels must share attribute, share label
-  //     same: 1.5
-  //   }
+  //   bonuses: [
+  //      // all reels must share attribute, share label
+  //      { bonusType: 'same', multiplier: 1.5 }
+  //   ]
   // },
   {
     label: 'bar combo',
     attributes: [ 'bar' ],
-    bonuses: {
-      // all reels must be bar
-      any: 1.5,
-      // all reels must be bar, all labels must match
-      same: 3,
-      // all reels must be bar, all labels must vary
-      unique: 2
-    }
+    bonuses: [
+      { bonusType: 'unique', multiplier: 1.1 },
+      { bonusType: 'same', multiplier: 1.3 },
+      { bonusType: 'any', multiplier: 1 },
+    ]
   },
   {
     label: 'buff combo',
     attributes: [ 'buff' ],
-    bonuses: {
-      any: 1.5,
-      same: 3,
-      unique: 2
-    }
+    bonuses: [
+      { bonusType: 'unique', multiplier: 2 },
+      { bonusType: 'same', multiplier: 3 },
+      { bonusType: 'any', multiplier: 1.5 },
+    ]
   },
   {
     label: 'attack combo',
     attributes: [ 'attack' ],
-    bonuses: {
-      any: 1.5,
-      same: 3,
-      unique: 2
-    }
+    bonuses: [
+      { bonusType: 'unique', multiplier: 2 },
+      { bonusType: 'same', multiplier: 3 },
+      { bonusType: 'any', multiplier: 1.5 },
+    ]
   }
 ]
 
@@ -102,12 +114,12 @@ export const reelsData: RawReelDef[] = [
   // },
   {
     reelItems: [
-      { label: 'seven', img: R7, effect: 'score', value: 7 },
-      { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
-      { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
-      { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
-      { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
-      { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
+      // { label: 'seven', img: R7, effect: 'score', value: 7 },
+      // { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
+      // { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
+      // { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
+      // { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
+      // { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
       { label: 'crazy', img: Rcrazy, attributes: [ 'buff' ] },
       { label: 'flame', img: Rflame, attributes: [ 'attack' ], effect: 'fire damage', value: 1.1 },
       { label: 'halo', img: Rhalo, attributes: [ 'buff' ], effect: 'extraLife' },
@@ -133,12 +145,12 @@ export const reelsData: RawReelDef[] = [
   },
   {
     reelItems: [
-      { label: 'seven', img: R7, effect: 'score', value: 7 },
-      { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
-      { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
-      { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
-      { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
-      { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
+      // { label: 'seven', img: R7, effect: 'score', value: 7 },
+      // { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
+      // { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
+      // { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
+      // { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
+      // { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
       { label: 'crazy', img: Rcrazy, attributes: [ 'buff' ] },
       { label: 'flame', img: Rflame, attributes: [ 'attack' ], effect: 'fire damage', value: 1.1 },
       { label: 'halo', img: Rhalo, attributes: [ 'buff' ], effect: 'extraLife' },
@@ -164,12 +176,12 @@ export const reelsData: RawReelDef[] = [
   },
   {
     reelItems: [
-      { label: 'seven', img: R7, effect: 'score', value: 7 },
-      { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
-      { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
-      { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
-      { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
-      { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
+      // { label: 'seven', img: R7, effect: 'score', value: 7 },
+      // { label: 'bar1', img: Rbar1, attributes: [ 'bar', '*' ] },
+      // { label: 'bar2', img: Rbar2, attributes: [ 'bar', '*' ] },
+      // { label: 'bar3', img: Rbar3, attributes: [ 'bar', '*' ] },
+      // { label: 'bat', img: Rbat, attributes: [ 'attack', 'creature' ], effect: 'life steal', value: 1 },
+      // { label: 'coins', img: Rcoins, attributes: [ 'money' ], effect: 'gold bonus', value: 5 },
       { label: 'crazy', img: Rcrazy, attributes: [ 'buff' ] },
       { label: 'flame', img: Rflame, attributes: [ 'attack' ], effect: 'fire damage', value: 1.1 },
       { label: 'halo', img: Rhalo, attributes: [ 'buff' ], effect: 'extraLife' },

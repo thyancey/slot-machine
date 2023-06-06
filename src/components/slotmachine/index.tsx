@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-// import { PayoutItem } from './paytable';
 import { useCallback, useEffect, useState } from 'react';
-import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo } from './data';
+import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo, ReelComboResult } from './data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { ReelTarget, getActiveCombos, getRandomReelTargets } from './utils';
@@ -113,7 +112,7 @@ function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
-  const [activeCombos, setActiveCombos] = useState<ReelCombo[]>([]);
+  const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
 
   useEffect(() => {
     // later on, reel should store extra properties other than the reelItems
@@ -141,6 +140,7 @@ function SlotMachine() {
       setReelTargets(getRandomReelTargets(reelDefs, spinCount));
       setSpinCount(spinCount + 1);
       setSpinLock(true);
+      setActiveCombos([]);
     }
   }, [reelDefs, spinCount, spinLock]);
 
@@ -153,24 +153,19 @@ function SlotMachine() {
 
       if (curReelItems.filter((rI) => rI === undefined).length === 0) {
         // setActiveCombos
-        const activeCombos = getActiveCombos(curReelItems, reelCombos);
+        // @ts-ignore curReelItems doesnt have any undefined values!
+        setActiveCombos(getActiveCombos(curReelItems, reelCombos));
         setSpinLock(false);
       }
     },
     [setCurReelItems, curReelItems, setSpinLock, reelCombos]
   );
 
-  console.log('activeCombos', activeCombos);
-
   return (
     <ScWrapper>
       <ScDisplayContainer>[]
-        <Display reelCombos={reelCombos} numReels={reelDefs.length}/>
+        <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelDefs.length}/>
       </ScDisplayContainer>
-      {/* 
-      <ScPayTableContainer>
-        <PayTable payoutItems={payoutItems} />
-      </ScPayTableContainer> */}
 
       <ScReelContainer>
         {reelDefs.map((reelDef, rdIdx) => (
