@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReelCombo } from './reel-data';
+import { ReelCombo } from '../data';
 import { useState } from 'react';
 
 const ScWrapper = styled.div`

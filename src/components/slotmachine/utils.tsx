@@ -1,5 +1,5 @@
 import { getEasing } from '../../utils';
-import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT } from './reel-data';
+import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT } from './data';
 
 export type ReelTarget = [itemIdx: number, spinCount: number];
 

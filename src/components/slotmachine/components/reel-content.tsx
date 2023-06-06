@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReelItem } from './reel-data';
+import { ReelItem } from '../data';
 
 interface ScProps {
   height: number;

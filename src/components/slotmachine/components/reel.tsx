@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { MIN_SPINS_RANGE, REEL_HEIGHT, REEL_OVERLAP, ReelDef, ReelItem, SPIN_POWER_RANGE } from './reel-data';
-import { clamp, randInRange } from '../../utils';
-import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from './utils';
+import { MIN_SPINS_RANGE, REEL_HEIGHT, REEL_OVERLAP, ReelDef, ReelItem, SPIN_POWER_RANGE } from '../data';
+import { clamp, randInRange } from '../../../utils';
+import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
 
 // imagine the construction as a ribbon, rendering each reelItem top to bottom
 // to complete the looping effect, REEL_OVERLAP n of items are repeated at the top and bottom

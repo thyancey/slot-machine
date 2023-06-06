@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import Reel from './reel';
+import Reel from './components/reel';
 // import { PayoutItem } from './paytable';
 import { useCallback, useEffect, useState } from 'react';
-import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo } from './reel-data';
-import ResultLabel from './result-label';
-import Display from './display';
+import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo } from './data';
+import ResultLabel from './components/result-label';
+import Display from './components/display';
 import { ReelTarget, getActiveCombos, getRandomReelTargets } from './utils';
 
 const ScWrapper = styled.main`
