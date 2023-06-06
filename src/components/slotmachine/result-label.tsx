@@ -81,6 +81,9 @@ function ResultLabel({ reelItem }: Props) {
         <ScPill>
           <span>{reelItem?.label.toUpperCase()}</span>
         </ScPill>
+        <ScPill>
+          <span>{reelItem?.attributes?.join(',').toUpperCase()}</span>
+        </ScPill>
       </ScAnimator>
     </ScWrapper>
   );

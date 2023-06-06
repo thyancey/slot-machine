@@ -1,18 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { ReelDef, ReelItem } from './reel-data';
-import { MinMaxTouple, clamp, getEasing, randInRange } from '../../utils';
-import { ReelTarget } from '.';
+import { MIN_SPINS_RANGE, REEL_HEIGHT, REEL_OVERLAP, ReelDef, ReelItem, SPIN_POWER_RANGE } from './reel-data';
+import { clamp, randInRange } from '../../utils';
+import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from './utils';
 
 // imagine the construction as a ribbon, rendering each reelItem top to bottom
 // to complete the looping effect, REEL_OVERLAP n of items are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
-const REEL_HEIGHT = 120; // height of each reel cell
-const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
-const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
-const MIN_SPINS_RANGE: MinMaxTouple = [1, 2]; // RNG number of times to go around for each reel
 const SPIN_TICK: number = 30;
 
 // kinda like the cutout you can see the reel through
@@ -44,68 +40,6 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
-const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastAngle: number) => {
-  return getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
-};
-
-// add redudant items to top and bottom of reel to make it seem continuous
-export const buildReel = (reelItems: any[], reelOverlap: number) => {
-  // starting with [ 0, 1, 2 ]
-
-  // [ +1, +2, 0, 1, 2 ]
-  const loopBefore = [];
-  // the +1 here attached the last to the top, regardless of overlap value
-  for (let i = 0; i < reelOverlap; i++) {
-    const offset = reelItems.length - (i % reelItems.length) - 1;
-    loopBefore.push(reelItems[offset]);
-  }
-
-  // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
-  const loopAfter = [];
-  for (let i = 0; i < reelOverlap; i++) {
-    loopAfter.push(reelItems[i % reelItems.length]);
-  }
-
-  return ([] as any[])
-    .concat(loopBefore.reverse())
-    .concat(reelItems.map((rI) => rI))
-    .concat(loopAfter);
-};
-
-/*
-  from an array like [ 'a', 'b' ], figure out how to do something like
-  "starting from "b", go to "a", and loop at least 2 times"
-
-  this could probably get cleaned up and simplified but im sick of messing with it.
-*/
-export const projectSpinTarget = (numItems: number, curIdx: number, nextIdx: number, loops: number) => {
-  const change = nextIdx - curIdx;
-
-  if (loops === 0) {
-    if (change === 0) {
-      return curIdx + numItems;
-    } else if (change > 0) {
-      return curIdx + change;
-    } else {
-      return curIdx + numItems + change;
-    }
-  } else {
-    if (change === 0) {
-      return curIdx + numItems * loops;
-    } else if (change > 0) {
-      return curIdx + numItems * loops + change;
-    } else {
-      return curIdx + numItems * loops + (numItems + change);
-    }
-  }
-};
-
-const projectSpinAngle = (numItems: number, targetIdx: number, curIdx: number) => {
-  if (numItems === 1) {
-    return targetIdx * REEL_HEIGHT;
-  }
-  return (targetIdx / numItems) * (numItems * REEL_HEIGHT) - curIdx * REEL_HEIGHT;
-};
 
 type Props = {
   reelDef: ReelDef;

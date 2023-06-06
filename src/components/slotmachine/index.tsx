@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import Reel from './reel';
 // import { PayoutItem } from './paytable';
 import { useCallback, useEffect, useState } from 'react';
-import { ReelDef, ReelItem, reelsData } from './reel-data';
+import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo } from './reel-data';
 import ResultLabel from './result-label';
-
-export type ReelTarget = [itemIdx: number, spinCount: number];
+import Display from './display';
+import { ReelTarget, getActiveCombos, getRandomReelTargets } from './utils';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -19,23 +19,17 @@ const ScWrapper = styled.main`
   align-items: center;
 
   background-color: var(--color-white);
-  box-shadow: 0 0 0 .75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
+  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
   text-align: center;
 
   border-radius: 0.5rem;
 `;
 
-const ScScreen = styled.div`
+const ScDisplayContainer = styled.div`
   height: 10rem;
-  background-color: var(--color-grey);
-  border-radius: .6rem;
-  padding: 1rem;
-  width:calc(100% - 2rem);
+  width: calc(100% - 2rem);
   margin: 1rem auto;
-
-  font-family: var(--font-8bit2);
-  font-size: 5rem;
-  color: var(--color-white);
+  position: relative;
 `;
 
 const ScReelContainer = styled.div`
@@ -76,20 +70,20 @@ const ScHandle = styled.div`
   height: 100%;
   left: calc(100% + 4rem);
   top: 0;
-  z-index:1;
+  z-index: 1;
   border-radius: 0.5rem;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   padding-top: 1rem;
-  
+
   background-color: var(--color-white);
   color: var(--color-grey);
-  box-shadow: 0 0 0 .75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
+  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
 
-  span{
+  span {
     font-family: var(--font-8bit2);
     font-size: 4rem;
     line-height: 3rem;
-    text-align:center;
+    text-align: center;
   }
 
   cursor: pointer;
@@ -99,7 +93,7 @@ const ScHandle = styled.div`
     color: var(--color-pink);
   }
 
-  &.disabled{
+  &.disabled {
     background-color: var(--color-grey);
     color: var(--color-black);
 
@@ -110,31 +104,6 @@ const ScHandle = styled.div`
 `;
 const ScSpinCount = styled.div``;
 
-// const payoutItems: PayoutItem[] = [
-//   {
-//     label: 'c + c + c',
-//     points: 100,
-//   },
-//   {
-//     label: 'o + c + s',
-//     points: 200,
-//   },
-//   {
-//     label: 'o + o + o',
-//     points: 500,
-//   },
-//   {
-//     label: 's + s + s',
-//     points: 1000,
-//   },
-// ];
-
-// later on, some factors should weight the "random"
-const getRandomReelIdx = (reelDef: ReelDef) => Math.floor(Math.random() * reelDef.reelItems.length);
-
-const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
-  return reelSet.map((reelDef) => [getRandomReelIdx(reelDef), spinCount] as ReelTarget);
-};
 
 function SlotMachine() {
   // const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
@@ -143,6 +112,8 @@ function SlotMachine() {
   const [curReelItems, setCurReelItems] = useState<(ReelItem | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
+  const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
+  const [activeCombos, setActiveCombos] = useState<ReelCombo[]>([]);
 
   useEffect(() => {
     // later on, reel should store extra properties other than the reelItems
@@ -159,6 +130,8 @@ function SlotMachine() {
       )
     );
 
+    setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
+
     setReelTargets(Array(reelsData.length).fill([-1, 0]));
     setCurReelItems(Array(reelsData.length).fill(undefined));
   }, []);
@@ -171,6 +144,7 @@ function SlotMachine() {
     }
   }, [reelDefs, spinCount, spinLock]);
 
+
   const onCurReelItem = useCallback(
     (reelItem: ReelItem, reelIdx: number) => {
       // this mutation was the only way to get this working reliably...
@@ -178,18 +152,22 @@ function SlotMachine() {
       setCurReelItems([...curReelItems]);
 
       if (curReelItems.filter((rI) => rI === undefined).length === 0) {
+        // setActiveCombos
+        const activeCombos = getActiveCombos(curReelItems, reelCombos);
         setSpinLock(false);
       }
     },
-    [setCurReelItems, curReelItems, setSpinLock]
+    [setCurReelItems, curReelItems, setSpinLock, reelCombos]
   );
+
+  console.log('activeCombos', activeCombos);
 
   return (
     <ScWrapper>
-      <ScScreen>
-        <span>{'YOU WIN !'}</span>
-      </ScScreen>
-{/* 
+      <ScDisplayContainer>[]
+        <Display reelCombos={reelCombos} numReels={reelDefs.length}/>
+      </ScDisplayContainer>
+      {/* 
       <ScPayTableContainer>
         <PayTable payoutItems={payoutItems} />
       </ScPayTableContainer> */}
@@ -214,7 +192,7 @@ function SlotMachine() {
       <ScPayoutTray>
         <div />
       </ScPayoutTray>
-      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()} >
+      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
         <span>{'T R Y - A G A I N'}</span>
       </ScHandle>
       <ScSpinCount>{`spins: ${spinCount}`}</ScSpinCount>
