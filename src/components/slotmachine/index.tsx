@@ -1,208 +1,196 @@
 import styled from 'styled-components';
-import Reel, { ReelItem } from './reel';
-import PayTable, { PayoutItem } from './paytable';
-import { useCallback, useState } from 'react';
+import Reel from './components/reel';
+import { useCallback, useEffect, useState } from 'react';
+import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo, ReelComboResult } from './data';
+import ResultLabel from './components/result-label';
+import Display from './components/display';
+import { ReelTarget, getActiveCombos, getRandomReelTargets } from './utils';
 
 const ScWrapper = styled.main`
   position: absolute;
 
+  // TODO: at the moment, this is 2x the handle width, to center everything
+  margin-left: -8rem;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: min-content auto 4rem;
   justify-content: center;
   align-items: center;
 
-  background-color: var(--color-blue);
+  background-color: var(--color-white);
+  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
   text-align: center;
 
   border-radius: 0.5rem;
 `;
 
-const ScPayTableContainer = styled.div`
-  /* background-color: var(--color-black); */
-  /* border: .25rem solid var(--color-pink); */
-  padding: .5rem;
+const ScDisplayContainer = styled.div`
+  height: 10rem;
+  width: calc(100% - 2rem);
+  margin: 1rem auto;
+  position: relative;
 `;
+
 const ScReelContainer = styled.div`
   background-color: var(--color-grey);
   height: 100%;
   display: flex;
-  margin: .5rem;
-  padding: .5rem;
-  border-radius: .5rem;
+  margin: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   align-items: center;
   justify-content: center;
 
   > div {
-    margin: 0rem .5rem;
+    margin: 0rem 0.5rem;
   }
 `;
 const ScPayoutTray = styled.div`
-  padding: .5rem;
+  padding: 0.5rem;
   height: 100%;
 
   > div {
     height: 100%;
     background-color: var(--color-black);
     border: 0.5rem solid var(--color-grey);
-    border-radius: .5rem;
+    border-radius: 0.5rem;
   }
+`;
+
+const ScReelLabels = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 /* stick it to the side */
 const ScHandle = styled.div`
   position: absolute;
-  border: 0.25rem solid white;
-  width: 2rem;
-  height: 10rem;
-  left: 100%;
-  margin-left: 1rem;
-  bottom: 50%;
-  border-radius: .5rem;
-  background-color: var(--color-purple);
-  transition: background-color 0.2s ease-in-out;
+  width: 4rem;
+  height: 100%;
+  left: calc(100% + 4rem);
+  top: 0;
+  z-index: 1;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  padding-top: 1rem;
+
+  background-color: var(--color-white);
+  color: var(--color-grey);
+  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
+
+  span {
+    font-family: var(--font-8bit2);
+    font-size: 4rem;
+    line-height: 3rem;
+    text-align: center;
+  }
 
   cursor: pointer;
 
   &:hover {
-    background-color: var(--color-pink);
+    background-color: var(--color-yellow);
+    color: var(--color-pink);
+  }
+
+  &.disabled {
+    background-color: var(--color-grey);
+    color: var(--color-black);
+
+    &:hover {
+      background-color: var(--color-grey);
+    }
   }
 `;
+const ScSpinCount = styled.div``;
 
-const reels: ReelItem[][] = [
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-  [
-    { label: 'seven', img: 'seven' },
-    { label: 'bar1', img: 'bar1' },
-    { label: 'bar2', img: 'bar2' },
-    { label: 'bar3', img: 'bar3' },
-    { label: 'bat', img: 'bat' },
-    { label: 'coins', img: 'coins' },
-    { label: 'crazy', img: 'crazy' },
-    { label: 'flame', img: 'flame' },
-    { label: 'halo', img: 'halo' },
-    { label: 'heart', img: 'heart' },
-    { label: 'lightning', img: 'lightning' },
-    { label: 'poison', img: 'poison' },
-    { label: 'shield', img: 'shield' },
-    { label: 'snowflake', img: 'snowflake' },
-    { label: 'sword', img: 'sword' }
-  ],
-];
-
-const payoutItems: PayoutItem[] = [
-  {
-    label: 'c + c + c',
-    points: 100,
-  },
-  {
-    label: 'o + c + s',
-    points: 200,
-  },
-  {
-    label: 'o + o + o',
-    points: 500,
-  },
-  {
-    label: 's + s + s',
-    points: 1000,
-  },
-];
-
-/*
-  I could not get the async timers working with react state
-  so this variable helps keeps things up to date when they happen
-  at the same time. There is probably some better solution with
-  useRef, but I couldn't get it to work.
-*/
-let activeSpin = [false, false, false];
-const setActiveSpin = (newSpins: boolean[]) => {
-  activeSpin = newSpins;
-};
 
 function SlotMachine() {
-  const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
-  const startSpinning = useCallback(() => {
-    if (!cachedSpinning.find((iS) => iS === true)) {
-      setActiveSpin([true, true, true]);
-      setCachedSpinning(activeSpin);
-    }
-  }, [cachedSpinning]);
+  // const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
+  const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
+  const [reelTargets, setReelTargets] = useState<ReelTarget[]>([]);
+  const [curReelItems, setCurReelItems] = useState<(ReelItem | undefined)[]>([]);
+  const [spinCount, setSpinCount] = useState(0);
+  const [spinLock, setSpinLock] = useState(false);
+  const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
+  const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
 
-  const onSpinComplete = useCallback(
-    (reelIdx: number) => {
-      const ret = activeSpin.map((iS, idx) => {
-        if (idx === reelIdx) return false;
-        return iS;
-      });
-      setActiveSpin(ret);
-      setCachedSpinning(activeSpin);
+  useEffect(() => {
+    // later on, reel should store extra properties other than the reelItems
+    setReelDefs(
+      reelsData.map(
+        (reel) =>
+          ({
+            ...reel,
+            reelItems: reel.reelItems.map((rI, rIdx) => ({
+              ...rI,
+              idx: rIdx,
+            })),
+          } as ReelDef)
+      )
+    );
+
+    setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
+
+    setReelTargets(Array(reelsData.length).fill([-1, 0]));
+    setCurReelItems(Array(reelsData.length).fill(undefined));
+  }, []);
+
+  const triggerSpin = useCallback(() => {
+    if (!spinLock) {
+      setReelTargets(getRandomReelTargets(reelDefs, spinCount));
+      setSpinCount(spinCount + 1);
+      setSpinLock(true);
+      setActiveCombos([]);
+    }
+  }, [reelDefs, spinCount, spinLock]);
+
+
+  const onCurReelItem = useCallback(
+    (reelItem: ReelItem, reelIdx: number) => {
+      // this mutation was the only way to get this working reliably...
+      curReelItems[reelIdx] = reelItem;
+      setCurReelItems([...curReelItems]);
+
+      if (curReelItems.filter((rI) => rI === undefined).length === 0) {
+        // setActiveCombos
+        // @ts-ignore curReelItems doesnt have any undefined values!
+        setActiveCombos(getActiveCombos(curReelItems, reelCombos));
+        setSpinLock(false);
+      }
     },
-    [cachedSpinning, setCachedSpinning]
+    [setCurReelItems, curReelItems, setSpinLock, reelCombos]
   );
 
   return (
     <ScWrapper>
-      <ScPayTableContainer>
-        <PayTable payoutItems={payoutItems} />
-      </ScPayTableContainer>
+      <ScDisplayContainer>[]
+        <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelDefs.length}/>
+      </ScDisplayContainer>
+
       <ScReelContainer>
-        <Reel
-          reelIdx={0}
-          reelItems={reels[0]}
-          spinning={cachedSpinning[0]}
-          onSpinComplete={onSpinComplete}
-        />
-        <Reel
-          reelIdx={1}
-          reelItems={reels[1]}
-          spinning={cachedSpinning[1]}
-          onSpinComplete={onSpinComplete}
-        />
-        <Reel
-          reelIdx={2}
-          reelItems={reels[2]}
-          spinning={cachedSpinning[2]}
-          onSpinComplete={onSpinComplete}
-        />
+        {reelDefs.map((reelDef, rdIdx) => (
+          <Reel
+            key={`reel-${rdIdx}`}
+            reelIdx={rdIdx}
+            reelDef={reelDef}
+            reelItems={reelDef.reelItems}
+            reelTarget={reelTargets[rdIdx]}
+            setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, rdIdx)}
+          />
+        ))}
       </ScReelContainer>
+      <ScReelLabels>
+        {curReelItems.map((cri, idx) => (
+          <ResultLabel key={idx} reelItem={cri} />
+        ))}
+      </ScReelLabels>
       <ScPayoutTray>
         <div />
       </ScPayoutTray>
-      <ScHandle onClick={() => startSpinning()} />
+      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
+        <span>{'T R Y - A G A I N'}</span>
+      </ScHandle>
+      <ScSpinCount>{`spins: ${spinCount}`}</ScSpinCount>
     </ScWrapper>
   );
 }
