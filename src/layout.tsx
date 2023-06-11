@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
+import Header from './components/header';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -29,13 +30,31 @@ const ScStage = styled.main`
   position: relative;
 `;
 
+const ScBg = styled.div`
+  position:absolute;
+  inset: -12rem;
+  /* z-index: -1; */
+  font-size: 12rem;
+  font-family: var(--font-8bit2);
+  line-height: 10rem;
+  z-index:-1;
+  letter-spacing: -3rem;
+  transform: rotate(-20deg);
+  top: -50%;
+  color: var(--color-pink);
+  opacity: .2;
+`
+
+const slotString = 'S L O T S'
 function Layout() {
+  const bgText = Array(100).fill(slotString);
   return (
     <ScWrapper>
-      <ScHeader>{'! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS !'}</ScHeader>
+      <Header />
       <ScStage>
         <SlotMachine />
       </ScStage>
+      <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
     </ScWrapper>
   );
 }

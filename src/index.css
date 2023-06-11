@@ -27,7 +27,7 @@
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
-  --font-base: 'Bubblegum Sans', cursive;
+  --font-base: var(--font-8bit2);
 
   font-family: var(--font-base);
 
