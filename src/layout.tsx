@@ -11,14 +11,6 @@ const ScWrapper = styled.main`
   flex-direction: column;
 `;
 
-const ScHeader = styled.h1`
-  margin: 1rem;
-  margin-left: -10rem;
-  font-size:5rem;
-  white-space:nowrap;
-  font-family: var(--font-8bit2);
-`;
-
 const ScStage = styled.main`
   flex: 1;
 
@@ -45,9 +37,8 @@ const ScBg = styled.div`
   opacity: .2;
 `
 
-const slotString = 'S L O T S'
 function Layout() {
-  const bgText = Array(100).fill(slotString);
+  const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
       <Header />
