@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
 import Header from './components/header';
+import ItemList from './components/itemlist';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -42,6 +43,7 @@ function Layout() {
   return (
     <ScWrapper>
       <Header />
+      <ItemList />
       <ScStage>
         <SlotMachine />
       </ScStage>
