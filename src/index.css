@@ -29,6 +29,9 @@
   --font-8bit2: 'Silkscreen', cursive;
   --font-base: var(--font-8bit2);
 
+  --border-width: 0.75rem;
+  --border-width-small: 0.5rem;
+
   font-family: var(--font-base);
 
   background-color: var(--color-grey);
@@ -48,8 +51,17 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 3.2rem;
   line-height: 1.1;
+}
+h2 {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+h1, h2, h3, h4, h5, p, span, i, ul, li {
+  margin: 0;
+  padding: 0;
 }
 
 /* @media (prefers-color-scheme: light) {} */

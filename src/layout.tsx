@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
 import Header from './components/header';
 import ItemList from './components/itemlist';
+import ItemSelector from './components/item-selector';
+import { useState } from 'react';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -39,15 +41,17 @@ const ScBg = styled.div`
 `
 
 function Layout() {
+  const [ itemSelectorOpen, setItemSelectorOpen ] = useState(false);
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <Header />
+      <Header onOpenItemSelector={() => setItemSelectorOpen(true)}/>
       <ItemList />
       <ScStage>
         <SlotMachine />
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
+      <ItemSelector isOpen={itemSelectorOpen} onClose={() => setItemSelectorOpen(false)}/>
     </ScWrapper>
   );
 }
