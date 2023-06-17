@@ -81,38 +81,41 @@ export const reelsData: RawReelDef[] = [
   {
     // spinRange: [ 5, 8 ],
     reelItems: [
+      // reelItemDef.coins
       reelItemDef.crazy,
       reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+      reelItemDef.halo,
+      reelItemDef.lightning,
+      reelItemDef.poison,
+      reelItemDef.shield,
+      reelItemDef.snowflake,
+      reelItemDef.sword,
     ],
   },
   {
     reelItems: [
+      // reelItemDef.coins
       reelItemDef.crazy,
       reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+      reelItemDef.halo,
+      reelItemDef.lightning,
+      reelItemDef.poison,
+      reelItemDef.shield,
+      reelItemDef.snowflake,
+      reelItemDef.sword,
     ],
   },
   {
     reelItems: [
+      // reelItemDef.coins
       reelItemDef.crazy,
       reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+      reelItemDef.halo,
+      reelItemDef.lightning,
+      reelItemDef.poison,
+      reelItemDef.shield,
+      reelItemDef.snowflake,
+      reelItemDef.sword,
     ],
   },
 ];
@@ -174,6 +177,15 @@ export const reelComboDef: ReelCombo[] = [
   {
     label: 'attack combo',
     attributes: ['attack'],
+    bonuses: [
+      { bonusType: 'unique', multiplier: 2 },
+      { bonusType: 'same', multiplier: 3 },
+      { bonusType: 'any', multiplier: 1.5 },
+    ],
+  },
+  {
+    label: '$$$ combo',
+    attributes: ['money'],
     bonuses: [
       { bonusType: 'unique', multiplier: 2 },
       { bonusType: 'same', multiplier: 3 },

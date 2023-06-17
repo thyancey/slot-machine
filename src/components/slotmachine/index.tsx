@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext } from 'react';
-import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo, ReelComboResult } from './data';
+import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
+import { ReelItem, reelsData, reelComboDef, ReelCombo, ReelComboResult, reelItemDef } from './data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
-import { ReelTarget, getActiveCombos, getComboScore, getRandomReelTargets } from './utils';
+import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';
 import { AppContext } from '../../store/appcontext';
 
 const ScWrapper = styled.main`
@@ -104,10 +104,9 @@ const ScHandle = styled.div`
 `;
 const ScSpinCount = styled.div``;
 
-
 function SlotMachine() {
   // const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
-  const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
+  // const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
   const [reelTargets, setReelTargets] = useState<ReelTarget[]>([]);
   const [curReelItems, setCurReelItems] = useState<(ReelItem | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
@@ -117,40 +116,37 @@ function SlotMachine() {
   const { incrementScore, setReelStates, reelStates } = useContext(AppContext);
 
   useEffect(() => {
-    // later on, reel should store extra properties other than the reelItems
-    setReelDefs(
-      reelsData.map(
-        (reel) =>
-          ({
-            ...reel,
-            reelItems: reel.reelItems.map((rI, rIdx) => ({
-              ...rI,
-              idx: rIdx,
-            })),
-          } as ReelDef)
-      )
-    );
-
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
 
-    setReelTargets(Array(reelsData.length).fill([-1, 0]));
-    setCurReelItems(Array(reelsData.length).fill(undefined));
+    // setReelTargets(Array(reelStates.length).fill([-1, 0]));
+    // setCurReelItems(Array(reelStates.length).fill(undefined));
 
-    setReelStates(reelsData.map((reel, rIdx) => ({
-      idx: rIdx,
-      reelItems: reel.reelItems.map(r => r.label)
-    })));
+    // only used for INITIALIZING state, after that reelState should be used.
+    setReelStates(
+      reelsData.map((reel, rIdx) => ({
+        idx: rIdx,
+        reelItems: reel.reelItems.map((r) => r.label),
+      }))
+    );
   }, []);
+
+  useEffect(() => {
+    setReelTargets(Array(reelStates.length).fill([-1, 0]));
+    setCurReelItems(Array(reelStates.length).fill(undefined));
+  }, [reelStates]);
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
-      setReelTargets(getRandomReelTargets(reelDefs, spinCount));
+      // setReelTargets(getRandomReelTargets(reelDefs, spinCount));
+
+      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.reelItems.map((r) => r)));
+      setReelTargets(randomReelPositions.map((r) => [r, spinCount]));
+
       setSpinCount(spinCount + 1);
       setSpinLock(true);
       setActiveCombos([]);
     }
-  }, [reelDefs, spinCount, spinLock]);
-
+  }, [spinCount, spinLock, reelStates]);
 
   const onCurReelItem = useCallback(
     (reelItem: ReelItem, reelIdx: number) => {
@@ -162,11 +158,11 @@ function SlotMachine() {
       if (curReelItems.filter((rI) => rI === undefined).length === 0) {
         // setActiveCombos
         // @ts-ignore curReelItems doesnt have any undefined values!
-        const activeCombos = getActiveCombos(curReelItems, reelCombos)
+        const activeCombos = getActiveCombos(curReelItems, reelCombos);
         setActiveCombos(activeCombos);
 
         const comboScore = getComboScore(curReelItems as ReelItem[], activeCombos);
-        if(comboScore !== 0){
+        if (comboScore !== 0) {
           incrementScore(comboScore);
         }
         setSpinLock(false);
@@ -175,19 +171,28 @@ function SlotMachine() {
     [setCurReelItems, curReelItems, setSpinLock, reelCombos]
   );
 
+  const realReelItems = useMemo(() => {
+    return reelStates.map((reelState) =>
+      reelState.reelItems.map((rI, riIdx) => ({
+        ...reelItemDef[rI],
+        idx: riIdx,
+      }))
+    );
+  }, [reelStates]);
+
   return (
     <ScWrapper>
-      <ScDisplayContainer>[]
-        <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelDefs.length}/>
+      <ScDisplayContainer>
+        []
+        <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelStates.length} />
       </ScDisplayContainer>
 
       <ScReelContainer>
-        {reelDefs.map((reelDef, rdIdx) => (
+        {realReelItems.map((reelItems, rdIdx) => (
           <Reel
             key={`reel-${rdIdx}`}
             reelIdx={rdIdx}
-            reelDef={reelDef}
-            reelItems={reelDef.reelItems}
+            reelItems={reelItems}
             reelTarget={reelTargets[rdIdx]}
             setCurReelItem={(reelItem: ReelItem) => onCurReelItem(reelItem, rdIdx)}
           />
