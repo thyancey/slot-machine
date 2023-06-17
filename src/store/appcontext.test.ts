@@ -1,0 +1,101 @@
+import { describe, it, expect } from 'vitest';
+
+import { insertAfterPosition, insertIntoArray } from './appcontext';
+
+describe('AppContext', () => {
+  describe('#insertIntoArray', () => {
+    const items = ['apple', 'banana', 'carrot'];
+
+    it('should insert before reel', () => {
+      const result = insertIntoArray(-1, 'NEW', items);
+      expect(result.length).toBe(4);
+      expect(result).toEqual(['NEW', 'apple', 'banana', 'carrot']);
+    });
+
+    it('should insert after first position', () => {
+      const result = insertIntoArray(0, 'NEW', items);
+      expect(result.length).toBe(4);
+      expect(result).toEqual(['apple', 'NEW', 'banana', 'carrot']);
+    });
+
+    it('should insert after last position', () => {
+      const result = insertIntoArray(2, 'NEW', items);
+      expect(result.length).toBe(4);
+      expect(result).toEqual(['apple', 'banana', 'carrot', 'NEW']);
+    });
+
+    it('should insert duplicate after first position', () => {
+      const result = insertIntoArray(0, 'apple', items);
+      expect(result.length).toBe(4);
+      expect(result).toEqual(['apple', 'apple', 'banana', 'carrot']);
+    });
+
+    it('should not change input if index is under bounded', () => {
+      const result = insertIntoArray(-2, 'NEW', items);
+      expect(result.length).toBe(3);
+      expect(result).toEqual(['apple', 'banana', 'carrot']);
+    });
+
+    it('should not change input if index is over bounded', () => {
+      const result = insertIntoArray(3, 'NEW', items);
+      expect(result.length).toBe(3);
+      expect(result).toEqual(['apple', 'banana', 'carrot']);
+    });
+  });
+
+  
+  describe('#insertAfterPosition', () => {
+    const reelStates = [
+      {
+        idx: 0,
+        reelItems: ['apple', 'banana', 'carrot']
+      },
+      {
+        idx: 1,
+        reelItems: ['apple', 'banana', 'carrot']
+      }
+    ];
+
+    it('should insert before first reel', () => {
+      const result = insertAfterPosition(0, -1, 'NEW', reelStates);
+      expect(result).toEqual([
+        {
+          idx: 0,
+          reelItems: ['NEW', 'apple', 'banana', 'carrot']
+        },
+        {
+          idx: 1,
+          reelItems: ['apple', 'banana', 'carrot']
+        }
+      ]);
+    });
+
+    it('should insert after last reel', () => {
+      const result = insertAfterPosition(1, 2, 'NEW', reelStates);
+      expect(result).toEqual([
+        {
+          idx: 0,
+          reelItems: ['apple', 'banana', 'carrot']
+        },
+        {
+          idx: 1,
+          reelItems: ['apple', 'banana', 'carrot', 'NEW']
+        }
+      ]);
+    });
+
+    it('should return same if bad reel index provided', () => {
+      const result = insertAfterPosition(10, 2, 'NEW', reelStates);
+      expect(result).toEqual([
+        {
+          idx: 0,
+          reelItems: ['apple', 'banana', 'carrot']
+        },
+        {
+          idx: 1,
+          reelItems: ['apple', 'banana', 'carrot']
+        }
+      ]);
+    });
+  });
+});
