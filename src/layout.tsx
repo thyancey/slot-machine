@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
 import Header from './components/header';
 import ItemList from './components/itemlist';
-import ItemSelector from './components/item-selector';
+import MachineEditor from './components/machine-editor';
 import { useState } from 'react';
 
 const ScWrapper = styled.main`
@@ -41,17 +41,17 @@ const ScBg = styled.div`
 `
 
 function Layout() {
-  const [ itemSelectorOpen, setItemSelectorOpen ] = useState(false);
+  const [ machineEditorOpen, setMachineEditorOpen ] = useState(false);
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <Header onOpenItemSelector={() => setItemSelectorOpen(true)}/>
+      <Header onOpenMachineEditor={() => setMachineEditorOpen(true)}/>
       <ItemList />
       <ScStage>
         <SlotMachine />
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
-      <ItemSelector isOpen={itemSelectorOpen} onClose={() => setItemSelectorOpen(false)}/>
+      <MachineEditor isOpen={machineEditorOpen} onClose={() => setMachineEditorOpen(false)}/>
     </ScWrapper>
   );
 }

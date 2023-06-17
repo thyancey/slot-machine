@@ -39,9 +39,9 @@ const ScDebugMenu = styled.div`
 `;
 
 interface Props {
-  onOpenItemSelector: Function;
+  onOpenMachineEditor: Function;
 }
-function Header({ onOpenItemSelector }: Props) {
+function Header({ onOpenMachineEditor }: Props) {
   const { score } = useContext(AppContext);
   return (
     <ScWrapper>
@@ -49,7 +49,7 @@ function Header({ onOpenItemSelector }: Props) {
         <p>{score}</p>
       </ScScorebox>
       <ScDebugMenu>
-        <Button onClick={() => onOpenItemSelector()}>{'+'}</Button>
+        <Button onClick={() => onOpenMachineEditor()}>{'+'}</Button>
       </ScDebugMenu>
     </ScWrapper>
   );

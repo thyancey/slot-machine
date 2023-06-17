@@ -35,7 +35,7 @@ const ScWrapper = styled.div<ScProps>`
   }
 
   img {
-    width: 100%;
+    height: 100%;
     filter: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   }
 `;
@@ -48,7 +48,6 @@ type Props = {
 function ReelContent({ reelItem, height }: Props) {
   return (
     <ScWrapper height={height}>
-      {/* <p>{reelItem.idx}</p> */}
       <img src={reelItem.img || ''} />
     </ScWrapper>
   );

@@ -4,6 +4,8 @@ const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   score: number;
   incrementScore: Function;
+  selectedItemKey: string;
+  setSelectedItemKey: Function;
 }
 
 interface Props {
@@ -11,13 +13,14 @@ interface Props {
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
+  const [selectedItemKey, setSelectedItemKey] = useState('');
 
   const incrementScore = (increment: number = 0) => {
     setScore(prevScore => prevScore + increment);
   };
 
   return (
-    <AppContext.Provider value={{ score, incrementScore } as AppContextType}>
+    <AppContext.Provider value={{ score, incrementScore, selectedItemKey, setSelectedItemKey } as AppContextType}>
       {children}
     </AppContext.Provider>
   );

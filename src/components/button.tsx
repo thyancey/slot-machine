@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const ScWrapper = styled.button`
+export const StyledButton = styled.button`
   border: var(--border-width) solid var(--color-pink);
   background-color: var(--color-grey);
   font-family: var(--font-base);
@@ -22,7 +22,7 @@ interface Props {
 }
 
 function Button({ children, onClick }: Props) {
-  return <ScWrapper onClick={(e) => onClick && onClick(e)}>{children}</ScWrapper>;
+  return <StyledButton onClick={(e) => onClick && onClick(e)}>{children}</StyledButton>;
 }
 
 export default Button;
