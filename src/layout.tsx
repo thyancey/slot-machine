@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
+import Header from './components/header';
+import ItemList from './components/itemlist';
+import ItemSelector from './components/item-selector';
+import { useState } from 'react';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -8,14 +12,6 @@ const ScWrapper = styled.main`
 
   display: flex;
   flex-direction: column;
-`;
-
-const ScHeader = styled.h1`
-  margin: 1rem;
-  margin-left: -10rem;
-  font-size:5rem;
-  white-space:nowrap;
-  font-family: var(--font-8bit2);
 `;
 
 const ScStage = styled.main`
@@ -29,13 +25,33 @@ const ScStage = styled.main`
   position: relative;
 `;
 
+const ScBg = styled.div`
+  position:absolute;
+  inset: -12rem;
+  /* z-index: -1; */
+  font-size: 12rem;
+  font-family: var(--font-8bit2);
+  line-height: 10rem;
+  z-index:-1;
+  letter-spacing: -3rem;
+  transform: rotate(-20deg);
+  top: -50%;
+  color: var(--color-pink);
+  opacity: .2;
+`
+
 function Layout() {
+  const [ itemSelectorOpen, setItemSelectorOpen ] = useState(false);
+  const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <ScHeader>{'! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS ! SLOTS !'}</ScHeader>
+      <Header onOpenItemSelector={() => setItemSelectorOpen(true)}/>
+      <ItemList />
       <ScStage>
         <SlotMachine />
       </ScStage>
+      <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
+      <ItemSelector isOpen={itemSelectorOpen} onClose={() => setItemSelectorOpen(false)}/>
     </ScWrapper>
   );
 }

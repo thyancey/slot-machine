@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import { ReelDef, ReelItem, reelsData, reelComboDef, ReelCombo, ReelComboResult } from './data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
-import { ReelTarget, getActiveCombos, getRandomReelTargets } from './utils';
+import { ReelTarget, getActiveCombos, getComboScore, getRandomReelTargets } from './utils';
+import { AppContext } from '../../store/appcontext';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -113,6 +114,7 @@ function SlotMachine() {
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
+  const { incrementScore } = useContext(AppContext);
 
   useEffect(() => {
     // later on, reel should store extra properties other than the reelItems
@@ -151,10 +153,17 @@ function SlotMachine() {
       curReelItems[reelIdx] = reelItem;
       setCurReelItems([...curReelItems]);
 
+      // if no undefined reelItems, all reelItems are done spinning.
       if (curReelItems.filter((rI) => rI === undefined).length === 0) {
         // setActiveCombos
         // @ts-ignore curReelItems doesnt have any undefined values!
-        setActiveCombos(getActiveCombos(curReelItems, reelCombos));
+        const activeCombos = getActiveCombos(curReelItems, reelCombos)
+        setActiveCombos(activeCombos);
+
+        const comboScore = getComboScore(curReelItems as ReelItem[], activeCombos);
+        if(comboScore !== 0){
+          incrementScore(comboScore);
+        }
         setSpinLock(false);
       }
     },

@@ -9,18 +9,19 @@ export const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
   return reelSet.map((reelDef) => [getRandomReelIdx(reelDef), spinCount] as ReelTarget);
 };
 
-
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], reelItems: ReelItem[]) => {
   for (var i = 0; i < bonuses.length; i++) {
     switch (bonuses[i].bonusType) {
-      case 'same': 
+      case 'same':
         if (checkSameStrings(reelItems.map((rI) => rI.label))) {
           return bonuses[i];
-        } break;
+        }
+        break;
       case 'unique':
         if (checkUniqueStrings(reelItems.map((rI) => rI.label))) {
           return bonuses[i];
-        } break;
+        }
+        break;
       default:
         return bonuses[i]; //any
     }
@@ -43,7 +44,7 @@ export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) 
         combos.push({
           label: rC.label,
           attribute: rC.attributes[a],
-          bonus: getFirstMatchingBonus(rC.bonuses, reelItems)
+          bonus: getFirstMatchingBonus(rC.bonuses, reelItems),
         });
 
         return combos;
@@ -56,8 +57,25 @@ export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) 
   // check labels for same or unique bonus
   // rank combos
   console.log('gac', reelItems, reelCombos, activeCombos);
+
   return activeCombos;
 };
+
+export const getComboScore = (reelItems: ReelItem[], activeCombos: ReelComboResult[]) =>
+  activeCombos.reduce((totScore, aC) => {
+    console.log('reelItems', reelItems);
+    let baseScore = reelItems.reduce((acc, reelItem) => (acc += (reelItem.score || 0)), 0);
+    console.log('baseScore', baseScore);
+
+    if (aC.bonus?.multiplier) {
+      totScore += aC.bonus.multiplier * baseScore;
+    }
+    if (aC.bonus?.value) {
+      totScore += aC.bonus.value;
+    }
+
+    return totScore;
+  }, 0);
 
 // add redudant items to top and bottom of reel to make it seem continuous
 export const buildReel = (reelItems: any[], reelOverlap: number) => {
