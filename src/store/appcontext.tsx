@@ -17,7 +17,7 @@ export interface ReelState {
 }
 
 export const insertIntoArray = (positionIdx: number, itemKey: string, items: string[]) => {
-  console.log('insertIntoArray', itemKey, positionIdx, items);
+  // console.log('insertIntoArray', itemKey, positionIdx, items);
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > items.length) {
@@ -29,7 +29,7 @@ export const insertIntoArray = (positionIdx: number, itemKey: string, items: str
 };
 
 export const insertAfterPosition = (reelIdx: number, positionIdx: number, itemKey: string, reelStates: ReelState[]) => {
-  console.log('insertIntoReel', reelIdx, positionIdx, itemKey, reelStates);
+  // console.log('insertIntoReel', reelIdx, positionIdx, itemKey, reelStates);
   return reelStates.map((reelState, rIdx) => {
     if (rIdx === reelIdx) {
       return {

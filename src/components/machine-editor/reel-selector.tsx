@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Fragment, useCallback, useContext } from 'react';
 import { AppContext } from '../../store/appcontext';
-import { reelsData } from '../slotmachine/data';
+import { reelItemDef } from '../slotmachine/data';
 
 const ScWrapper = styled.ul`
   background-color: var(--color-grey);
@@ -17,7 +17,8 @@ const ScReelContainer = styled.li`
   margin: 1rem;
 `;
 
-const ScReelItems = styled.ul``;
+const ScReelItems = styled.ul`
+`;
 
 const ScInsertButton = styled.button`
   width: 100%;
@@ -76,7 +77,7 @@ function ReelSelector({}: Props) {
 
   return (
     <ScWrapper>
-      {reelsData.map((rd, rIdx) => (
+      {reelStates.map((rd, rIdx) => (
         <ScReelContainer key={rIdx}>
           <span>{`reel ${rIdx + 1}`}</span>
           <ScReelItems>
@@ -84,7 +85,7 @@ function ReelSelector({}: Props) {
             {rd.reelItems.map((ri, riIdx) => (
               <Fragment key={`rc_${riIdx}`}>
                 <ScReelContent>
-                  <img src={ri.img} />
+                  <img src={reelItemDef[ri].img} />
                 </ScReelContent>
                 <InsertButton onClick={() => onInsertClick(rIdx, riIdx)} />
               </Fragment>

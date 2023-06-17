@@ -114,7 +114,7 @@ function SlotMachine() {
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
-  const { incrementScore, setReelStates } = useContext(AppContext);
+  const { incrementScore, setReelStates, reelStates } = useContext(AppContext);
 
   useEffect(() => {
     // later on, reel should store extra properties other than the reelItems
