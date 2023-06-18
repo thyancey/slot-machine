@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { AppContext } from '../store/appcontext';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import Button from './button';
+import AssetMap from '../assets';
 
 const ScWrapper = styled.header`
   border-bottom: 0.75rem solid var(--color-pink);
@@ -36,20 +37,51 @@ const ScDebugMenu = styled.div`
   position: absolute;
   right: 0;
   top: 0;
+  background-color: var(--color-grey);
+  border: var(--border-width) solid var(--color-yellow);
+
+  border-radius: 1.5rem;
 `;
+
+const ScTokenContainer = styled.ul`
+
+`;
+
+const ScToken = styled.li`
+  width:2rem;
+  height:2rem;
+  display:inline-block;
+  background: url(${AssetMap.UI_Token_Empty}) no-repeat center / contain;
+
+  &.active{
+    background-image: url(${AssetMap.UI_Token})
+  }
+`;
+
+const MAX_TOKENS = 5;
 
 interface Props {
   onOpenMachineEditor: Function;
 }
 function Header({ onOpenMachineEditor }: Props) {
-  const { score } = useContext(AppContext);
+  const { score, upgradeTokens } = useContext(AppContext);
+
+  const tokenStatus = useMemo(() => {
+    return Array.from({ length: MAX_TOKENS}, (_ , idx) => idx).map((idx) => idx < upgradeTokens);
+  }, [ upgradeTokens ]);
+
   return (
     <ScWrapper>
       <ScScorebox>
         <p>{score}</p>
       </ScScorebox>
       <ScDebugMenu>
-        <Button onClick={() => onOpenMachineEditor()}>{'+'}</Button>
+        <Button disabled={upgradeTokens <= 0} onClick={() => onOpenMachineEditor()}>{`upgrade (${upgradeTokens})`}</Button>
+        <ScTokenContainer>
+          {tokenStatus.map((isActive, idx) => (
+            <ScToken key={idx} className={isActive ? 'active' : ''} />
+          ))}
+        </ScTokenContainer>
       </ScDebugMenu>
     </ScWrapper>
   );

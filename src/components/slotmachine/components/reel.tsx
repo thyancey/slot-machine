@@ -61,18 +61,21 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
   const [lastSpinAngle, setLastSpinAngle] = useState(0);
   const [spinAngleTarget, setSpinAngleTarget] = useState(0);
 
+  /*
   useEffect(() => {
     console.log(`reel #${reelIdx} initialized with reelTarget: ${reelTarget}`);
   }, []);
+  */
 
   useEffect(() => {
-    console.log('---------- RESET REEL ---------');
+    // console.log('---------- RESET REEL ---------');
     setItems(buildReel(reelItems, REEL_OVERLAP));
     setSpinAngle(0);
 
     setLastSpinAngle(0);
     setSpinProgress(0);
-    // setCurIdx(0);
+     // reset the reel position, but maybe eventually keep it? itll be weird when adding/removing stuff
+    setCurIdx(0);
   }, [reelItems]);
 
   useEffect(() => {

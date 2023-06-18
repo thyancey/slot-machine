@@ -6,12 +6,14 @@ interface AppContextType {
   score: number;
   selectedItemKey: string;
   reelStates: ReelState[];
+  upgradeTokens: number;
   incrementScore: Function;
   setSelectedItemKey: Function;
   setReelStates: Function;
   insertIntoReel: Function;
   removeFromReel: Function;
   insertReel: Function;
+  setUpgradeTokens: Function;
 }
 
 export interface ReelState {
@@ -65,6 +67,7 @@ interface Props {
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
+  const [upgradeTokens, setUpgradeTokens] = useState(3);
   const [selectedItemKey, setSelectedItemKey] = useState('');
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
 
@@ -98,12 +101,14 @@ const AppProvider = ({ children }: Props) => {
           score,
           selectedItemKey,
           reelStates,
+          upgradeTokens,
           incrementScore,
           setSelectedItemKey,
           setReelStates,
           insertIntoReel,
           removeFromReel,
           insertReel,
+          setUpgradeTokens,
         } as AppContextType
       }
     >

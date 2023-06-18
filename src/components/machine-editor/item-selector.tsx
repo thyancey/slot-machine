@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { reelItemDef } from '../slotmachine/data';
 import { useContext } from 'react';
 import { AppContext } from '../../store/appcontext';
+import { pickRandomFromArray } from '../../utils';
 
 const ScWrapper = styled.ul`
   display: flex;
@@ -35,7 +36,7 @@ const ScItemOption = styled.li`
   }
 
   &:hover {
-    background-color: var(--color-purple);
+    background-color: var(--color-pink);
 
     &.chosen {
       background-color: var(--color-pink);
@@ -47,13 +48,17 @@ const ScItemOption = styled.li`
   }
 `;
 
+const NUM_CHOICES = 4;
+
 interface Props {}
 function ItemSelector({}: Props) {
   const { setSelectedItemKey, selectedItemKey } = useContext(AppContext);
 
+  const itemKeys = pickRandomFromArray(NUM_CHOICES, Object.keys(reelItemDef));
+
   return (
     <ScWrapper>
-      {Object.keys(reelItemDef).map((key: string) => (
+      {itemKeys.map((key: string) => (
         <ScItemOption
           className={key === selectedItemKey ? 'chosen' : ''}
           key={key}

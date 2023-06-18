@@ -15,6 +15,7 @@
 
   --color-black: #070707;
   --color-grey: #32292f;
+  --color-grey-light: #574751;
   --color-white: #FFF9D6;
   --color-blue: #00bbf9;
   --color-teal: #00f5d4;
@@ -31,6 +32,8 @@
 
   --border-width: 0.75rem;
   --border-width-small: 0.5rem;
+
+  --filter-reelitemshadow: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
 
   font-family: var(--font-base);
 

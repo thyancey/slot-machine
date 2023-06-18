@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Button from '../button';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
 import ItemSelector from './item-selector';
 import ReelEditor from './reel-editor';
@@ -75,13 +75,43 @@ interface Props {
   onClose: Function;
 }
 function MachineEditor({ isOpen, onClose }: Props) {
-  const { selectedItemKey, setSelectedItemKey } = useContext(AppContext);
+  const { selectedItemKey, setSelectedItemKey, insertIntoReel, removeFromReel, insertReel, upgradeTokens, setUpgradeTokens } = useContext(AppContext);
+
+  // close this sucker when you run out of money
+  useEffect(() => {
+    if (upgradeTokens <= 0) {
+      onClose();
+    }
+    setSelectedItemKey('');
+  }, [upgradeTokens]);
 
   const closeEditor = useCallback(() => {
     setSelectedItemKey('');
     onClose();
   }, [onClose, selectedItemKey]);
 
+  const onInsertIntoReel = useCallback(
+    (reelIdx: number, itemIdx: number) => {
+      insertIntoReel(reelIdx, itemIdx);
+      setUpgradeTokens(upgradeTokens - 1);
+    },
+    [insertIntoReel, upgradeTokens]
+  );
+  const onInsertReel = useCallback(
+    (reelIdx: number) => {
+      insertReel(reelIdx);
+      setUpgradeTokens(upgradeTokens - 1);
+    },
+    [insertIntoReel, upgradeTokens]
+  );
+  const onRemoveFromReel = useCallback(
+    (reelIdx: number, itemIdx: number) => {
+      removeFromReel(reelIdx, itemIdx);
+      setUpgradeTokens(upgradeTokens + 1);
+    },
+    [insertIntoReel, upgradeTokens]
+  );
+  
   const mode: MachineEditorMode = useMemo(() => {
     return !selectedItemKey ? 'item' : 'reel';
   }, [selectedItemKey]);
@@ -90,7 +120,17 @@ function MachineEditor({ isOpen, onClose }: Props) {
     <ScWrapper className={isOpen ? 'panel-open' : ''}>
       <ScPanel>
         <h2>{mode === 'item' ? 'choose your upgrade' : 'insert into reel'}</h2>
-        <ScBody>{mode === 'item' ? <ItemSelector /> : <ReelEditor />}</ScBody>
+        <ScBody>
+          {mode === 'item' ? (
+            <ItemSelector />
+          ) : (
+            <ReelEditor
+              onInsertIntoReel={onInsertIntoReel}
+              onRemoveFromReel={onRemoveFromReel}
+              onInsertReel={onInsertReel}
+            />
+          )}
+        </ScBody>
         <ScFooter>
           <ScFooterButtons>
             {mode === 'item' ? (

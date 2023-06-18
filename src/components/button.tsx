@@ -10,18 +10,33 @@ export const StyledButton = styled.button`
   padding: 0.5rem;
 
   cursor: pointer;
-  &:hover {
+  color: var(--color-white);
+  &:hover{
     background-color: var(--color-pink);
+  }
+
+  &.disabled{
+    border-color: var(--color-purple);
+    cursor: default;
+    color: var(--color-grey-light);
+    &:hover{
+      background-color: var(--color-grey);
+    }
   }
 `;
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
   onClick?: Function;
+  disabled?: Boolean;
 }
 
-function Button({ children, onClick }: Props) {
-  return <StyledButton onClick={(e) => onClick && onClick(e)}>{children}</StyledButton>;
+function Button({ children, onClick, disabled }: Props) {
+  return (
+    <StyledButton className={disabled ? 'disabled' : ''} onClick={(e) => !disabled && onClick && onClick(e)}>
+      {children}
+    </StyledButton>
+  );
 }
 
 export default Button;
