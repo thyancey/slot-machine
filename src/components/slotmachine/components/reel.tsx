@@ -25,6 +25,14 @@ const ScWrapper = styled.div`
   }
 `;
 
+const ScReelOverlay = styled.div`
+  position: absolute;
+  inset: -0.6rem;
+  --color-pink-transparent: rgba(241, 91, 181, 0);
+  background: var(--color-pink);
+  background: linear-gradient(0deg, var(--color-pink) 0%, var(--color-pink-transparent) 20%, var(--color-pink-transparent) 80%, var(--color-pink) 100%);
+`;
+
 const ScReelCenterer = styled.div`
   position: absolute;
   top: 50%;
@@ -164,6 +172,7 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
           ))}
         </ScReelTape>
       </ScReelCenterer>
+      <ScReelOverlay />
     </ScWrapper>
   );
 }
