@@ -18,9 +18,8 @@ import { MinMaxTouple } from '../../utils';
 export const REEL_HEIGHT = 120; // height of each reel cell
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
-export const MIN_SPINS_RANGE: MinMaxTouple = [1, 2]; // RNG number of times to go around for each reel
 
-export type RawReelItem = {
+export type ReelItem = {
   label: string;
   img?: string;
   effect?: string;
@@ -28,21 +27,13 @@ export type RawReelItem = {
   attributes?: string[];
   score?: number;
 };
-export interface ReelItem extends RawReelItem {
-  idx: number;
-};
 
-export interface RawReelDef {
-  spinRange?: MinMaxTouple;
-  reelItems: RawReelItem[];
-}
 export interface ReelDef {
-  spinRange?: MinMaxTouple;
   reelItems: ReelItem[];
 }
 
 export interface ReelItemDict {
-  [key: string]: RawReelItem;
+  [key: string]: ReelItem;
 }
 
 export const reelItemDef: ReelItemDict = {
@@ -77,9 +68,8 @@ export const reelItemDef: ReelItemDict = {
   sword: { label: 'sword', img: Rsword, attributes: ['attack'], effect: 'extra damage', value: 2, score: 80 },
 };
 
-export const reelsData: RawReelDef[] = [
+export const reelsData: ReelDef[] = [
   {
-    // spinRange: [ 5, 8 ],
     reelItems: [
       // reelItemDef.coins
       reelItemDef.crazy,

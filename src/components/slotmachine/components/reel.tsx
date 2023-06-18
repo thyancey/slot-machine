@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { MIN_SPINS_RANGE, REEL_HEIGHT, REEL_OVERLAP, ReelItem, SPIN_POWER_RANGE } from '../data';
-import { MinMaxTouple, clamp, randInRange } from '../../../utils';
+import { REEL_HEIGHT, REEL_OVERLAP, ReelItem, SPIN_POWER_RANGE } from '../data';
+import { clamp, randInRange } from '../../../utils';
 import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
 
 // imagine the construction as a ribbon, rendering each reelItem top to bottom
@@ -42,14 +42,13 @@ const ScReelTape = styled.div`
 
 
 type Props = {
-  spinRange?: MinMaxTouple;
   reelItems: ReelItem[];
   reelIdx: number; // mostly for identification / logging
   setCurReelItem: Function;
   reelTarget: ReelTarget;
 };
 
-function SlotReel({ spinRange, reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
+function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const spinTimer = useRef<number | null>(null);
@@ -94,7 +93,7 @@ function SlotReel({ spinRange, reelItems, reelIdx, setCurReelItem, reelTarget }:
       reelItems.length,
       curIdx,
       reelTarget[0],
-      randInRange(spinRange || MIN_SPINS_RANGE, true)
+      3 // TODO: refactor this out, base spins off of # of items in reel
     );
     const projectedSpinAngle = projectSpinAngle(reelItems.length, nextSpinTarget, curIdx);
     const nextSpinAngle = spinAngle + projectedSpinAngle;
@@ -103,7 +102,7 @@ function SlotReel({ spinRange, reelItems, reelIdx, setCurReelItem, reelTarget }:
     setSpinAngleTarget(nextSpinAngle);
     setSpinPower(randInRange(SPIN_POWER_RANGE));
     setIsSpinning(true);
-  }, [reelItems, reelTarget, spinAngle, spinRange, curIdx]);
+  }, [reelItems, reelTarget, spinAngle, curIdx]);
 
   // remove timer when unmounting
   useEffect(() => {

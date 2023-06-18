@@ -173,10 +173,7 @@ function SlotMachine() {
 
   const realReelItems = useMemo(() => {
     return reelStates.map((reelState) =>
-      reelState.reelItems.map((rI, riIdx) => ({
-        ...reelItemDef[rI],
-        idx: riIdx,
-      }))
+      reelState.reelItems.map((rI) => reelItemDef[rI])
     );
   }, [reelStates]);
 
