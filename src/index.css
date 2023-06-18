@@ -36,6 +36,9 @@
 
   background-color: var(--color-grey);
   color: var(--color-white);
+  
+  
+  user-select: none;
 }
 
 *, *::before, *::after {

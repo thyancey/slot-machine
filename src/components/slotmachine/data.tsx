@@ -18,6 +18,7 @@ import { MinMaxTouple } from '../../utils';
 export const REEL_HEIGHT = 120; // height of each reel cell
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
+export const MAX_REELS = 6;
 
 export type ReelItem = {
   label: string;

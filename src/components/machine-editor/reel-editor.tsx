@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Fragment, useCallback, useContext } from 'react';
+import { Fragment, useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import { reelItemDef } from '../slotmachine/data';
+import { MAX_REELS, reelItemDef } from '../slotmachine/data';
 
 const ScWrapper = styled.ul`
   background-color: var(--color-grey);
@@ -18,25 +18,27 @@ const ScReelContainer = styled.li`
   max-width: 15rem;
 `;
 
-const ScReelItems = styled.ul`
-`;
+const ScReelItems = styled.ul``;
 
 const ScInsertButton = styled.button`
-  width: 100%;
   font-size: 1rem;
-  padding: 0rem;
-  border: 0.125rem dashed var(--color-green);
   background-color: var(--color-grey);
-  margin-bottom: 0.25rem;
-  margin-top: 0.25rem;
-
-  transition: padding 0.2s, background-color 0.2s;
-
+  border: 0.125rem dashed var(--color-green);
   cursor: pointer;
 
   &:hover {
-    padding: 1rem;
     background-color: var(--color-green);
+  }
+`;
+
+const ScInsertItemButton = styled(ScInsertButton)`
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  transition: padding 0.2s, background-color 0.2s;
+
+  &:hover {
+    padding: 1rem;
   }
 `;
 
@@ -52,8 +54,7 @@ const ScReelContent = styled.div`
   padding: 0.25rem;
   position: relative;
 
-  span{
-
+  span {
   }
 
   img {
@@ -63,82 +64,84 @@ const ScReelContent = styled.div`
 `;
 
 const ScRemoveLabel = styled.div`
-  width:100%;
-  height:100%;
-  position:absolute;
-  display:flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
   align-items: center;
   justify-content: center;
   /* border: 0.125rem dashed var(--color-pink); */
 
   cursor: pointer;
   opacity: 0;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 
-  &:hover{
+  &:hover {
     opacity: 1;
   }
 
-  span{
+  span {
     color: var(--color-white);
-    z-index:1;
+    z-index: 1;
   }
-  >div{
-    position:absolute;
+  > div {
+    position: absolute;
     background-color: var(--color-pink);
-    width:100%;
-    height:100%;
-    opacity: .9;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
   }
-`
+`;
 
 interface InsertButtonProps {
   onClick: Function;
 }
-const InsertButton = ({ onClick }: InsertButtonProps) => {
-  return <ScInsertButton onClick={() => onClick()}>{'insert'}</ScInsertButton>;
+const InsertItemButton = ({ onClick }: InsertButtonProps) => {
+  return <ScInsertItemButton onClick={() => onClick()}>{'insert'}</ScInsertItemButton>;
 };
 
 interface Props {}
 function ReelEditor({}: Props) {
-  const { reelStates, insertIntoReel, removeFromReel } = useContext(AppContext);
+  const { reelStates, insertIntoReel, removeFromReel, insertReel } = useContext(AppContext);
 
-  const onInsertClick = useCallback(
-    (reelIdx: number, idx: number) => {
-      insertIntoReel(reelIdx, idx);
-    },
-    [insertIntoReel]
-  );
-
-  const onRemoveClick = useCallback(
-    (reelIdx: number, idx: number) => {
-      removeFromReel(reelIdx, idx);
-    },
-    [removeFromReel]
-  );
+  const canAddReels = useMemo(() => {
+    return reelStates.length < MAX_REELS;
+  }, [reelStates]);
 
   return (
     <ScWrapper>
+      {canAddReels && (
+        <ScReelContainer>
+          <h3>{'NEW REEL'}</h3>
+          <InsertItemButton onClick={() => insertReel(-1)} />
+        </ScReelContainer>
+      )}
       {reelStates.map((rd, rIdx) => (
         <ScReelContainer key={rIdx}>
-          <span>{`reel ${rIdx + 1}`}</span>
+          <h3>{`REEL ${rIdx + 1}`}</h3>
           <ScReelItems>
-            <InsertButton key={`rc_-1`} onClick={() => onInsertClick(rIdx, -1)} />
+            <InsertItemButton key={`rc_-1`} onClick={() => insertIntoReel(rIdx, -1)} />
             {rd.items.map((ri, itemIdx) => (
               <Fragment key={`rc_${itemIdx}`}>
                 <ScReelContent>
                   <img src={reelItemDef[ri].img} />
-                  <ScRemoveLabel onClick={() => onRemoveClick(rIdx, itemIdx)}>
+                  <ScRemoveLabel onClick={() => removeFromReel(rIdx, itemIdx)}>
                     <span>{'REMOVE'}</span>
                     <div />
                   </ScRemoveLabel>
                 </ScReelContent>
-                <InsertButton onClick={() => onInsertClick(rIdx, itemIdx)} />
+                <InsertItemButton onClick={() => insertIntoReel(rIdx, itemIdx)} />
               </Fragment>
             ))}
           </ScReelItems>
         </ScReelContainer>
       ))}
+      {canAddReels && (
+        <ScReelContainer>
+          <h3>{'NEW REEL'}</h3>
+          <InsertItemButton onClick={() => insertReel(reelStates.length - 1)} />
+        </ScReelContainer>
+      )}
     </ScWrapper>
   );
 }

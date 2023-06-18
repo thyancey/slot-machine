@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useState } from 'react';
+import { MAX_REELS } from '../components/slotmachine/data';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -10,22 +11,23 @@ interface AppContextType {
   setReelStates: Function;
   insertIntoReel: Function;
   removeFromReel: Function;
+  insertReel: Function;
 }
 
 export interface ReelState {
   items: string[];
 }
 
-export const insertIntoArray = (positionIdx: number, itemKey: string, items: string[]) => {
+export const insertIntoArray = (positionIdx: number, item: any, array: any[]) => {
   // console.log('insertIntoArray', itemKey, positionIdx, items);
   const newPos = positionIdx + 1;
 
-  if (newPos < 0 || newPos > items.length) {
+  if (newPos < 0 || newPos > array.length) {
     console.error(`invalid index ${positionIdx} provided`);
-    return items;
+    return array;
   }
 
-  return [...items.slice(0, newPos), itemKey, ...items.slice(newPos)];
+  return [...array.slice(0, newPos), item, ...array.slice(newPos)];
 };
 
 export const insertAfterPosition = (reelIdx: number, positionIdx: number, itemKey: string, reelStates: ReelState[]) => {
@@ -46,7 +48,7 @@ export const removeAtPosition = (reelIdx: number, positionIdx: number, reelState
     console.log('ARE YOU CRAZY?!?! YOU CANT HAVE NOTHING!!!!!');
     return reelStates;
   }
-  
+
   return reelStates.map((reelState, rIdx) => {
     if(rIdx === reelIdx){
       return {
@@ -80,6 +82,15 @@ const AppProvider = ({ children }: Props) => {
     setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
   };
 
+  const insertReel = (positionIdx: number) => {
+    console.log('insertReel', positionIdx, reelStates);
+    if(reelStates.length < MAX_REELS){
+      setReelStates(insertIntoArray(positionIdx, { items: [ selectedItemKey ] }, reelStates));
+    } else {
+      console.log(`cannot add more than ${MAX_REELS} reels!`);
+    }
+  };
+
   return (
     <AppContext.Provider
       value={
@@ -92,6 +103,7 @@ const AppProvider = ({ children }: Props) => {
           setReelStates,
           insertIntoReel,
           removeFromReel,
+          insertReel,
         } as AppContextType
       }
     >
