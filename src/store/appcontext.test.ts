@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { insertAfterPosition, insertIntoArray } from './appcontext';
+import { insertAfterPosition, insertIntoArray, removeAtPosition } from './appcontext';
 
 describe('AppContext', () => {
   describe('#insertIntoArray', () => {
@@ -80,6 +80,66 @@ describe('AppContext', () => {
 
     it('should return same if bad reel index provided', () => {
       const result = insertAfterPosition(10, 2, 'NEW', reelStates);
+      expect(result).toEqual([
+        {
+          items: ['apple', 'banana', 'carrot']
+        },
+        {
+          items: ['apple', 'banana', 'carrot']
+        }
+      ]);
+    });
+  });
+  
+  
+  describe('#removeAtPosition', () => {
+    const reelStates = [
+      {
+        items: ['apple', 'banana', 'carrot']
+      },
+      {
+        items: ['apple', 'banana', 'carrot']
+      }
+    ];
+
+    it('should remove first value in first reel', () => {
+      const result = removeAtPosition(0, 0, reelStates);
+      expect(result).toEqual([
+        {
+          items: ['banana', 'carrot']
+        },
+        {
+          items: ['apple', 'banana', 'carrot']
+        }
+      ]);
+    });
+
+    it('should remove second value in second reel', () => {
+      const result = removeAtPosition(1, 1, reelStates);
+      expect(result).toEqual([
+        {
+          items: ['apple', 'banana', 'carrot']
+        },
+        {
+          items: ['apple', 'carrot']
+        }
+      ]);
+    });
+
+    it('should remove last value in first reel', () => {
+      const result = removeAtPosition(0, 2, reelStates);
+      expect(result).toEqual([
+        {
+          items: ['apple', 'banana']
+        },
+        {
+          items: ['apple', 'banana', 'carrot']
+        }
+      ]);
+    });
+
+    it('should not break, if invalid position given', () => {
+      const result = removeAtPosition(0, 4, reelStates);
       expect(result).toEqual([
         {
           items: ['apple', 'banana', 'carrot']
