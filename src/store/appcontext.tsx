@@ -42,6 +42,11 @@ export const insertAfterPosition = (reelIdx: number, positionIdx: number, itemKe
 };
 
 export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: ReelState[]) => {
+  if(reelStates.length === 1 && reelStates[0].items.length === 1){
+    console.log('ARE YOU CRAZY?!?! YOU CANT HAVE NOTHING!!!!!');
+    return reelStates;
+  }
+  
   return reelStates.map((reelState, rIdx) => {
     if(rIdx === reelIdx){
       return {
@@ -50,7 +55,7 @@ export const removeAtPosition = (reelIdx: number, positionIdx: number, reelState
     } else {
       return reelState;
     }
-  });
+  }).filter(rs => rs.items.length > 0);
 }
 
 interface Props {

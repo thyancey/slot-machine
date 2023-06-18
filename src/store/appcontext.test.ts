@@ -149,5 +149,38 @@ describe('AppContext', () => {
         }
       ]);
     });
+
+    it('should remove reel after clearing out all items', () => {
+      const theseReelStates = [
+        {
+          items: ['apple']
+        },
+        {
+          items: ['banana', 'carrot']
+        }
+      ];
+
+      const result = removeAtPosition(0, 0, theseReelStates);
+      expect(result).toEqual([
+        {
+          items: ['banana', 'carrot']
+        }
+      ]);
+    });
+
+    it('should not remove last remaining reel and item', () => {
+      const theseReelStates = [
+        {
+          items: ['apple']
+        }
+      ];
+
+      const result = removeAtPosition(0, 0, theseReelStates);
+      expect(result).toEqual([
+        {
+          items: ['apple']
+        }
+      ]);
+    });
   });
 });
