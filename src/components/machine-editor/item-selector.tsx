@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { reelItemDef } from '../slotmachine/data';
-import { useContext } from 'react';
-import { AppContext } from '../../store/appcontext';
+import { useEffect, useState } from 'react';
 import { pickRandomFromArray } from '../../utils';
 
 const ScWrapper = styled.ul`
@@ -50,11 +49,20 @@ const ScItemOption = styled.li`
 
 const NUM_CHOICES = 4;
 
-interface Props {}
-function ItemSelector({}: Props) {
-  const { setSelectedItemKey, selectedItemKey } = useContext(AppContext);
+interface Props {
+  active: boolean;
+  selectedItemKey: string;
+  onSelectItemKey: Function;
+}
+function ItemSelector({ active, selectedItemKey, onSelectItemKey }: Props) {
+  const [itemKeys, setItemKeys] = useState<string[]>([]);
 
-  const itemKeys = pickRandomFromArray(NUM_CHOICES, Object.keys(reelItemDef));
+  useEffect(() => {
+    if (active) {
+      console.log('set them keys');
+      setItemKeys(pickRandomFromArray(NUM_CHOICES, Object.keys(reelItemDef)));
+    }
+  }, [active]);
 
   return (
     <ScWrapper>
@@ -62,7 +70,7 @@ function ItemSelector({}: Props) {
         <ScItemOption
           className={key === selectedItemKey ? 'chosen' : ''}
           key={key}
-          onClick={() => setSelectedItemKey(key)}
+          onClick={() => onSelectItemKey(key)}
         >
           <img src={reelItemDef[key].img || ''} />
         </ScItemOption>

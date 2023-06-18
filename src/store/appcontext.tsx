@@ -64,6 +64,8 @@ export const removeAtPosition = (reelIdx: number, positionIdx: number, reelState
     }
   }).filter(rs => rs.items.length > 0);
 }
+
+export const INITIAL_TOKENS = 2;
 export const MAX_REEL_TOKENS = 5;
 
 export type UiState = 'game' | 'editor';
@@ -73,7 +75,7 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [uiState, setUiState] = useState<UiState>('game');
-  const [upgradeTokens, setUpgradeTokensState] = useState(3);
+  const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
   const [selectedItemKey, setSelectedItemKey] = useState('');
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
 

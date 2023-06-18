@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Fragment, useContext, useMemo } from 'react';
-import { AppContext } from '../../store/appcontext';
+import { AppContext, MAX_REEL_TOKENS } from '../../store/appcontext';
 import { MAX_REELS, ReelItem, reelItemDef } from '../slotmachine/data';
 
 const ScWrapper = styled.ul`
@@ -36,13 +36,20 @@ const ScInsertItemButton = styled(ScInsertButton)`
   margin-bottom: 0.25rem;
   margin-top: 0.25rem;
   width: 100%;
-  transition: height 0.2s, background-color 0.2s;
+  transition: background-color 0.2s, max-height 0.2s, opacity 0.2s;
   display:flex;
   align-items: center;
   justify-content: center;
   position: relative;
 
-  height: 2rem;
+  height: 5rem;
+  max-height:0rem;
+  opacity: 0;
+
+  &.active{
+    max-height: 2rem;
+    opacity: 1;
+  }
   
   >*{
     position:absolute;
@@ -57,8 +64,8 @@ const ScInsertItemButton = styled(ScInsertButton)`
     filter: var(--filter-shadow1);
   }
 
-  &:hover {
-    height: 5rem;
+  &.active:hover {
+    max-height: 5rem;
     span{
       opacity:0;
     }
@@ -125,9 +132,9 @@ interface InsertButtonProps {
 }
 const InsertItemButton = ({ onClick, reelItem }: InsertButtonProps) => {
   return (
-    <ScInsertItemButton onClick={() => onClick()}>
+    <ScInsertItemButton className={!!reelItem ? 'active' : ''} onClick={() => onClick()}>
       <span>{'insert'}</span>
-      <img src={reelItem.img} />
+      {reelItem && <img src={reelItem.img} />}
     </ScInsertItemButton>
   );
 };
@@ -138,15 +145,15 @@ interface Props {
   onInsertReel: Function;
 }
 function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props) {
-  const { reelStates, selectedItemKey } = useContext(AppContext);
+  const { reelStates, selectedItemKey, upgradeTokens } = useContext(AppContext);
 
   const canAddReels = useMemo(() => {
     return reelStates.length < MAX_REELS;
   }, [reelStates]);
 
   const canRemoveItems = useMemo(() => {
-    return !(reelStates.length === 1 && reelStates[0].items.length === 1);
-  }, [ reelStates ]);
+    return !selectedItemKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].items.length === 1);
+  }, [ reelStates, selectedItemKey, upgradeTokens ]);
 
   const reelItem = useMemo(() => {
     return reelItemDef[selectedItemKey];
