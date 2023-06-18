@@ -43,9 +43,9 @@ const ScReelTape = styled.div`
 
 type Props = {
   reelItems: ReelItem[];
-  reelIdx: number; // mostly for identification / logging
   setCurReelItem: Function;
   reelTarget: ReelTarget;
+  reelIdx: number; // mostly for identification / logging
 };
 
 function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {

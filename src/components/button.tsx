@@ -1,14 +1,13 @@
 import styled from 'styled-components';
 
 export const StyledButton = styled.button`
-  border: var(--border-width) solid var(--color-pink);
+  border: var(--border-width-small) solid var(--color-pink);
   background-color: var(--color-grey);
   font-family: var(--font-base);
   border-radius: 0.75rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 2rem;
   padding: 0.5rem;
-  padding-bottom: 0.7rem;
 
   cursor: pointer;
   &:hover {

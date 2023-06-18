@@ -9,12 +9,13 @@ const ScWrapper = styled.ul`
 
   display: flex;
   flex-direction: row;
-  overflow-y: auto;
+  justify-content: center;
 `;
 
 const ScReelContainer = styled.li`
   flex: 1;
   margin: 1rem;
+  max-width: 15rem;
 `;
 
 const ScReelItems = styled.ul`
@@ -24,7 +25,7 @@ const ScInsertButton = styled.button`
   width: 100%;
   font-size: 1rem;
   padding: 0rem;
-  border: 0.125rem dashed var(--color-pink);
+  border: 0.125rem dashed var(--color-green);
   background-color: var(--color-grey);
   margin-bottom: 0.25rem;
   margin-top: 0.25rem;
@@ -35,7 +36,7 @@ const ScInsertButton = styled.button`
 
   &:hover {
     padding: 1rem;
-    background-color: var(--color-pink);
+    background-color: var(--color-green);
   }
 `;
 
@@ -51,11 +52,46 @@ const ScReelContent = styled.div`
   padding: 0.25rem;
   position: relative;
 
+  span{
+
+  }
+
   img {
     height: 100%;
     filter: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   }
 `;
+
+const ScRemoveLabel = styled.div`
+  width:100%;
+  height:100%;
+  position:absolute;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 0.125rem dashed var(--color-pink); */
+
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .2s;
+
+  &:hover{
+    opacity: 1;
+  }
+
+  span{
+    color: var(--color-white);
+    z-index:1;
+  }
+  >div{
+    position:absolute;
+    background-color: var(--color-pink);
+    width:100%;
+    height:100%;
+    opacity: .9;
+  }
+`
+
 interface InsertButtonProps {
   onClick: Function;
 }
@@ -64,15 +100,21 @@ const InsertButton = ({ onClick }: InsertButtonProps) => {
 };
 
 interface Props {}
-function ReelSelector({}: Props) {
-  const { reelStates, insertIntoReel } = useContext(AppContext);
-  console.log('component, reelStates', reelStates);
+function ReelEditor({}: Props) {
+  const { reelStates, insertIntoReel, removeFromReel } = useContext(AppContext);
 
   const onInsertClick = useCallback(
     (reelIdx: number, idx: number) => {
       insertIntoReel(reelIdx, idx);
     },
     [insertIntoReel]
+  );
+
+  const onRemoveClick = useCallback(
+    (reelIdx: number, idx: number) => {
+      removeFromReel(reelIdx, idx);
+    },
+    [removeFromReel]
   );
 
   return (
@@ -82,12 +124,16 @@ function ReelSelector({}: Props) {
           <span>{`reel ${rIdx + 1}`}</span>
           <ScReelItems>
             <InsertButton key={`rc_-1`} onClick={() => onInsertClick(rIdx, -1)} />
-            {rd.reelItems.map((ri, riIdx) => (
-              <Fragment key={`rc_${riIdx}`}>
+            {rd.items.map((ri, itemIdx) => (
+              <Fragment key={`rc_${itemIdx}`}>
                 <ScReelContent>
                   <img src={reelItemDef[ri].img} />
+                  <ScRemoveLabel onClick={() => onRemoveClick(rIdx, itemIdx)}>
+                    <span>{'REMOVE'}</span>
+                    <div />
+                  </ScRemoveLabel>
                 </ScReelContent>
-                <InsertButton onClick={() => onInsertClick(rIdx, riIdx)} />
+                <InsertButton onClick={() => onInsertClick(rIdx, itemIdx)} />
               </Fragment>
             ))}
           </ScReelItems>
@@ -97,4 +143,4 @@ function ReelSelector({}: Props) {
   );
 }
 
-export default ReelSelector;
+export default ReelEditor;

@@ -9,11 +9,11 @@ interface AppContextType {
   setSelectedItemKey: Function;
   setReelStates: Function;
   insertIntoReel: Function;
+  removeFromReel: Function;
 }
 
 export interface ReelState {
-  idx: number;
-  reelItems: string[];
+  items: string[];
 }
 
 export const insertIntoArray = (positionIdx: number, itemKey: string, items: string[]) => {
@@ -33,14 +33,25 @@ export const insertAfterPosition = (reelIdx: number, positionIdx: number, itemKe
   return reelStates.map((reelState, rIdx) => {
     if (rIdx === reelIdx) {
       return {
-        idx: reelState.idx,
-        reelItems: insertIntoArray(positionIdx, itemKey, reelState.reelItems),
+        items: insertIntoArray(positionIdx, itemKey, reelState.items),
       };
     } else {
       return reelState;
     }
   });
 };
+
+export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: ReelState[]) => {
+  return reelStates.map((reelState, rIdx) => {
+    if(rIdx === reelIdx){
+      return {
+        items: reelState.items.filter((_, index) => index !== positionIdx)
+      }
+    } else {
+      return reelState;
+    }
+  });
+}
 
 interface Props {
   children: ReactNode;
@@ -54,10 +65,14 @@ const AppProvider = ({ children }: Props) => {
     setScore((prevScore) => prevScore + increment);
   };
 
-  const insertIntoReel = (reelIdx: number, insertIdx: number) => {
-    //console.log('insertIntoReel', reelIdx, insertIdx, reelStates);
-    const updated = insertAfterPosition(reelIdx, insertIdx, selectedItemKey, reelStates);
-    setReelStates(updated);
+  const insertIntoReel = (reelIdx: number, positionIdx: number) => {
+    //console.log('insertIntoReel', reelIdx, positionIdx, reelStates);
+    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedItemKey, reelStates));
+  };
+
+  const removeFromReel = (reelIdx: number, positionIdx: number) => {
+    console.log('removeFromReel', reelIdx, positionIdx, reelStates);
+    setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
   };
 
   return (
@@ -71,6 +86,7 @@ const AppProvider = ({ children }: Props) => {
           setSelectedItemKey,
           setReelStates,
           insertIntoReel,
+          removeFromReel,
         } as AppContextType
       }
     >

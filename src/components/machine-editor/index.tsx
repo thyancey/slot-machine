@@ -3,7 +3,7 @@ import Button from '../button';
 import { useCallback, useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
 import ItemSelector from './item-selector';
-import ReelSelector from './reel-selector';
+import ReelEditor from './reel-editor';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -32,7 +32,7 @@ const ScPanel = styled.div`
 
   h2 {
     padding: 1rem;
-    border-bottom: 0.25rem solid var(--color-white);
+    border-bottom: var(--border-width-small) solid var(--color-white);
   }
 `;
 
@@ -56,7 +56,7 @@ const ScBg = styled.div`
 `;
 
 const ScFooter = styled.div`
-  border-top: 0.25rem solid var(--color-white);
+  border-top: var(--border-width-small) solid var(--color-white);
 `;
 
 const ScFooterButtons = styled.div`
@@ -92,7 +92,7 @@ function MachineEditor({ isOpen, onClose }: Props) {
       <ScPanel>
         <h2>{`choose your ${mode}`}</h2>
         <ScBody>
-          { mode === 'item' ? <ItemSelector /> : <ReelSelector/> }
+          { mode === 'item' ? <ItemSelector /> : <ReelEditor/> }
         </ScBody>
         <ScFooter>
           <ScFooterButtons>

@@ -117,15 +117,10 @@ function SlotMachine() {
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
-
-    // setReelTargets(Array(reelStates.length).fill([-1, 0]));
-    // setCurReelItems(Array(reelStates.length).fill(undefined));
-
     // only used for INITIALIZING state, after that reelState should be used.
     setReelStates(
-      reelsData.map((reel, rIdx) => ({
-        idx: rIdx,
-        reelItems: reel.reelItems.map((r) => r.label),
+      reelsData.map((reel) => ({
+        items: reel.reelItems.map((r) => r.label),
       }))
     );
   }, []);
@@ -137,9 +132,7 @@ function SlotMachine() {
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
-      // setReelTargets(getRandomReelTargets(reelDefs, spinCount));
-
-      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.reelItems.map((r) => r)));
+      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.items.map((r) => r)));
       setReelTargets(randomReelPositions.map((r) => [r, spinCount]));
 
       setSpinCount(spinCount + 1);
@@ -173,7 +166,7 @@ function SlotMachine() {
 
   const realReelItems = useMemo(() => {
     return reelStates.map((reelState) =>
-      reelState.reelItems.map((rI) => reelItemDef[rI])
+      reelState.items.map((rI) => reelItemDef[rI])
     );
   }, [reelStates]);
 

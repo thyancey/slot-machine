@@ -47,12 +47,10 @@ describe('AppContext', () => {
   describe('#insertAfterPosition', () => {
     const reelStates = [
       {
-        idx: 0,
-        reelItems: ['apple', 'banana', 'carrot']
+        items: ['apple', 'banana', 'carrot']
       },
       {
-        idx: 1,
-        reelItems: ['apple', 'banana', 'carrot']
+        items: ['apple', 'banana', 'carrot']
       }
     ];
 
@@ -60,12 +58,10 @@ describe('AppContext', () => {
       const result = insertAfterPosition(0, -1, 'NEW', reelStates);
       expect(result).toEqual([
         {
-          idx: 0,
-          reelItems: ['NEW', 'apple', 'banana', 'carrot']
+          items: ['NEW', 'apple', 'banana', 'carrot']
         },
         {
-          idx: 1,
-          reelItems: ['apple', 'banana', 'carrot']
+          items: ['apple', 'banana', 'carrot']
         }
       ]);
     });
@@ -74,12 +70,10 @@ describe('AppContext', () => {
       const result = insertAfterPosition(1, 2, 'NEW', reelStates);
       expect(result).toEqual([
         {
-          idx: 0,
-          reelItems: ['apple', 'banana', 'carrot']
+          items: ['apple', 'banana', 'carrot']
         },
         {
-          idx: 1,
-          reelItems: ['apple', 'banana', 'carrot', 'NEW']
+          items: ['apple', 'banana', 'carrot', 'NEW']
         }
       ]);
     });
@@ -88,12 +82,10 @@ describe('AppContext', () => {
       const result = insertAfterPosition(10, 2, 'NEW', reelStates);
       expect(result).toEqual([
         {
-          idx: 0,
-          reelItems: ['apple', 'banana', 'carrot']
+          items: ['apple', 'banana', 'carrot']
         },
         {
-          idx: 1,
-          reelItems: ['apple', 'banana', 'carrot']
+          items: ['apple', 'banana', 'carrot']
         }
       ]);
     });
