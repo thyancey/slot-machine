@@ -14,7 +14,7 @@ import Rshield from './reels/reel-shield.gif';
 import Rsnowflake from './reels/reel-snowflake.gif';
 import Rsword from './reels/reel-sword.gif';
 import UI_Token from './ui/token.gif';
-import UI_Token_Empty from './ui/token-empty.gif';
+import UI_Token_Empty from './ui/token-empty2.gif';
 
 const AssetMap = {
   R7,

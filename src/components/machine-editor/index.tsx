@@ -70,25 +70,22 @@ const ScFooterButtons = styled.div`
 
 export type MachineEditorMode = 'item' | 'reel';
 
-interface Props {
-  isOpen: boolean;
-  onClose: Function;
-}
-function MachineEditor({ isOpen, onClose }: Props) {
-  const { selectedItemKey, setSelectedItemKey, insertIntoReel, removeFromReel, insertReel, upgradeTokens, setUpgradeTokens } = useContext(AppContext);
+interface Props {}
+function MachineEditor({}: Props) {
+  const { uiState, setUiState, selectedItemKey, setSelectedItemKey, insertIntoReel, removeFromReel, insertReel, upgradeTokens, setUpgradeTokens } = useContext(AppContext);
 
   // close this sucker when you run out of money
   useEffect(() => {
     if (upgradeTokens <= 0) {
-      onClose();
+      setUiState('game');
     }
     setSelectedItemKey('');
   }, [upgradeTokens]);
 
   const closeEditor = useCallback(() => {
     setSelectedItemKey('');
-    onClose();
-  }, [onClose, selectedItemKey]);
+    setUiState('game');
+  }, [selectedItemKey]);
 
   const onInsertIntoReel = useCallback(
     (reelIdx: number, itemIdx: number) => {
@@ -117,7 +114,7 @@ function MachineEditor({ isOpen, onClose }: Props) {
   }, [selectedItemKey]);
 
   return (
-    <ScWrapper className={isOpen ? 'panel-open' : ''}>
+    <ScWrapper className={uiState === 'editor' ? 'panel-open' : ''}>
       <ScPanel>
         <h2>{mode === 'item' ? 'choose your upgrade' : 'insert into reel'}</h2>
         <ScBody>

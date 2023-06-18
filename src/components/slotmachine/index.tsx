@@ -6,12 +6,13 @@ import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';
 import { AppContext } from '../../store/appcontext';
+import UpgradeTray from './components/upgradetray';
 
 const ScWrapper = styled.main`
   position: absolute;
 
-  // TODO: at the moment, this is 2x the handle width, to center everything
   margin-left: -8rem;
+  min-width: 28rem;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: min-content auto 4rem;
@@ -46,16 +47,9 @@ const ScReelContainer = styled.div`
     margin: 0rem 0.5rem;
   }
 `;
-const ScPayoutTray = styled.div`
-  padding: 0.5rem;
-  height: 100%;
-
-  > div {
-    height: 100%;
-    background-color: var(--color-black);
-    border: 0.5rem solid var(--color-grey);
-    border-radius: 0.5rem;
-  }
+const ScUpgradeTray = styled.div`
+  width: calc(100% - 2rem);
+  margin: 1rem auto;
 `;
 
 const ScReelLabels = styled.div`
@@ -102,11 +96,8 @@ const ScHandle = styled.div`
     }
   }
 `;
-const ScSpinCount = styled.div``;
 
 function SlotMachine() {
-  // const [cachedSpinning, setCachedSpinning] = useState<boolean[]>([]);
-  // const [reelDefs, setReelDefs] = useState<ReelDef[]>([]);
   const [reelTargets, setReelTargets] = useState<ReelTarget[]>([]);
   const [curReelItems, setCurReelItems] = useState<(ReelItem | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
@@ -193,13 +184,12 @@ function SlotMachine() {
           <ResultLabel key={idx} reelItem={cri} />
         ))}
       </ScReelLabels>
-      <ScPayoutTray>
-        <div />
-      </ScPayoutTray>
+      <ScUpgradeTray>
+        <UpgradeTray />
+      </ScUpgradeTray>
       <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
         <span>{'T R Y - A G A I N'}</span>
       </ScHandle>
-      <ScSpinCount>{`spins: ${spinCount}`}</ScSpinCount>
     </ScWrapper>
   );
 }

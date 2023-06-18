@@ -16,24 +16,37 @@ export const StyledButton = styled.button`
   }
 
   &.disabled{
-    border-color: var(--color-purple);
-    cursor: default;
+    border-color: var(--color-grey-light);
     color: var(--color-grey-light);
+    cursor: default;
     &:hover{
       background-color: var(--color-grey);
     }
   }
+
+  &.bs-special{
+    background-color: var(--color-purple);
+    border-color: var(--color-cyan);
+    
+    &:hover{
+      background-color: var(--color-pink);
+    }
+  }
 `;
+
+type ButtonStyle = 'normal' | 'special' | 'disabled';
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
   onClick?: Function;
   disabled?: Boolean;
+  buttonStyle?: ButtonStyle;
 }
 
-function Button({ children, onClick, disabled }: Props) {
+function Button({ children, onClick, disabled, buttonStyle = 'normal' }: Props) {
+  const className = disabled ? 'disabled' : `bs-${buttonStyle}`;
   return (
-    <StyledButton className={disabled ? 'disabled' : ''} onClick={(e) => !disabled && onClick && onClick(e)}>
+    <StyledButton className={className} onClick={(e) => !disabled && onClick && onClick(e)}>
       {children}
     </StyledButton>
   );

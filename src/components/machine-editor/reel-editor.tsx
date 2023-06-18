@@ -54,7 +54,7 @@ const ScInsertItemButton = styled(ScInsertButton)`
   img{
     opacity: 0;
     transition: opacity 0.3s;
-    filter: var(--filter-reelitemshadow);
+    filter: var(--filter-shadow1);
   }
 
   &:hover {
@@ -85,7 +85,7 @@ const ScReelContent = styled.div`
 
   img {
     height: 100%;
-    filter: var(--filter-reelitemshadow);
+    filter: var(--filter-shadow1);
   }
 `;
 

@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useState } from 'react';
 import { MAX_REELS } from '../components/slotmachine/data';
+import { clamp } from '../utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -7,6 +8,8 @@ interface AppContextType {
   selectedItemKey: string;
   reelStates: ReelState[];
   upgradeTokens: number;
+  uiState: UiState;
+  setUiState: Function;
   incrementScore: Function;
   setSelectedItemKey: Function;
   setReelStates: Function;
@@ -61,13 +64,16 @@ export const removeAtPosition = (reelIdx: number, positionIdx: number, reelState
     }
   }).filter(rs => rs.items.length > 0);
 }
+export const MAX_REEL_TOKENS = 5;
 
+export type UiState = 'game' | 'editor';
 interface Props {
   children: ReactNode;
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
-  const [upgradeTokens, setUpgradeTokens] = useState(3);
+  const [uiState, setUiState] = useState<UiState>('game');
+  const [upgradeTokens, setUpgradeTokensState] = useState(3);
   const [selectedItemKey, setSelectedItemKey] = useState('');
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
 
@@ -76,23 +82,24 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    //console.log('insertIntoReel', reelIdx, positionIdx, reelStates);
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedItemKey, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
-    console.log('removeFromReel', reelIdx, positionIdx, reelStates);
     setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
   };
 
   const insertReel = (positionIdx: number) => {
-    console.log('insertReel', positionIdx, reelStates);
     if(reelStates.length < MAX_REELS){
       setReelStates(insertIntoArray(positionIdx, { items: [ selectedItemKey ] }, reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
   };
+
+  const setUpgradeTokens = (newAmount: number) => {
+    setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
+  }
 
   return (
     <AppContext.Provider
@@ -102,6 +109,7 @@ const AppProvider = ({ children }: Props) => {
           selectedItemKey,
           reelStates,
           upgradeTokens,
+          uiState,
           incrementScore,
           setSelectedItemKey,
           setReelStates,
@@ -109,6 +117,7 @@ const AppProvider = ({ children }: Props) => {
           removeFromReel,
           insertReel,
           setUpgradeTokens,
+          setUiState,
         } as AppContextType
       }
     >

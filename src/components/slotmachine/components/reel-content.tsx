@@ -27,7 +27,7 @@ const ScWrapper = styled.div<ScProps>`
     right: 0;
     z-index: 1;
     font-size: 3rem;
-    color: var(--color-teal);
+    color: var(--color-cyan);
     -webkit-text-stroke: 2px var(--color-black);
     text-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-black),
       2px -2px 0 var(--color-black), -2px 2px 0 var(--color-black),
@@ -36,7 +36,7 @@ const ScWrapper = styled.div<ScProps>`
 
   img {
     height: 100%;
-    filter: var(--filter-reelitemshadow);
+    filter: var(--filter-shadow1);
   }
 `;
 
