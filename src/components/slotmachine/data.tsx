@@ -72,41 +72,41 @@ export const reelItemDef: ReelItemDict = {
 export const reelsData: ReelDef[] = [
   {
     reelItems: [
-      // reelItemDef.coins
+      reelItemDef.coins,
       reelItemDef.crazy,
       reelItemDef.flame,
-      reelItemDef.halo,
-      reelItemDef.lightning,
-      reelItemDef.poison,
-      reelItemDef.shield,
-      reelItemDef.snowflake,
-      reelItemDef.sword,
+      // reelItemDef.halo,
+      // reelItemDef.lightning,
+      // reelItemDef.poison,
+      // reelItemDef.shield,
+      // reelItemDef.snowflake,
+      // reelItemDef.sword,
     ],
   },
   {
     reelItems: [
-      // reelItemDef.coins
+      reelItemDef.coins,
       reelItemDef.crazy,
       reelItemDef.flame,
-      reelItemDef.halo,
-      reelItemDef.lightning,
-      reelItemDef.poison,
-      reelItemDef.shield,
-      reelItemDef.snowflake,
-      reelItemDef.sword,
+      // reelItemDef.halo,
+      // reelItemDef.lightning,
+      // reelItemDef.poison,
+      // reelItemDef.shield,
+      // reelItemDef.snowflake,
+      // reelItemDef.sword,
     ],
   },
   {
     reelItems: [
-      // reelItemDef.coins
+      reelItemDef.coins,
       reelItemDef.crazy,
       reelItemDef.flame,
-      reelItemDef.halo,
-      reelItemDef.lightning,
-      reelItemDef.poison,
-      reelItemDef.shield,
-      reelItemDef.snowflake,
-      reelItemDef.sword,
+      // reelItemDef.halo,
+      // reelItemDef.lightning,
+      // reelItemDef.poison,
+      // reelItemDef.shield,
+      // reelItemDef.snowflake,
+      // reelItemDef.sword,
     ],
   },
 ];

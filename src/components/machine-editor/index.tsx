@@ -47,7 +47,6 @@ const ScBody = styled.ul`
   gap: 1rem;
 `;
 
-
 const ScBg = styled.div`
   position: absolute;
   inset: 0;
@@ -60,14 +59,14 @@ const ScFooter = styled.div`
 `;
 
 const ScFooterButtons = styled.div`
-  display:flex;
+  display: flex;
   flex-direction: row;
-  >*{
+  > * {
     margin: 1rem;
-    flex:1;
+    flex: 1;
     padding: 1rem;
   }
-`
+`;
 
 export type MachineEditorMode = 'item' | 'reel';
 
@@ -81,7 +80,7 @@ function MachineEditor({ isOpen, onClose }: Props) {
   const closeEditor = useCallback(() => {
     setSelectedItemKey('');
     onClose();
-  }, [ onClose, selectedItemKey ])
+  }, [onClose, selectedItemKey]);
 
   const mode: MachineEditorMode = useMemo(() => {
     return !selectedItemKey ? 'item' : 'reel';
@@ -90,19 +89,36 @@ function MachineEditor({ isOpen, onClose }: Props) {
   return (
     <ScWrapper className={isOpen ? 'panel-open' : ''}>
       <ScPanel>
-        <h2>{`choose your ${mode}`}</h2>
-        <ScBody>
-          { mode === 'item' ? <ItemSelector /> : <ReelEditor/> }
-        </ScBody>
+        <h2>{mode === 'item' ? 'choose your upgrade' : 'insert into reel'}</h2>
+        <ScBody>{mode === 'item' ? <ItemSelector /> : <ReelEditor />}</ScBody>
         <ScFooter>
           <ScFooterButtons>
-            <Button
-              onClick={() => {
-                closeEditor();
-              }}
-            >
-              {'skip'}
-            </Button>
+            {mode === 'item' ? (
+              <Button
+                onClick={() => {
+                  closeEditor();
+                }}
+              >
+                {'skip'}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  onClick={() => {
+                    setSelectedItemKey('');
+                  }}
+                >
+                  {'back'}
+                </Button>
+                <Button
+                  onClick={() => {
+                    closeEditor();
+                  }}
+                >
+                  {'OK'}
+                </Button>
+              </>
+            )}
           </ScFooterButtons>
         </ScFooter>
       </ScPanel>
