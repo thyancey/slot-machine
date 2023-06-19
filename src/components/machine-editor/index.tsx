@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import Button from '../button';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
-import TileSelector, { discardTiles } from './tile-selector';
+import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
+import { discardTiles } from './utils';
 
 const ScWrapper = styled.aside`
   position: absolute;

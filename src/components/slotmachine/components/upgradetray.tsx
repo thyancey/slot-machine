@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { AppContext, MAX_REEL_TOKENS } from '../../../store/appcontext';
+import { AppContext } from '../../../store/appcontext';
+import { MAX_REEL_TOKENS } from '../../../store/data';
 import AssetMap from '../../../assets';
 import Button from '../../button';
 
