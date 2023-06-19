@@ -132,7 +132,7 @@ interface InsertButtonProps {
 }
 const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
   return (
-    <ScInsertTileButton className={tile ? 'active' : ''} onClick={() => onClick()}>
+    <ScInsertTileButton className={tile ? 'active' : ''} onClick={(e) => onClick(e)}>
       <span>{'insert'}</span>
       {tile && <img src={tile.img} />}
     </ScInsertTileButton>

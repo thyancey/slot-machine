@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useState } from 'react';
 import { DeckState, MAX_REELS, INITIAL_TOKENS, MAX_REEL_TOKENS, UiState, TileKeyCollection } from './data';
 import { clamp } from '../utils';
-import { ReelState, insertAfterPosition, insertIntoArray, removeAtPosition } from './utils';
+import { ReelState, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -61,7 +61,7 @@ const AppProvider = ({ children }: Props) => {
   const insertReel = (positionIdx: number) => {
     if(reelStates.length < MAX_REELS){
       const selectedTileKey = tileDeck[selectedTileIdx];
-      setReelStates(insertIntoArray(positionIdx, [ selectedTileKey ], reelStates));
+      setReelStates(insertReelStateIntoReelStates(positionIdx, [ selectedTileKey ], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }

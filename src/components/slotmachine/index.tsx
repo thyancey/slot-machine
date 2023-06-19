@@ -135,7 +135,7 @@ function SlotMachine() {
   }, [spinCount, spinLock, reelStates]);
 
   const onCurTile = useCallback(
-    (tile: Tile, reelIdx: number) => {
+    (tile: Tile | undefined, reelIdx: number) => {
       // this mutation was the only way to get this working reliably...
       curTiles[reelIdx] = tile;
       setCurTiles([...curTiles]);
@@ -173,7 +173,7 @@ function SlotMachine() {
             reelIdx={rdIdx}
             tiles={tiles}
             reelTarget={reelTargets[rdIdx]}
-            setCurTile={(tile: Tile) => onCurTile(tile, rdIdx)}
+            setCurTile={(tile: Tile | undefined) => onCurTile(tile, rdIdx)}
           />
         ))}
       </ScReelContainer>

@@ -1,6 +1,17 @@
 export type ReelState = string[];
 
-export const insertIntoArray = (positionIdx: number, newItem: unknown, array: unknown[]) => {
+export const insertReelStateIntoReelStates = (positionIdx: number, newReelState: ReelState, reelStates: ReelState[]) => {
+  const newPos = positionIdx + 1;
+
+  if (newPos < 0 || newPos > reelStates.length) {
+    console.error(`invalid index ${positionIdx} provided`);
+    return reelStates;
+  }
+
+  return [...reelStates.slice(0, newPos), newReelState, ...reelStates.slice(newPos)];
+};
+
+export const insertIntoArray = (positionIdx: number, newItem: string, array: ReelState) => {
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > array.length) {

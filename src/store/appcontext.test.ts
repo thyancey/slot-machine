@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { insertAfterPosition, insertIntoArray, removeAtPosition } from './utils';
 
-import { insertAfterPosition, insertIntoArray, removeAtPosition } from './appcontext';
 
 describe('AppContext', () => {
   describe('#insertIntoArray', () => {
