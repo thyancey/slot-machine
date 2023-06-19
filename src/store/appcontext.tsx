@@ -19,9 +19,7 @@ interface AppContextType {
   setUpgradeTokens: Function;
 }
 
-export interface ReelState {
-  items: string[];
-}
+export type ReelState = string[];
 
 export const insertIntoArray = (positionIdx: number, newItem: any, array: any[]) => {
   const newPos = positionIdx + 1;
@@ -37,9 +35,7 @@ export const insertIntoArray = (positionIdx: number, newItem: any, array: any[])
 export const insertAfterPosition = (reelIdx: number, positionIdx: number, tileKey: string, reelStates: ReelState[]) => {
   return reelStates.map((reelState, rIdx) => {
     if (rIdx === reelIdx) {
-      return {
-        items: insertIntoArray(positionIdx, tileKey, reelState.items),
-      };
+      return insertIntoArray(positionIdx, tileKey, reelState);
     } else {
       return reelState;
     }
@@ -47,20 +43,18 @@ export const insertAfterPosition = (reelIdx: number, positionIdx: number, tileKe
 };
 
 export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: ReelState[]) => {
-  if(reelStates.length === 1 && reelStates[0].items.length === 1){
+  if(reelStates.length === 1 && reelStates[0].length === 1){
     console.log('ARE YOU CRAZY?!?! YOU CANT HAVE NOTHING!!!!!');
     return reelStates;
   }
 
   return reelStates.map((reelState, rIdx) => {
     if(rIdx === reelIdx){
-      return {
-        items: reelState.items.filter((_, index) => index !== positionIdx)
-      }
+      return reelState.filter((_, index) => index !== positionIdx);
     } else {
       return reelState;
     }
-  }).filter(rs => rs.items.length > 0);
+  }).filter(rs => rs.length > 0);
 }
 
 export const INITIAL_TOKENS = 2;
@@ -91,7 +85,7 @@ const AppProvider = ({ children }: Props) => {
 
   const insertReel = (positionIdx: number) => {
     if(reelStates.length < MAX_REELS){
-      setReelStates(insertIntoArray(positionIdx, { items: [ selectedTileKey ] }, reelStates));
+      setReelStates(insertIntoArray(positionIdx, [ selectedTileKey ], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }

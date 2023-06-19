@@ -152,7 +152,7 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
   }, [reelStates]);
 
   const canRemoveTiles = useMemo(() => {
-    return !selectedTileKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].items.length === 1);
+    return !selectedTileKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].length === 1);
   }, [ reelStates, selectedTileKey, upgradeTokens ]);
 
   const tile = useMemo(() => {
@@ -173,7 +173,7 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
           <h3>{`REEL ${rIdx + 1}`}</h3>
           <ScTiles>
             <InsertTileButton key={`rc_-1`} tile={tile} onClick={() => onInsertIntoReel(rIdx, -1)} />
-            {rd.items.map((ri, tileIdx) => (
+            {rd.map((ri, tileIdx) => (
               <Fragment key={`rc_${tileIdx}`}>
                 <ScReelContent>
                   <img src={tileGlossary[ri].img} />

@@ -1,7 +1,7 @@
 import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
 import { ReelDef, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from './data';
 
-export type ReelTarget = [itemIdx: number, spinCount: number];
+export type ReelTarget = [tileIdx: number, spinCount: number];
 
 // later on, some factors should weight the "random"
 export const getRandomIdx = (array: any[]) => Math.floor(Math.random() * array.length);
@@ -67,9 +67,7 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
 
 export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   activeCombos.reduce((totScore, aC) => {
-    console.log('tiles', tiles);
     let baseScore = tiles.reduce((acc, tile) => (acc += (tile.score || 0)), 0);
-    console.log('baseScore', baseScore);
 
     if (aC.bonus?.multiplier) {
       totScore += aC.bonus.multiplier * baseScore;

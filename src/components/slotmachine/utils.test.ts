@@ -44,7 +44,7 @@ describe('slotmachine', () => {
   
     // TODO: something wrong with wrapped spins
     describe('#projectSpinTarget', () => {
-      // numItems, curIdx, next, numLoops
+      // numTiles, curIdx, next, numLoops
       it('should return index for same loop', () => {
         expect(projectSpinTarget(2, 0, 0, 0)).toBe(2);
         expect(projectSpinTarget(2, 0, 1, 0)).toBe(1);

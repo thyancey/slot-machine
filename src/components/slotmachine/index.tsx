@@ -110,9 +110,7 @@ function SlotMachine() {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
     // only used for INITIALIZING state, after that reelState should be used.
     setReelStates(
-      reelsData.map((reel) => ({
-        items: reel.tiles.map((r) => r.label),
-      }))
+      reelsData.map((reel) => reel.tiles.map((r) => r.label))
     );
   }, []);
 
@@ -123,7 +121,7 @@ function SlotMachine() {
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
-      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.items.map((r) => r)));
+      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.map((r) => r)));
       setReelTargets(randomReelPositions.map((r) => [r, spinCount]));
 
       setSpinCount(spinCount + 1);
@@ -157,7 +155,7 @@ function SlotMachine() {
 
   const reelTiles = useMemo(() => {
     return reelStates.map((reelState) =>
-      reelState.items.map((rI) => tileGlossary[rI])
+      reelState.map((tileKey) => tileGlossary[tileKey])
     );
   }, [reelStates]);
 

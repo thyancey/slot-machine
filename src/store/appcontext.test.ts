@@ -46,47 +46,31 @@ describe('AppContext', () => {
   
   describe('#insertAfterPosition', () => {
     const reelStates = [
-      {
-        items: ['apple', 'banana', 'carrot']
-      },
-      {
-        items: ['apple', 'banana', 'carrot']
-      }
+      ['apple', 'banana', 'carrot'],
+      ['apple', 'banana', 'carrot']
     ];
 
     it('should insert before first reel', () => {
       const result = insertAfterPosition(0, -1, 'NEW', reelStates);
       expect(result).toEqual([
-        {
-          items: ['NEW', 'apple', 'banana', 'carrot']
-        },
-        {
-          items: ['apple', 'banana', 'carrot']
-        }
+        ['NEW', 'apple', 'banana', 'carrot'],
+        ['apple', 'banana', 'carrot']
       ]);
     });
 
     it('should insert after last reel', () => {
       const result = insertAfterPosition(1, 2, 'NEW', reelStates);
       expect(result).toEqual([
-        {
-          items: ['apple', 'banana', 'carrot']
-        },
-        {
-          items: ['apple', 'banana', 'carrot', 'NEW']
-        }
+        ['apple', 'banana', 'carrot'],
+        ['apple', 'banana', 'carrot', 'NEW']
       ]);
     });
 
     it('should return same if bad reel index provided', () => {
       const result = insertAfterPosition(10, 2, 'NEW', reelStates);
       expect(result).toEqual([
-        {
-          items: ['apple', 'banana', 'carrot']
-        },
-        {
-          items: ['apple', 'banana', 'carrot']
-        }
+        ['apple', 'banana', 'carrot'],
+        ['apple', 'banana', 'carrot']
       ]);
     });
   });
@@ -94,92 +78,62 @@ describe('AppContext', () => {
   
   describe('#removeAtPosition', () => {
     const reelStates = [
-      {
-        items: ['apple', 'banana', 'carrot']
-      },
-      {
-        items: ['apple', 'banana', 'carrot']
-      }
+      ['apple', 'banana', 'carrot'],
+      ['apple', 'banana', 'carrot']
     ];
 
     it('should remove first value in first reel', () => {
       const result = removeAtPosition(0, 0, reelStates);
       expect(result).toEqual([
-        {
-          items: ['banana', 'carrot']
-        },
-        {
-          items: ['apple', 'banana', 'carrot']
-        }
+        ['banana', 'carrot'],
+        ['apple', 'banana', 'carrot']
       ]);
     });
 
     it('should remove second value in second reel', () => {
       const result = removeAtPosition(1, 1, reelStates);
       expect(result).toEqual([
-        {
-          items: ['apple', 'banana', 'carrot']
-        },
-        {
-          items: ['apple', 'carrot']
-        }
+        ['apple', 'banana', 'carrot'],
+        ['apple', 'carrot']
       ]);
     });
 
     it('should remove last value in first reel', () => {
       const result = removeAtPosition(0, 2, reelStates);
       expect(result).toEqual([
-        {
-          items: ['apple', 'banana']
-        },
-        {
-          items: ['apple', 'banana', 'carrot']
-        }
+        ['apple', 'banana'],
+        ['apple', 'banana', 'carrot']
       ]);
     });
 
     it('should not break, if invalid position given', () => {
       const result = removeAtPosition(0, 4, reelStates);
       expect(result).toEqual([
-        {
-          items: ['apple', 'banana', 'carrot']
-        },
-        {
-          items: ['apple', 'banana', 'carrot']
-        }
+        ['apple', 'banana', 'carrot'],
+        ['apple', 'banana', 'carrot']
       ]);
     });
 
     it('should remove reel after clearing out all items', () => {
       const theseReelStates = [
-        {
-          items: ['apple']
-        },
-        {
-          items: ['banana', 'carrot']
-        }
+        ['apple'],
+        ['banana', 'carrot']
       ];
 
       const result = removeAtPosition(0, 0, theseReelStates);
       expect(result).toEqual([
-        {
-          items: ['banana', 'carrot']
-        }
+        ['banana', 'carrot']
       ]);
     });
 
     it('should not remove last remaining reel and tile', () => {
       const theseReelStates = [
-        {
-          items: ['apple']
-        }
+        ['apple']
       ];
 
       const result = removeAtPosition(0, 0, theseReelStates);
       expect(result).toEqual([
-        {
-          items: ['apple']
-        }
+        ['apple']
       ]);
     });
   });
