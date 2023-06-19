@@ -59,7 +59,6 @@ function ItemSelector({ active, selectedItemKey, onSelectItemKey }: Props) {
 
   useEffect(() => {
     if (active) {
-      console.log('set them keys');
       setItemKeys(pickRandomFromArray(NUM_CHOICES, Object.keys(reelItemDef)));
     }
   }, [active]);

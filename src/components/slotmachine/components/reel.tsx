@@ -28,9 +28,9 @@ const ScWrapper = styled.div`
 const ScReelOverlay = styled.div`
   position: absolute;
   inset: -0.6rem;
-  --color-pink-transparent: rgba(241, 91, 181, 0);
-  background: var(--color-pink);
-  background: linear-gradient(0deg, var(--color-pink) 0%, var(--color-pink-transparent) 20%, var(--color-pink-transparent) 80%, var(--color-pink) 100%);
+  --color-grey-transparent: rgba(241, 91, 181, 0);
+  background: var(--color-grey);
+  background: linear-gradient(0deg, var(--color-grey) 0%, var(--color-grey-transparent) 20%, var(--color-grey-transparent) 80%, var(--color-grey) 100%);
 `;
 
 const ScReelCenterer = styled.div`
@@ -141,7 +141,7 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
           setSpinAngle(nextAngle);
           completeSpins();
         } else {
-          console.log('<< done', spinProgress);
+          // console.log('<< done', spinProgress);
           completeSpins();
         }
       }
