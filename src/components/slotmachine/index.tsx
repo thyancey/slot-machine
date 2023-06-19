@@ -1,7 +1,15 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, defaultTileDeck, DeckIdxCollection } from '../../store/data';
+import {
+  Tile,
+  defaultReelState,
+  reelComboDef,
+  ReelCombo,
+  ReelComboResult,
+  defaultTileDeck,
+  DeckIdxCollection,
+} from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
@@ -106,7 +114,7 @@ function SlotMachine() {
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck } = useContext(AppContext);
-  const [ targetSlotIdxs, setTargetSlotIdxs ] = useState<number[]>([]);
+  const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
 
   useEffect(() => {
     // console.log('SlotMachine.initial load');
@@ -117,63 +125,56 @@ function SlotMachine() {
       drawn: [],
       // populate and shuffle the deck
       draw: Array.from(Array(defaultTileDeck.length).keys()).sort(() => Math.random() - 0.5),
-      discard: []
+      discard: [],
     });
   }, [setDeckState, setReelStates, setTileDeck]);
 
   useEffect(() => {
-    //setTargetSlotIdxs(Array(reelStates.length).fill([-1, 0]));
-    // console.log('SlotMachine: reelStates changed', reelStates);
     setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
-
-  
-  // useEffect(() => {
-  //   console.log('SlotMachine: reelResults changed', reelResults);
-  // }, [reelResults]);
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
       // determine what the next line of slots will be, someday make this weighted
-      setTargetSlotIdxs(reelStates.map(rs => getRandomIdx(rs)));
+      setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
 
       setSpinCount(spinCount + 1);
-      // setSpinLock(true);
+      setReelResults(Array(reelStates.length).fill(-1));
+      setSpinLock(true);
       setActiveCombos([]);
     }
   }, [spinCount, spinLock, reelStates]);
 
-  const onSpinComplete = useCallback((reelIdx: number) => {
-    console.log(`reel [${reelIdx}] done spinning!`);
-    console.log(reelResults, targetSlotIdxs);
-    if(reelResults[reelIdx] === undefined || targetSlotIdxs[reelIdx] === undefined){
-      return;
+  const onSpinComplete = useCallback(
+    (reelIdx: number, slotIdx: number) => {
+      // console.log(`(pre) reel [${reelIdx}] done spinning and landed on ${slotIdx}!`);
+      setReelResults((prev) => prev.map((sIdx, rIdx) => (rIdx === reelIdx ? slotIdx : sIdx)));
+    },
+    [setReelResults]
+  );
+
+  useEffect(() => {
+    if (reelResults.length === reelStates.length && !reelResults.includes(-1)) {
+      console.log('ALL REELS ARE DONE!');
+      setSpinLock(false);
     }
-    if(reelResults[reelIdx] !== targetSlotIdxs[reelIdx]){
-      setReelResults(reelResults.map((deckIdx, idx) => {
-        if(idx === reelIdx){
-          return targetSlotIdxs[reelIdx];
-        }
-        return deckIdx;
-      }));
-    }
-  }, [reelResults, targetSlotIdxs]);
+  }, [reelResults, reelStates.length]);
 
   const resultSet = useMemo(() => {
-    if(reelStates.length === 0 || reelResults.length === 0 || reelResults.includes(-1)){
+    if (reelStates.length === 0 || reelResults.length === 0) {
       // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
       return [];
     }
     return reelResults.map((slotIdx, reelIdx) => {
+      if(slotIdx === -1) return undefined;
       const deckIdx = reelStates[reelIdx][slotIdx];
       return getTileFromDeckIdx(deckIdx, tileDeck);
-    })
-  }, [ reelResults, reelStates, tileDeck ]);
+    });
+  }, [reelResults, reelStates, tileDeck]);
 
   return (
     <ScWrapper>
       <ScDisplayContainer>
-        []
         <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelStates.length} />
       </ScDisplayContainer>
 

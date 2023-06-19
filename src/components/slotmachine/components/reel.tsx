@@ -4,15 +4,15 @@ import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReelState, getProgressiveSpinAngle, getSpinTarget } from '../utils';
-import { MinMaxTouple, clamp } from '../../../utils';
+import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const SPIN_TICK = 30;
-const SPIN_SPEED = 0.05;
-const MIN_SLOT_DISTANCE = 3;
+const SPIN_DURATION_RANGE = [ 0.005, 0.02 ] as MinMaxTouple;
+const SLOT_DISTANCE_RANGE = [ 20, 40 ] as MinMaxTouple;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -22,7 +22,7 @@ const ScWrapper = styled.div`
   position: relative;
 
   /* makes a cutout */
-  /* clip-path: inset(0 0 round 10px); */
+  clip-path: inset(0 0 round 10px);
 `;
 
 const ScReelOverlay = styled.div`
@@ -61,7 +61,7 @@ type Props = {
   tileDeck: TileKeyCollection;
   targetSlotIdx: number; // idx of tiles to go to, regardless of how much spinning to be done
   spinCount: number; // this helps determine when a spin started
-  onSpinComplete: (reelIdx: number) => void;
+  onSpinComplete: (reelIdx: number, slotIdx: number) => void;
 };
 function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpinComplete }: Props) {
   // (looped) idx of current item, number grows to infinity
@@ -69,6 +69,7 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([0, 0]); // current, next
   const [spinProgress, setSpinProgress] = useState(1);
+  const [spinSpeed, setSpinSpeed] = useState(0.1);
 
   // const spinTimer = useRef<number | null>(null);
 
@@ -79,30 +80,31 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
     setLoopedIdxs([0, 0]);
   }, [reelState, reelIdx]);
 
+  /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
-    /* THIS SHOULD BE THE CATALYST TO START SPINNING */
-    console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
+    //console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
 
     // allows the reel to spin again
     setSpinProgress(0);
-
+    setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
     // the targetLoopedIdx (index [1]) will now be come the previous, so assign it as such, and 
     // use it to calculate the next targetLoopedIdx all at once
-    setLoopedIdxs((prev) => [prev[1], getSpinTarget(prev[1], targetSlotIdx, reelState.length, MIN_SLOT_DISTANCE)]);
-  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress]);
+    setLoopedIdxs((prev) => [prev[1], getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true))]);
+  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed]);
 
   useEffect(() => {
     if (spinProgress >= 1) {
-      console.log('DONE SPINNIN');
-      // end this
-      onSpinComplete(reelIdx);
+      // have to calculate the end result value here, over using "targetSlotIdx", because adding that
+      // prop to this useEffect dependency array makes the reel think it finished spinning on a brand
+      // new pull, cause spinProgress had not changed to 0 yet
+      onSpinComplete(reelIdx, loopedIdxs[1] % reelState.length);
     } else {
       setTimeout(() => {
         // use an easing function to smoothly increment the % progress up to the value of 1
-        setSpinProgress((prevProgress) => clamp(prevProgress + SPIN_SPEED, 0, 1));
+        setSpinProgress((prevProgress) => clamp(prevProgress + spinSpeed, 0, 1));
       }, SPIN_TICK);
     }
-  }, [spinProgress, setSpinProgress, onSpinComplete, reelIdx]);
+  }, [spinProgress, setSpinProgress, onSpinComplete, reelIdx, loopedIdxs, reelState.length, spinSpeed]);
 
   const reelTop = useMemo(() => {
     const curAngle = getProgressiveSpinAngle(spinProgress, loopedIdxs[1], loopedIdxs[0], REEL_HEIGHT);
@@ -127,7 +129,7 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
           ))}
         </ScReelTape>
       </ScReelCenterer>
-      {/* <ScReelOverlay /> */}
+      <ScReelOverlay />
     </ScWrapper>
   );
 }
