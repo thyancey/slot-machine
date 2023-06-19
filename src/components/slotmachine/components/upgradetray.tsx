@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { AppContext, MAX_REEL_TOKENS } from '../../../store/appcontext';
+import { AppContext } from '../../../store/appcontext';
+import { MAX_REEL_TOKENS } from '../../../store/data';
 import AssetMap from '../../../assets';
 import Button from '../../button';
 
@@ -40,8 +41,7 @@ const ScToken = styled.li`
   }
 `;
 
-type Props = {};
-function UpgradeTray({}: Props) {
+function UpgradeTray() {
   const { upgradeTokens, setUiState } = useContext(AppContext);
   const tokenStatus = useMemo(() => {
     return Array.from({ length: MAX_REEL_TOKENS }, (_, idx) => idx).map((idx) => idx < upgradeTokens);

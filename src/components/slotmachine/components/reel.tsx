@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import ReelContent from './reel-content';
 import { REEL_HEIGHT, REEL_OVERLAP, Tile, SPIN_POWER_RANGE } from '../../../store/data';
 import { clamp, randInRange } from '../../../utils';
-import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
+import { ReelTarget, buildReelLegacy, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
-const SPIN_TICK: number = 30;
+const SPIN_TICK = 30;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -51,7 +51,7 @@ const ScReelTape = styled.div`
 
 type Props = {
   tiles: Tile[];
-  setCurTile: Function;
+  setCurTile: (tile: Tile | undefined) => void;
   reelTarget: ReelTarget;
   reelIdx: number; // mostly for identification / logging
 };
@@ -77,7 +77,7 @@ function SlotReel({ tiles, reelIdx, setCurTile, reelTarget }: Props) {
 
   useEffect(() => {
     // console.log('---------- RESET REEL ---------');
-    setReelTiles(buildReel(tiles, REEL_OVERLAP));
+    setReelTiles(buildReelLegacy(tiles, REEL_OVERLAP));
     setSpinAngle(0);
 
     setLastSpinAngle(0);

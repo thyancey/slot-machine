@@ -31,9 +31,7 @@ const ScScorebox = styled.div`
   }
 `;
 
-interface Props {
-}
-function Header({}: Props) {
+function Header() {
   const { score } = useContext(AppContext);
 
   return (

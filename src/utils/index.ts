@@ -20,7 +20,7 @@ const easeInOutQuad = (t: number) => {
 
 export const checkSameStrings = (items: string[]) => items.filter((i) => i === items[0]).length === items.length;
 export const checkUniqueStrings = (items: string[]) => {
-  let unique = items.reduce((acc, str) => {
+  const unique = items.reduce((acc, str) => {
     if (acc.indexOf(str) === -1) {
       return [...acc, str];
     }
@@ -29,7 +29,7 @@ export const checkUniqueStrings = (items: string[]) => {
   return unique.length === items.length;
 };
 
-export const pickRandomFromArray = (numChoices: number, array: any[]) => {
+export const pickRandomFromArray = (numChoices: number, array: unknown[]) => {
   const idxs = Array.from(Array(array.length).keys());
   const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
   

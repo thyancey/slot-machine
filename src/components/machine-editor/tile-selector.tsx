@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { DeckState, Tile, tileGlossary } from '../../store/data';
+import { MAX_HAND_SIZE, Tile, tileGlossary } from '../../store/data';
 import { useEffect, useContext, useMemo } from 'react';
-import { clamp } from '../../utils';
 import { AppContext } from '../../store/appcontext';
+import { drawTiles } from './utils';
 
 const ScWrapper = styled.ul`
   display: flex;
@@ -48,49 +48,6 @@ const ScTile = styled.li`
   }
 `;
 
-/**
- * Pull cards from the top of the deck. If there is no more draw pile, refill it from the discard. Do not
- */
-export const drawTile = (deckState: DeckState, noRefill?: boolean) => {
-  if (deckState.draw.length === 0) {
-    if (noRefill || deckState.discard.length === 0) {
-      console.log('!! no more cards!');
-      // well apparently theres no cards left, so just give back what you had
-      return deckState;
-    }
-
-    // refill / shuffle the deck
-    const shuffledDraw = deckState.discard.sort(() => Math.random() - 0.5);
-    deckState.draw = shuffledDraw;
-    deckState.discard = [];
-  }
-
-  return {
-    drawn: [...deckState.drawn, deckState.draw[deckState.draw.length - 1]],
-    draw: deckState.draw.slice(0, -1),
-    discard: deckState.discard,
-  };
-};
-
-export const drawTiles = (numToDraw: number, deckState: DeckState) => {
-  let availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
-  const operations = Array.from(Array(availableToDraw).keys());
-
-  return operations.reduce((acc, _) => {
-    return drawTile(acc);
-  }, deckState);
-};
-
-export const discardTiles = (discardIdxs: number[], deckState: DeckState) => {
-  return {
-    drawn: deckState.drawn.filter((tileIdx) => !discardIdxs.includes(tileIdx)),
-    draw: deckState.draw,
-    discard: [...deckState.discard, ...discardIdxs],
-  };
-};
-
-const NUM_CHOICES = 3;
-
 interface HandTile {
   deckIdx: number,
   tile: Tile
@@ -99,7 +56,7 @@ interface HandTile {
 interface Props {
   active: boolean;
   selectedTileIdx: number;
-  onSelectTile: Function;
+  onSelectTile: (deckIdx: number) => void;
 }
 function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
   const { deckState, setDeckState, tileDeck } = useContext(AppContext);
@@ -107,17 +64,18 @@ function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
   // when loading screen, draw some cards
   useEffect(() => {
     if (active) {
-      const afterState = drawTiles(NUM_CHOICES, deckState);
+      const afterState = drawTiles(MAX_HAND_SIZE, deckState);
+      console.log('setDeckState', afterState);
       setDeckState(afterState);
     }
-  }, [active]);
+  }, [active, setDeckState]);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
       deckIdx,
       tile: tileGlossary[tileDeck[deckIdx]]
     }));
-  }, [deckState]);
+  }, [deckState, tileDeck]);
 
   return (
     <ScWrapper>

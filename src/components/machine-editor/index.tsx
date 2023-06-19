@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import Button from '../button';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
-import TileSelector, { discardTiles } from './tile-selector';
+import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
+import { discardTiles } from './utils';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -70,12 +71,10 @@ const ScFooterButtons = styled.div`
 
 export type MachineEditorMode = 'hand' | 'reel';
 
-interface Props {}
-function MachineEditor({}: Props) {
+function MachineEditor() {
   const {
     uiState,
     setUiState,
-    selectedTileIdx,
     setSelectedTileIdx,
     insertIntoReel,
     removeFromReel,
@@ -88,15 +87,6 @@ function MachineEditor({}: Props) {
   const [preselectedTileIdx, setPreselectedTileIdx] = useState(-1);
   const [editorMode, setEditorMode] = useState<MachineEditorMode>('hand');
 
-  // close this sucker when you run out of money
-  /*
-  useEffect(() => {
-    if (upgradeTokens <= 0) {
-      setUiState('game');
-    }
-  }, [upgradeTokens]);
-  */
-
   useEffect(() => {
     if (uiState !== 'editor') {
       if (upgradeTokens === 0) {
@@ -106,18 +96,14 @@ function MachineEditor({}: Props) {
       }
       setPreselectedTileIdx(-1);
     }
-  }, [uiState]);
-
-  // useEffect(() => {
-  //   setEditorMode(selectedTileIdx ? 'hand' : 'reel');
-  // }, [selectedTileIdx]);
+  }, [uiState, upgradeTokens]);
 
   const closeEditor = useCallback(() => {
     setSelectedTileIdx(-1);
     setPreselectedTileIdx(-1);
-    setDeckState(discardTiles(deckState.drawn, deckState))
+    setDeckState(discardTiles(deckState.drawn, deckState));
     setUiState('game');
-  }, [selectedTileIdx, deckState]);
+  }, [deckState, setSelectedTileIdx, setPreselectedTileIdx, setDeckState, setUiState]);
 
   const onInsertIntoReel = useCallback(
     (reelIdx: number, tileIdx: number) => {
@@ -126,7 +112,7 @@ function MachineEditor({}: Props) {
       setPreselectedTileIdx(-1);
       setUpgradeTokens(upgradeTokens - 1);
     },
-    [insertIntoReel, upgradeTokens]
+    [insertIntoReel, upgradeTokens, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
   );
   const onInsertReel = useCallback(
     (reelIdx: number) => {
@@ -135,7 +121,7 @@ function MachineEditor({}: Props) {
       setPreselectedTileIdx(-1);
       setUpgradeTokens(upgradeTokens - 1);
     },
-    [insertIntoReel, upgradeTokens]
+    [upgradeTokens, setSelectedTileIdx, insertReel, setUpgradeTokens]
   );
   const onRemoveFromReel = useCallback(
     (reelIdx: number, tileIdx: number) => {
@@ -144,7 +130,7 @@ function MachineEditor({}: Props) {
       setPreselectedTileIdx(-1);
       setUpgradeTokens(upgradeTokens + 1);
     },
-    [insertIntoReel, upgradeTokens]
+    [upgradeTokens, removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
   );
 
   return (
@@ -189,10 +175,10 @@ const renderFooter = (
   editorMode: MachineEditorMode,
   preselectedTileIdx: number,
   upgradeTokens: number,
-  setSelectedTileIdx: Function,
-  setPreselectedTileIdx: Function,
-  setEditorMode: Function,
-  closeEditor: Function
+  setSelectedTileIdx: (idx: number) => void,
+  setPreselectedTileIdx: (idx: number) => void,
+  setEditorMode: (str: MachineEditorMode) => void,
+  closeEditor: () => void
 ) => {
   const CloseButton = () => (
     <Button
@@ -229,8 +215,8 @@ const renderFooter = (
         <>
           <Button
             onClick={() => {
-              setSelectedTileIdx('');
-              setPreselectedTileIdx('');
+              setSelectedTileIdx(-1);
+              setPreselectedTileIdx(-1);
               setEditorMode('hand');
             }}
           >
@@ -246,8 +232,8 @@ const renderFooter = (
         <Button
           buttonStyle='special'
           onClick={() => {
-            setSelectedTileIdx('');
-            setPreselectedTileIdx('');
+            setSelectedTileIdx(-1);
+            setPreselectedTileIdx(-1);
             setEditorMode('hand');
           }}
         >

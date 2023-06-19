@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Fragment, useContext, useMemo } from 'react';
-import { AppContext, MAX_REEL_TOKENS } from '../../store/appcontext';
-import { MAX_REELS, Tile, tileGlossary } from '../../store/data';
+import { AppContext } from '../../store/appcontext';
+import { MAX_REELS, MAX_REEL_TOKENS, Tile, tileGlossary } from '../../store/data';
 
 const ScWrapper = styled.ul`
   background-color: var(--color-grey);
@@ -127,12 +127,12 @@ const ScRemoveLabel = styled.div`
 `;
 
 interface InsertButtonProps {
-  onClick: Function;
+  onClick: React.MouseEventHandler;
   tile: Tile;
 }
 const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
   return (
-    <ScInsertTileButton className={!!tile ? 'active' : ''} onClick={() => onClick()}>
+    <ScInsertTileButton className={tile ? 'active' : ''} onClick={(e) => onClick(e)}>
       <span>{'insert'}</span>
       {tile && <img src={tile.img} />}
     </ScInsertTileButton>
@@ -140,9 +140,9 @@ const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
 };
 
 interface Props {
-  onInsertIntoReel: Function;
-  onRemoveFromReel: Function;
-  onInsertReel: Function;
+  onInsertIntoReel: (reelIdx: number, positionIdx: number) => void;
+  onRemoveFromReel: (reelIdx: number, positionIdx: number) => void;
+  onInsertReel: (positionIdx: number) => void;
 }
 function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props) {
   const { reelStates, selectedTileIdx, upgradeTokens, tileDeck } = useContext(AppContext);
@@ -157,7 +157,7 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
 
   const tile = useMemo(() => {
     return tileGlossary[tileDeck[selectedTileIdx]];
-  }, [selectedTileIdx]);
+  }, [tileDeck, selectedTileIdx]);
 
 
   return (

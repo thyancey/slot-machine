@@ -3,6 +3,7 @@ import SlotMachine from './components/slotmachine';
 import Header from './components/header';
 import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
+import Deck from './components/deck';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -49,6 +50,7 @@ function Layout() {
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
       <MachineEditor />
+      {/* <Deck /> */}
     </ScWrapper>
   );
 }
