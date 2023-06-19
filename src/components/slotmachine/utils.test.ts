@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { buildReel, getActiveCombos, projectSpinTarget } from './utils';
+import { buildReelFromKeys, getActiveCombos, getSpinTarget, projectSpinTarget } from './utils';
 import { ReelCombo, Tile } from '../../store/data';
 
 describe('slotmachine', () => {
   describe('slotmachine > reel', () => {
-    describe('#buildReel', () => {
+    describe('#buildReelFromKeys', () => {
       it('should keep tiles the same when no reelOverlap provided', () => {
-        expect(buildReel(['A', 'B', 'C'], 0)).toEqual(
+        expect(buildReelFromKeys(['A', 'B', 'C'], 0)).toEqual(
           ['A', 'B', 'C']
         );
       });
   
       it('should keep previx items before/after reel', () => {
-        expect(buildReel(['A', 'B', 'C'], 2)).toEqual(
+        expect(buildReelFromKeys(['A', 'B', 'C'], 2)).toEqual(
           [
             'B', 'C',
             'A', 'B', 'C',
@@ -22,7 +22,7 @@ describe('slotmachine', () => {
       });
   
       it('should handle repeat longer than array', () => {
-        expect(buildReel(['A', 'B'], 3)).toEqual(
+        expect(buildReelFromKeys(['A', 'B'], 3)).toEqual(
           [
             'B', 'A', 'B',
             'A', 'B',
@@ -32,7 +32,7 @@ describe('slotmachine', () => {
       });
   
       it('should handle repeat for a single tile', () => {
-        expect(buildReel(['A'], 3)).toEqual(
+        expect(buildReelFromKeys(['A'], 3)).toEqual(
           [
             'A', 'A', 'A',
             'A',
@@ -67,6 +67,32 @@ describe('slotmachine', () => {
         expect(projectSpinTarget(4, 1, 3, 1)).toBe(7)
       })
     });
+
+    describe('#getSpinTarget', () => {
+      // tests use a reel of 3 indicies, interpreted like this:
+      // [ 0, 1, 2, | 3, 4, 5, | 6, 7, 8, | 9, 10, 11]
+      it('should get adjacent spinTarget (no loop) with no minDistance', () => {
+        expect(getSpinTarget(0, 1, 3, 0)).toBe(1)
+      });
+      it('should get adjacent spinTarget (no loop) with minDistance of 1', () => {
+        expect(getSpinTarget(0, 1, 3, 1)).toBe(1)
+      });
+      it('should get next adjacent spinTarget (1 loop) with minDistance of 2', () => {
+        expect(getSpinTarget(0, 1, 3, 2)).toBe(4)
+      });
+      it('should stay in same spot, if on idx and no minDistance', () => {
+        expect(getSpinTarget(1, 1, 3, 0)).toBe(1)
+      });
+      it('should loop to next exact position, if on idx and minDistance length of set', () => {
+        expect(getSpinTarget(1, 1, 3, 3)).toBe(4)
+      });
+      it('should loop to next exact position, if on idx and minDistance less than length of set, but greater than 0', () => {
+        expect(getSpinTarget(1, 1, 3, 1)).toBe(4)
+      });
+      it('should loop a bunch of times with a big minDistance, and land on desired idx', () => {
+        expect(getSpinTarget(1, 0, 3, 6)).toBe(9)
+      });
+    })
   });
   
   describe('#getActiveCombos', () => {

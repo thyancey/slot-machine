@@ -1,5 +1,13 @@
-import { ReactNode, createContext, useState } from 'react';
-import { DeckState, MAX_REELS, INITIAL_TOKENS, MAX_REEL_TOKENS, UiState, TileKeyCollection, DeckIdxCollection } from './data';
+import { ReactNode, createContext, useCallback, useState } from 'react';
+import {
+  DeckState,
+  MAX_REELS,
+  INITIAL_TOKENS,
+  MAX_REEL_TOKENS,
+  UiState,
+  TileKeyCollection,
+  DeckIdxCollection,
+} from './data';
 import { clamp } from '../utils';
 import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 
@@ -13,7 +21,7 @@ interface AppContextType {
 
   tileDeck: TileKeyCollection;
   setTileDeck: (value: TileKeyCollection) => void;
-  
+
   deckState: DeckState;
   setDeckState: (value: DeckState) => void;
 
@@ -42,7 +50,9 @@ const AppProvider = ({ children }: Props) => {
   const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
-    drawn: [], draw: [], discard: []
+    drawn: [],
+    draw: [],
+    discard: [],
   });
 
   const incrementScore = (increment = 0) => {
@@ -50,16 +60,19 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
+    console.log('1');
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
+    console.log('2');
     setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
   };
 
   const insertReel = (positionIdx: number) => {
-    if(reelStates.length < MAX_REELS){
-      setReelStates(insertReelStateIntoReelStates(positionIdx, [ selectedTileIdx ], reelStates));
+    if (reelStates.length < MAX_REELS) {
+      console.log('3');
+      setReelStates(insertReelStateIntoReelStates(positionIdx, [selectedTileIdx], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
@@ -67,7 +80,7 @@ const AppProvider = ({ children }: Props) => {
 
   const setUpgradeTokens = (newAmount: number) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
-  }
+  };
 
   return (
     <AppContext.Provider
@@ -87,7 +100,7 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
-          
+
           insertIntoReel,
           removeFromReel,
           insertReel,
@@ -96,7 +109,7 @@ const AppProvider = ({ children }: Props) => {
           setTileDeck,
 
           deckState,
-          setDeckState
+          setDeckState,
         } as AppContextType
       }
     >

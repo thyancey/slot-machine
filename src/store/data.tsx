@@ -163,20 +163,8 @@ export type TileDeck = Tile[];
 // (usually has less, the TileDeck changes as the player progresses)
 export const defaultTileDeck: TileKeyCollection = [
   'coins',
-  'coins',
-  'coins',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
+  'slot_bar2',
+  'slot_bar3'
 ]
 
 /**
@@ -200,9 +188,7 @@ export type DeckState = {
 export const defaultReelState: DeckIdxCollection[] = [
   [
     0,
-    3
-  ],
-  [
-    3
+    1,
+    2
   ]
 ];
