@@ -27,7 +27,7 @@ const ScWrapper = styled.div<ScProps>`
     right: 0;
     z-index: 1;
     font-size: 3rem;
-    color: var(--color-teal);
+    color: var(--color-cyan);
     -webkit-text-stroke: 2px var(--color-black);
     text-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-black),
       2px -2px 0 var(--color-black), -2px 2px 0 var(--color-black),
@@ -35,8 +35,8 @@ const ScWrapper = styled.div<ScProps>`
   }
 
   img {
-    width: 100%;
-    filter: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
+    height: 100%;
+    filter: var(--filter-shadow1);
   }
 `;
 
@@ -48,7 +48,6 @@ type Props = {
 function ReelContent({ reelItem, height }: Props) {
   return (
     <ScWrapper height={height}>
-      {/* <p>{reelItem.idx}</p> */}
       <img src={reelItem.img || ''} />
     </ScWrapper>
   );

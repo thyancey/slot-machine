@@ -26,7 +26,12 @@ const ScWrapper = styled.div`
   }
 `;
 
-const ScCombos = styled.ul``;
+const ScCombos = styled.ul`
+  li{
+    font-size: 1rem;
+    line-height: 1.25rem;
+  }
+`;
 
 const ScStatus = styled.div``;
 

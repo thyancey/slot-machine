@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { AppContext } from '../store/appcontext';
 import { useContext } from 'react';
-import Button from './button';
 
 const ScWrapper = styled.header`
   border-bottom: 0.75rem solid var(--color-pink);
@@ -32,25 +31,16 @@ const ScScorebox = styled.div`
   }
 `;
 
-const ScDebugMenu = styled.div`
-  position: absolute;
-  right: 0;
-  top: 0;
-`;
-
 interface Props {
-  onOpenItemSelector: Function;
 }
-function Header({ onOpenItemSelector }: Props) {
+function Header({}: Props) {
   const { score } = useContext(AppContext);
+
   return (
     <ScWrapper>
       <ScScorebox>
         <p>{score}</p>
       </ScScorebox>
-      <ScDebugMenu>
-        <Button onClick={() => onOpenItemSelector()}>{'+'}</Button>
-      </ScDebugMenu>
     </ScWrapper>
   );
 }

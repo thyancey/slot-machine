@@ -5,18 +5,18 @@ export const randInRange = (range: MinMaxTouple, isIndexes = false) => {
 };
 export const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(val, max));
 
-export type EasingFunction = 'linear' | 'easeInOutQuad' | 'easeInOutBounce'
+export type EasingFunction = 'linear' | 'easeInOutQuad' | 'easeInOutBounce';
 export const getEasing = (perc: number, easingFunc: EasingFunction) => {
   switch(easingFunc){
     case 'linear': return easeLinear(perc);
     case 'easeInOutQuad': return easeInOutQuad(perc);
     default: return easeLinear(perc);
   }
-}
+};
 const easeLinear = (t: number) => t;
 const easeInOutQuad = (t: number) => {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-}
+};
 
 export const checkSameStrings = (items: string[]) => items.filter((i) => i === items[0]).length === items.length;
 export const checkUniqueStrings = (items: string[]) => {
@@ -27,4 +27,11 @@ export const checkUniqueStrings = (items: string[]) => {
     return acc;
   }, [] as string[]);
   return unique.length === items.length;
+};
+
+export const pickRandomFromArray = (numChoices: number, array: any[]) => {
+  const idxs = Array.from(Array(array.length).keys());
+  const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
+  
+  return shuffledIdxs.slice(0, numChoices).map(i => array[i]);
 };

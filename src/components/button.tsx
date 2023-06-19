@@ -1,28 +1,55 @@
 import styled from 'styled-components';
 
-const ScWrapper = styled.button`
-  border: var(--border-width) solid var(--color-pink);
+export const StyledButton = styled.button`
+  border: var(--border-width-small) solid var(--color-pink);
   background-color: var(--color-grey);
   font-family: var(--font-base);
   border-radius: 0.75rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 2rem;
   padding: 0.5rem;
-  padding-bottom: 0.7rem;
 
   cursor: pointer;
-  &:hover {
+  color: var(--color-white);
+  &:hover{
     background-color: var(--color-pink);
   }
+
+  &.disabled{
+    border-color: var(--color-grey-light);
+    color: var(--color-grey-light);
+    cursor: default;
+    &:hover{
+      background-color: var(--color-grey);
+    }
+  }
+
+  &.bs-special{
+    background-color: var(--color-purple);
+    border-color: var(--color-cyan);
+    
+    &:hover{
+      background-color: var(--color-pink);
+    }
+  }
 `;
+
+type ButtonStyle = 'normal' | 'special' | 'disabled';
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
   onClick?: Function;
+  disabled?: Boolean;
+  buttonStyle?: ButtonStyle;
 }
 
-function Button({ children, onClick }: Props) {
-  return <ScWrapper onClick={(e) => onClick && onClick(e)}>{children}</ScWrapper>;
+function Button({ children, onClick, disabled, buttonStyle = 'normal' }: Props) {
+  const className = disabled ? 'disabled' : `bs-${buttonStyle}`;
+  return (
+    <StyledButton className={className} onClick={(e) => !disabled && onClick && onClick(e)}>
+      {children}
+    </StyledButton>
+  );
 }
 
 export default Button;

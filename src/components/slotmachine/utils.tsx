@@ -4,9 +4,13 @@ import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup 
 export type ReelTarget = [itemIdx: number, spinCount: number];
 
 // later on, some factors should weight the "random"
-export const getRandomReelIdx = (reelDef: ReelDef) => Math.floor(Math.random() * reelDef.reelItems.length);
+export const getRandomIdx = (array: any[]) => Math.floor(Math.random() * array.length);
+export const getRandom2dIdxs = (arrayOfArrays: any[][]) => {
+  return arrayOfArrays.map((array) => getRandomIdx(array));
+};
+
 export const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
-  return reelSet.map((reelDef) => [getRandomReelIdx(reelDef), spinCount] as ReelTarget);
+  return reelSet.map((reelDef) => [getRandomIdx(reelDef.reelItems), spinCount] as ReelTarget);
 };
 
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], reelItems: ReelItem[]) => {
@@ -56,7 +60,7 @@ export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) 
   // gather groups of matching attributes
   // check labels for same or unique bonus
   // rank combos
-  console.log('gac', reelItems, reelCombos, activeCombos);
+  // console.log('gac', reelItems, reelCombos, activeCombos);
 
   return activeCombos;
 };

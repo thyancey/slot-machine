@@ -15,9 +15,10 @@
 
   --color-black: #070707;
   --color-grey: #32292f;
+  --color-grey-light: #574751;
   --color-white: #FFF9D6;
   --color-blue: #00bbf9;
-  --color-teal: #00f5d4;
+  --color-cyan: #00f5d4;
   --color-yellow: #fee440;
   --color-green: #0bbf00;
   --color-red: #f15b00;
@@ -32,10 +33,15 @@
   --border-width: 0.75rem;
   --border-width-small: 0.5rem;
 
+  --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
+
   font-family: var(--font-base);
 
   background-color: var(--color-grey);
   color: var(--color-white);
+  
+  
+  user-select: none;
 }
 
 *, *::before, *::after {
@@ -59,9 +65,22 @@ h2 {
   line-height: 1;
 }
 
-h1, h2, h3, h4, h5, p, span, i, ul, li {
+h1, h2, h3, h4, h5, p, span, i {
   margin: 0;
   padding: 0;
+}
+
+ul, li {
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+
+button {
+  margin:0;
+  padding:0;
+  border:none;
+  font-family: var(--font-base);
 }
 
 /* @media (prefers-color-scheme: light) {} */
