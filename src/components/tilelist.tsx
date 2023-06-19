@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { tileGlossary } from './slotmachine/data';
+import { tileGlossary } from '../store/data';
 
 const ScWrapper = styled.aside`
   position: absolute;

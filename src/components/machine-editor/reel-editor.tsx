@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Fragment, useContext, useMemo } from 'react';
 import { AppContext, MAX_REEL_TOKENS } from '../../store/appcontext';
-import { MAX_REELS, Tile, tileGlossary } from '../slotmachine/data';
+import { MAX_REELS, Tile, tileGlossary } from '../../store/data';
 
 const ScWrapper = styled.ul`
   background-color: var(--color-grey);

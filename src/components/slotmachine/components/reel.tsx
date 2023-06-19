@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { REEL_HEIGHT, REEL_OVERLAP, Tile, SPIN_POWER_RANGE } from '../data';
+import { REEL_HEIGHT, REEL_OVERLAP, Tile, SPIN_POWER_RANGE } from '../../../store/data';
 import { clamp, randInRange } from '../../../utils';
 import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
 

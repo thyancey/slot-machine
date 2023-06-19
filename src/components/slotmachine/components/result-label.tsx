@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Tile } from '../data';
+import { Tile } from '../../../store/data';
 import { useEffect, useState } from 'react';
 
 const ScWrapper = styled.div`

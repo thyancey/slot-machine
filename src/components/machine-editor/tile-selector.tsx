@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { tileGlossary } from '../slotmachine/data';
+import { tileGlossary } from '../../store/data';
 import { useEffect, useState } from 'react';
 import { pickRandomFromArray } from '../../utils';
 

@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useState } from 'react';
-import { MAX_REELS } from '../components/slotmachine/data';
+import { MAX_REELS } from './data';
 import { clamp } from '../utils';
 
 const AppContext = createContext({} as AppContextType);

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import { Tile, reelsData, reelComboDef, ReelCombo, ReelComboResult, tileGlossary } from './data';
+import { Tile, reelsData, reelComboDef, ReelCombo, ReelComboResult, tileGlossary } from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';

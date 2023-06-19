@@ -1,5 +1,5 @@
 import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { ReelDef, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from './data';
+import { ReelDef, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
 

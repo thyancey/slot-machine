@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildReel, getActiveCombos, projectSpinTarget } from './utils';
-import { ReelCombo, Tile } from './data';
+import { ReelCombo, Tile } from '../../store/data';
 
 describe('slotmachine', () => {
   describe('slotmachine > reel', () => {

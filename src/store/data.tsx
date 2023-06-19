@@ -1,5 +1,5 @@
-import { MinMaxTouple } from '../../utils';
-import AssetMap from '../../assets';
+import { MinMaxTouple } from '../utils';
+import AssetMap from '../assets';
 
 export const REEL_HEIGHT = 120; // height of each reel cell
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
