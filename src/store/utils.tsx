@@ -1,6 +1,6 @@
 export type ReelState = string[];
 
-export const insertIntoArray = (positionIdx: number, newItem: any, array: any[]) => {
+export const insertIntoArray = (positionIdx: number, newItem: unknown, array: unknown[]) => {
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > array.length) {

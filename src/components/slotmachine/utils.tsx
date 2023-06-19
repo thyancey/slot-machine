@@ -4,8 +4,8 @@ import { TileKeyCollection, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, Bonus
 export type ReelTarget = [tileIdx: number, spinCount: number];
 
 // later on, some factors should weight the "random"
-export const getRandomIdx = (array: any[]) => Math.floor(Math.random() * array.length);
-export const getRandom2dIdxs = (arrayOfArrays: any[][]) => {
+export const getRandomIdx = (array: unknown[]) => Math.floor(Math.random() * array.length);
+export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
 };
 
@@ -37,7 +37,7 @@ export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
 export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   // loop each combo
   const activeCombos = reelCombos.reduce((combos, rC) => {
-    for (var a = 0; a < rC.attributes.length; a++) {
+    for (let a = 0; a < rC.attributes.length; a++) {
       // if every tile has a matching attribute
       if (
         tiles.filter((rI) => {
@@ -80,26 +80,26 @@ export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   }, 0);
 
 // add redudant tiles to top and bottom of reel to make it seem continuous
-export const buildReel = (tiles: any[], reelOverlap: number) => {
+export const buildReel = (tileKeys: string[], reelOverlap: number) => {
   // starting with [ 0, 1, 2 ]
 
   // [ +1, +2, 0, 1, 2 ]
   const loopBefore = [];
   // the +1 here attached the last to the top, regardless of overlap value
   for (let i = 0; i < reelOverlap; i++) {
-    const offset = tiles.length - (i % tiles.length) - 1;
-    loopBefore.push(tiles[offset]);
+    const offset = tileKeys.length - (i % tileKeys.length) - 1;
+    loopBefore.push(tileKeys[offset]);
   }
 
   // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
   const loopAfter = [];
   for (let i = 0; i < reelOverlap; i++) {
-    loopAfter.push(tiles[i % tiles.length]);
+    loopAfter.push(tileKeys[i % tileKeys.length]);
   }
 
-  return ([] as any[])
+  return ([] as string[])
     .concat(loopBefore.reverse())
-    .concat(tiles.map((rI) => rI))
+    .concat(tileKeys.map((tileKey) => tileKey))
     .concat(loopAfter);
 };
 

@@ -116,7 +116,7 @@ function SlotMachine() {
       draw: Array.from(Array(defaultTileDeck.length).keys()).sort(() => Math.random() - 0.5),
       discard: []
     });
-  }, []);
+  }, [setDeckState, setReelStates, setTileDeck]);
 
   useEffect(() => {
     setReelTargets(Array(reelStates.length).fill([-1, 0]));
@@ -142,9 +142,7 @@ function SlotMachine() {
 
       // if no undefined tiles, all tiles are done spinning.
       if (curTiles.filter((rI) => rI === undefined).length === 0) {
-        // setActiveCombos
-        // @ts-ignore curTiles doesnt have any undefined values!
-        const activeCombos = getActiveCombos(curTiles, reelCombos);
+        const activeCombos = getActiveCombos(curTiles as Tile[], reelCombos);
         setActiveCombos(activeCombos);
 
         const comboScore = getComboScore(curTiles as Tile[], activeCombos);
@@ -154,7 +152,7 @@ function SlotMachine() {
         setSpinLock(false);
       }
     },
-    [setCurTiles, curTiles, setSpinLock, reelCombos]
+    [curTiles, reelCombos, setSpinLock, setCurTiles, incrementScore]
   );
 
   const reelTiles = useMemo(() => {

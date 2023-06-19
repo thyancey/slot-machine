@@ -29,7 +29,7 @@ export const checkUniqueStrings = (items: string[]) => {
   return unique.length === items.length;
 };
 
-export const pickRandomFromArray = (numChoices: number, array: any[]) => {
+export const pickRandomFromArray = (numChoices: number, array: unknown[]) => {
   const idxs = Array.from(Array(array.length).keys());
   const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
   
