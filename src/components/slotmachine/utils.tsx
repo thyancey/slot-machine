@@ -103,6 +103,30 @@ export const buildReel = (tileKeys: string[], reelOverlap: number) => {
     .concat(loopAfter);
 };
 
+// add redudant tiles to top and bottom of reel to make it seem continuous
+export const buildReelLegacy = (tiles: Tile[], reelOverlap: number) => {
+  // starting with [ 0, 1, 2 ]
+
+  // [ +1, +2, 0, 1, 2 ]
+  const loopBefore = [] as Tile[];
+  // the +1 here attached the last to the top, regardless of overlap value
+  for (let i = 0; i < reelOverlap; i++) {
+    const offset = tiles.length - (i % tiles.length) - 1;
+    loopBefore.push(tiles[offset]);
+  }
+
+  // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
+  const loopAfter = [];
+  for (let i = 0; i < reelOverlap; i++) {
+    loopAfter.push(tiles[i % tiles.length]);
+  }
+
+  return ([] as Tile[])
+    .concat(loopBefore.reverse())
+    .concat(tiles)
+    .concat(loopAfter);
+};
+
 export const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastAngle: number) => {
   return getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
 };
