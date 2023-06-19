@@ -55,17 +55,17 @@ const AppProvider = ({ children }: Props) => {
     discard: [],
   });
 
-  const incrementScore = (increment = 0) => {
+  const incrementScore = useCallback((increment = 0) => {
     setScore((prevScore) => prevScore + increment);
-  };
+  }, [ setScore ]);
 
+  // TODO - these should probably use useCallback, but it wasnt necessary when i first
+  // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    console.log('1');
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
-    console.log('2');
     setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
   };
 

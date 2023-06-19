@@ -14,7 +14,7 @@ import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
 import UpgradeTray from './components/upgradetray';
-import { getRandomIdx } from './utils';
+import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.main`
@@ -113,8 +113,8 @@ function SlotMachine() {
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
-  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck } = useContext(AppContext);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
+  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
   useEffect(() => {
     // console.log('SlotMachine.initial load');
@@ -153,12 +153,24 @@ function SlotMachine() {
     [setReelResults]
   );
 
+  // all reels are done spinning, check for points
   useEffect(() => {
-    if (reelResults.length === reelStates.length && !reelResults.includes(-1)) {
+    if (reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
       console.log('ALL REELS ARE DONE!');
+      const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
+      // console.log('tiles', tiles);
+      const activeCombos = getActiveCombos(tiles, reelCombos);
+      setActiveCombos(activeCombos);
+
+      const comboScore = getComboScore(tiles, activeCombos);
+      if (comboScore !== 0) {
+        console.log('INCREMENTSCORE', comboScore);
+        incrementScore(comboScore);
+      }
+
       setSpinLock(false);
     }
-  }, [reelResults, reelStates.length]);
+  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore]);
 
   const resultSet = useMemo(() => {
     if (reelStates.length === 0 || reelResults.length === 0) {
@@ -166,7 +178,7 @@ function SlotMachine() {
       return [];
     }
     return reelResults.map((slotIdx, reelIdx) => {
-      if(slotIdx === -1) return undefined;
+      if (slotIdx === -1) return undefined;
       const deckIdx = reelStates[reelIdx][slotIdx];
       return getTileFromDeckIdx(deckIdx, tileDeck);
     });
