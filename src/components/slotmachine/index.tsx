@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext } from 'react';
-import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, defaultTileDeck } from '../../store/data';
+import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
+import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, defaultTileDeck, DeckIdxCollection } from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
 import UpgradeTray from './components/upgradetray';
 import { getRandomIdx } from './utils';
+import { getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -98,11 +99,12 @@ const ScHandle = styled.div`
 `;
 
 function SlotMachine() {
-  const [curTiles, setCurTiles] = useState<(Tile | undefined)[]>([]);
+  // const [curTiles, setCurTiles] = useState<(Tile | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
+  const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck } = useContext(AppContext);
   const [ targetSlotIdxs, setTargetSlotIdxs ] = useState<number[]>([]);
 
@@ -122,13 +124,16 @@ function SlotMachine() {
   useEffect(() => {
     //setTargetSlotIdxs(Array(reelStates.length).fill([-1, 0]));
     // console.log('SlotMachine: reelStates changed', reelStates);
-    setCurTiles(Array(reelStates.length).fill(undefined));
+    setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
+
+  
+  // useEffect(() => {
+  //   console.log('SlotMachine: reelResults changed', reelResults);
+  // }, [reelResults]);
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
-      //const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.map((r) => r)));
-      //setTargetSlotIdxs(randomReelPositions.map((r) => [r, spinCount]));
       // determine what the next line of slots will be, someday make this weighted
       setTargetSlotIdxs(reelStates.map(rs => getRandomIdx(rs)));
 
@@ -140,9 +145,30 @@ function SlotMachine() {
 
   const onSpinComplete = useCallback((reelIdx: number) => {
     console.log(`reel [${reelIdx}] done spinning!`);
-  }, []);
+    console.log(reelResults, targetSlotIdxs);
+    if(reelResults[reelIdx] === undefined || targetSlotIdxs[reelIdx] === undefined){
+      return;
+    }
+    if(reelResults[reelIdx] !== targetSlotIdxs[reelIdx]){
+      setReelResults(reelResults.map((deckIdx, idx) => {
+        if(idx === reelIdx){
+          return targetSlotIdxs[reelIdx];
+        }
+        return deckIdx;
+      }));
+    }
+  }, [reelResults, targetSlotIdxs]);
 
-  console.log('SlotMachine: reelStates', reelStates, targetSlotIdxs)
+  const resultSet = useMemo(() => {
+    if(reelStates.length === 0 || reelResults.length === 0 || reelResults.includes(-1)){
+      // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
+      return [];
+    }
+    return reelResults.map((slotIdx, reelIdx) => {
+      const deckIdx = reelStates[reelIdx][slotIdx];
+      return getTileFromDeckIdx(deckIdx, tileDeck);
+    })
+  }, [ reelResults, reelStates, tileDeck ]);
 
   return (
     <ScWrapper>
@@ -165,8 +191,8 @@ function SlotMachine() {
         ))}
       </ScReelContainer>
       <ScReelLabels>
-        {curTiles.map((cri, idx) => (
-          <ResultLabel key={idx} tile={cri} />
+        {resultSet.map((tile, reelIdx) => (
+          <ResultLabel key={reelIdx} tile={tile} />
         ))}
       </ScReelLabels>
       <ScUpgradeTray>

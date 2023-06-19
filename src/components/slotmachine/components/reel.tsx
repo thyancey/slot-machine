@@ -74,7 +74,7 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
 
   // on initialize
   useEffect(() => {
-    console.log(`Reel [${reelIdx}] initialized with reelState: `, reelState);
+    // console.log(`Reel [${reelIdx}] initialized with reelState: `, reelState);
     // setLastLoopedIdx(0);
     setLoopedIdxs([0, 0]);
   }, [reelState, reelIdx]);
