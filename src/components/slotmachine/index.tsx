@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import { Tile, reelsData, reelComboDef, ReelCombo, ReelComboResult, tileGlossary } from '../../store/data';
+import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, tileGlossary } from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';
@@ -108,10 +108,7 @@ function SlotMachine() {
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
-    // only used for INITIALIZING state, after that reelState should be used.
-    setReelStates(
-      reelsData.map((reel) => reel.tiles.map((r) => r.label))
-    );
+    setReelStates(defaultReelState);
   }, []);
 
   useEffect(() => {
@@ -154,9 +151,7 @@ function SlotMachine() {
   );
 
   const reelTiles = useMemo(() => {
-    return reelStates.map((reelState) =>
-      reelState.map((tileKey) => tileGlossary[tileKey])
-    );
+    return reelStates.map((reelState) => reelState.map((tileKey) => tileGlossary[tileKey]));
   }, [reelStates]);
 
   return (

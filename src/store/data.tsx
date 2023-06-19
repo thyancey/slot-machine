@@ -6,6 +6,20 @@ export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel s
 export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
 export const MAX_REELS = 6;
 
+/**
+ * Tiles are defined in the TileGlossary (unique)
+ * All tiles available to the player are stored in a draw TileDeck (subset, can have duplicate tiles)
+ * Each turn, the payer will pull tiles from the TileDeck into their TileHand (subset of TileDeck, can have duplicate tiles)
+ * Deferred/removed tiles are discarded into discard TileDeck. When the draw TileDeck is empty, it is refilled.
+ * 
+ * 1 to MAX_REELS exists in the SlotMachine
+ * Each Reel contains a TileCollection
+ */
+
+
+/**
+ * An item that fits within a slot in a reel.
+ */
 export type Tile = {
   label: string;
   img?: string;
@@ -15,14 +29,14 @@ export type Tile = {
   score?: number;
 };
 
-export interface ReelDef {
-  tiles: Tile[];
-}
 
+
+/**
+ * Internal definition for all tiles by unique Key. Player draws tiles from a TileDeck, however
+ */
 export interface TileGlossary {
   [key: string]: Tile;
 }
-
 export const tileGlossary: TileGlossary = {
   bat: { label: 'bat', img: AssetMap.Rbat, attributes: ['attack', 'creature'], effect: 'life steal', value: 1, score: 250 },
   coins: { label: 'coins', img: AssetMap.Rcoins, attributes: ['money'], effect: 'gold bonus', value: 5, score: 1000 },
@@ -55,75 +69,38 @@ export const tileGlossary: TileGlossary = {
   sword: { label: 'sword', img: AssetMap.Rsword, attributes: ['attack'], effect: 'extra damage', value: 2, score: 80 },
 };
 
-export const reelsData: ReelDef[] = [
-  {
-    tiles: [
-      tileGlossary.coins,
-      tileGlossary.crazy,
-      tileGlossary.flame,
-      // tileGlossary.halo,
-      // tileGlossary.lightning,
-      // tileGlossary.poison,
-      // tileGlossary.shield,
-      // tileGlossary.snowflake,
-      // tileGlossary.sword,
-    ],
-  },
-  {
-    tiles: [
-      tileGlossary.coins,
-      tileGlossary.crazy,
-      tileGlossary.flame,
-      // tileGlossary.halo,
-      // tileGlossary.lightning,
-      // tileGlossary.poison,
-      // tileGlossary.shield,
-      // tileGlossary.snowflake,
-      // tileGlossary.sword,
-    ],
-  },
-  {
-    tiles: [
-      tileGlossary.coins,
-      tileGlossary.crazy,
-      tileGlossary.flame,
-      // tileGlossary.halo,
-      // tileGlossary.lightning,
-      // tileGlossary.poison,
-      // tileGlossary.shield,
-      // tileGlossary.snowflake,
-      // tileGlossary.sword,
-    ],
-  },
-];
 
 /* combo/bonus stuff */
 export type MatchType = 'label' | 'attrAny' | 'attrUnique';
 
-export interface ReelCombo {
-  label: string;
-  attributes: string[];
-  bonuses: BonusGroup[];
-}
 
-export interface BonusGroup {
-  bonusType: BonusType;
-  multiplier?: number;
-  value?: number;
-}
+
+
 
 // unique: all reels must be bar, all labels must vary
 // same: all reels must be bar, all labels must match
 // any: all reels must be bar
 // put "any" last, otherwise it could match ahead of others
 export type BonusType = 'any' | 'unique' | 'same';
-
+export interface BonusGroup {
+  bonusType: BonusType;
+  multiplier?: number;
+  value?: number;
+}
 export interface ReelComboResult {
   label: string;
   attribute: string;
   bonus: BonusGroup | null;
 }
 
+/**
+ * A combination of attributes to check against a set of Tiles
+ */
+export interface ReelCombo {
+  label: string;
+  attributes: string[];
+  bonuses: BonusGroup[];
+}
 export const reelComboDef: ReelCombo[] = [
   // {
   //   label: 'default same combo',
@@ -169,4 +146,62 @@ export const reelComboDef: ReelCombo[] = [
       { bonusType: 'any', multiplier: 1.5 },
     ],
   },
+];
+
+
+/**
+ * Holds a collection of tiles that the player will draw from. Typically contains a subset of all Tiles in the TileGlossary,
+ * and will contain duplicates of tiles
+ */
+export type TileDeck = Tile[];
+// a TileDeck holds all tiles available for a player to draw. It may or may not contain all tiles defined in the glossary
+// (usually has less, the TileDeck changes as the player progresses)
+export const defaultTileDeck: TileDeck = [
+  tileGlossary.coins,
+  tileGlossary.coins,
+  tileGlossary.coins,
+  tileGlossary.crazy,
+  tileGlossary.flame,
+]
+
+/**
+ * An array of tileKeys, used typically for state management and mapping
+ * for various things. Tiles can be looked up via the tileGlossary
+ */
+export type TileKeyCollection = string[];
+
+export const defaultReelState: TileKeyCollection[] = [
+  [
+    'coins',
+    // 'crazy',
+    'flame',
+    // 'halo',
+    'lightning',
+    // 'poison',
+    // 'shield',
+    // 'snowflake',
+    // 'sword',
+  ],
+  [
+    'coins',
+    // 'crazy',
+    'flame',
+    // 'halo',
+    'lightning',
+    // 'poison',
+    // 'shield',
+    // 'snowflake',
+    // 'sword',
+  ],
+  [
+    'coins',
+    // 'crazy',
+    'flame',
+    // 'halo',
+    'lightning',
+    // 'poison',
+    // 'shield',
+    // 'snowflake',
+    // 'sword',
+  ]
 ];

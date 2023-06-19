@@ -1,5 +1,5 @@
 import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { ReelDef, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from '../../store/data';
+import { TileKeyCollection, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
 
@@ -9,8 +9,8 @@ export const getRandom2dIdxs = (arrayOfArrays: any[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
 };
 
-export const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
-  return reelSet.map((reelDef) => [getRandomIdx(reelDef.tiles), spinCount] as ReelTarget);
+export const getRandomReelTargets = (reelSet: TileKeyCollection[], spinCount: number) => {
+  return reelSet.map((tileKeys) => [getRandomIdx(tileKeys), spinCount] as ReelTarget);
 };
 
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
