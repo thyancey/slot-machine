@@ -29,7 +29,7 @@ export const drawTiles = (numToDraw: number, deckState: DeckState) => {
   const availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
   const operations = Array.from(Array(availableToDraw).keys());
 
-  return operations.reduce((acc, _) => {
+  return operations.reduce((acc) => {
     return drawTile(acc);
   }, deckState);
 };

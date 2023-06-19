@@ -67,14 +67,14 @@ function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
       const afterState = drawTiles(MAX_HAND_SIZE, deckState);
       setDeckState(afterState);
     }
-  }, [active]);
+  }, [active, deckState, setDeckState]);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
       deckIdx,
       tile: tileGlossary[tileDeck[deckIdx]]
     }));
-  }, [deckState]);
+  }, [deckState, tileDeck]);
 
   return (
     <ScWrapper>

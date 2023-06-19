@@ -41,8 +41,7 @@ const ScToken = styled.li`
   }
 `;
 
-type Props = {};
-function UpgradeTray({}: Props) {
+function UpgradeTray() {
   const { upgradeTokens, setUiState } = useContext(AppContext);
   const tokenStatus = useMemo(() => {
     return Array.from({ length: MAX_REEL_TOKENS }, (_, idx) => idx).map((idx) => idx < upgradeTokens);

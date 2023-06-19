@@ -157,7 +157,7 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
 
   const tile = useMemo(() => {
     return tileGlossary[tileDeck[selectedTileIdx]];
-  }, [selectedTileIdx]);
+  }, [tileDeck, selectedTileIdx]);
 
 
   return (
