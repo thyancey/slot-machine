@@ -145,19 +145,19 @@ interface Props {
   onInsertReel: Function;
 }
 function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props) {
-  const { reelStates, selectedTileKey, upgradeTokens } = useContext(AppContext);
+  const { reelStates, selectedTileIdx, upgradeTokens, tileDeck } = useContext(AppContext);
 
   const canAddReels = useMemo(() => {
     return reelStates.length < MAX_REELS;
   }, [reelStates]);
 
   const canRemoveTiles = useMemo(() => {
-    return !selectedTileKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].length === 1);
-  }, [ reelStates, selectedTileKey, upgradeTokens ]);
+    return selectedTileIdx === -1 && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].length === 1);
+  }, [ reelStates, selectedTileIdx, upgradeTokens ]);
 
   const tile = useMemo(() => {
-    return tileGlossary[selectedTileKey];
-  }, [selectedTileKey]);
+    return tileGlossary[tileDeck[selectedTileIdx]];
+  }, [selectedTileIdx]);
 
 
   return (

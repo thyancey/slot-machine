@@ -7,8 +7,8 @@ interface AppContextType {
   score: number;
   incrementScore: Function;
 
-  selectedTileKey: string;
-  setSelectedTileKey: Function;
+  selectedTileIdx: number;
+  setSelectedTileIdx: Function;
 
   tileDeck: TileKeyCollection;
   setTileDeck: Function;
@@ -79,20 +79,19 @@ const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
-  const [selectedTileKey, setSelectedTileKey] = useState('');
+  const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
     drawn: [], draw: [], discard: []
   });
 
-  console.log('deckState 1', deckState);
-
   const incrementScore = (increment: number = 0) => {
     setScore((prevScore) => prevScore + increment);
   };
 
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
+    const selectedTileKey = tileDeck[selectedTileIdx];
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileKey, reelStates));
   };
 
@@ -102,6 +101,7 @@ const AppProvider = ({ children }: Props) => {
 
   const insertReel = (positionIdx: number) => {
     if(reelStates.length < MAX_REELS){
+      const selectedTileKey = tileDeck[selectedTileIdx];
       setReelStates(insertIntoArray(positionIdx, [ selectedTileKey ], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
@@ -141,8 +141,8 @@ const AppProvider = ({ children }: Props) => {
           score,
           incrementScore,
 
-          selectedTileKey,
-          setSelectedTileKey,
+          selectedTileIdx,
+          setSelectedTileIdx,
 
           reelStates,
           setReelStates,
@@ -159,7 +159,7 @@ const AppProvider = ({ children }: Props) => {
 
           tileDeck,
           setTileDeck,
-          
+
           deckState,
           setDeckState
         } as AppContextType

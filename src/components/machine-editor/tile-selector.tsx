@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { DeckState, Tile, tileGlossary } from '../../store/data';
-import { useEffect, useState, useContext, useMemo } from 'react';
-import { clamp, pickRandomFromArray } from '../../utils';
+import { useEffect, useContext, useMemo } from 'react';
+import { clamp } from '../../utils';
 import { AppContext } from '../../store/appcontext';
 
 const ScWrapper = styled.ul`
@@ -93,45 +93,36 @@ const NUM_CHOICES = 3;
 
 interface HandTile {
   deckIdx: number,
-  tileKey: string,
   tile: Tile
 }
 
 interface Props {
   active: boolean;
-  selectedTileKey: string;
-  onSelectTileKey: Function;
+  selectedTileIdx: number;
+  onSelectTile: Function;
 }
-function TileSelector({ active, selectedTileKey, onSelectTileKey }: Props) {
-  // const [tiles, setTileKeys] = useState<string[]>([]);
+function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
   const { deckState, setDeckState, tileDeck } = useContext(AppContext);
 
+  // when loading screen, draw some cards
   useEffect(() => {
     if (active) {
-      // draw a hand
-      // console.log('TileSelector: deckState', deckState);
       const afterState = drawTiles(NUM_CHOICES, deckState);
-      // console.log('TileSelector: drawn', afterState, deckState);
-      // setTileKeys(pickRandomFromArray(NUM_CHOICES, Object.keys(tileGlossary)));
       setDeckState(afterState);
     }
   }, [active]);
 
   const tiles: HandTile[] = useMemo(() => {
-    console.log('regen tiles from', deckState, tileDeck);
     return deckState.drawn.map((deckIdx) => ({
       deckIdx,
-      tileKey: tileDeck[deckIdx],
       tile: tileGlossary[tileDeck[deckIdx]]
     }));
   }, [deckState]);
 
-  console.log('new tiles', tiles);
-
   return (
     <ScWrapper>
       {tiles.map((handTile) => (
-        <ScTile className={handTile.tileKey === selectedTileKey ? 'chosen' : ''} key={handTile.deckIdx} onClick={() => onSelectTileKey(handTile.tileKey)}>
+        <ScTile className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''} key={handTile.deckIdx} onClick={() => onSelectTile(handTile.deckIdx)}>
           <img src={handTile.tile.img || ''} />
         </ScTile>
       ))}
