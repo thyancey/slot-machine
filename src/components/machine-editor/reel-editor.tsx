@@ -127,12 +127,12 @@ const ScRemoveLabel = styled.div`
 `;
 
 interface InsertButtonProps {
-  onClick: Function;
+  onClick: React.MouseEventHandler;
   tile: Tile;
 }
 const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
   return (
-    <ScInsertTileButton className={!!tile ? 'active' : ''} onClick={() => onClick()}>
+    <ScInsertTileButton className={tile ? 'active' : ''} onClick={() => onClick()}>
       <span>{'insert'}</span>
       {tile && <img src={tile.img} />}
     </ScInsertTileButton>
@@ -140,9 +140,9 @@ const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
 };
 
 interface Props {
-  onInsertIntoReel: Function;
-  onRemoveFromReel: Function;
-  onInsertReel: Function;
+  onInsertIntoReel: (reelIdx: number, positionIdx: number) => void;
+  onRemoveFromReel: (reelIdx: number, positionIdx: number) => void;
+  onInsertReel: (positionIdx: number) => void;
 }
 function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props) {
   const { reelStates, selectedTileIdx, upgradeTokens, tileDeck } = useContext(AppContext);

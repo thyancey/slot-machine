@@ -189,10 +189,10 @@ const renderFooter = (
   editorMode: MachineEditorMode,
   preselectedTileIdx: number,
   upgradeTokens: number,
-  setSelectedTileIdx: Function,
-  setPreselectedTileIdx: Function,
-  setEditorMode: Function,
-  closeEditor: Function
+  setSelectedTileIdx: (idx: number) => void,
+  setPreselectedTileIdx: (idx: number) => void,
+  setEditorMode: (str: MachineEditorMode) => void,
+  closeEditor: () => void,
 ) => {
   const CloseButton = () => (
     <Button
@@ -229,8 +229,8 @@ const renderFooter = (
         <>
           <Button
             onClick={() => {
-              setSelectedTileIdx('');
-              setPreselectedTileIdx('');
+              setSelectedTileIdx(-1);
+              setPreselectedTileIdx(-1);
               setEditorMode('hand');
             }}
           >
@@ -246,8 +246,8 @@ const renderFooter = (
         <Button
           buttonStyle='special'
           onClick={() => {
-            setSelectedTileIdx('');
-            setPreselectedTileIdx('');
+            setSelectedTileIdx(-1);
+            setPreselectedTileIdx(-1);
             setEditorMode('hand');
           }}
         >

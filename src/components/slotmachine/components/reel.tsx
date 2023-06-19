@@ -9,7 +9,7 @@ import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, proje
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
-const SPIN_TICK: number = 30;
+const SPIN_TICK = 30;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -51,7 +51,7 @@ const ScReelTape = styled.div`
 
 type Props = {
   tiles: Tile[];
-  setCurTile: Function;
+  setCurTile: (tile: Tile | undefined) => void;
   reelTarget: ReelTarget;
   reelIdx: number; // mostly for identification / logging
 };

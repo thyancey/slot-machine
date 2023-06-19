@@ -14,7 +14,7 @@ export const getRandomReelTargets = (reelSet: TileKeyCollection[], spinCount: nu
 };
 
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
-  for (var i = 0; i < bonuses.length; i++) {
+  for (let i = 0; i < bonuses.length; i++) {
     switch (bonuses[i].bonusType) {
       case 'same':
         if (checkSameStrings(tiles.map((rI) => rI.label))) {
@@ -36,7 +36,7 @@ export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
 
 export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   // loop each combo
-  let activeCombos = reelCombos.reduce((combos, rC) => {
+  const activeCombos = reelCombos.reduce((combos, rC) => {
     for (var a = 0; a < rC.attributes.length; a++) {
       // if every tile has a matching attribute
       if (
@@ -67,7 +67,7 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
 
 export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   activeCombos.reduce((totScore, aC) => {
-    let baseScore = tiles.reduce((acc, tile) => (acc += (tile.score || 0)), 0);
+    const baseScore = tiles.reduce((acc, tile) => (acc += (tile.score || 0)), 0);
 
     if (aC.bonus?.multiplier) {
       totScore += aC.bonus.multiplier * baseScore;

@@ -38,8 +38,8 @@ type ButtonStyle = 'normal' | 'special' | 'disabled';
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];
-  onClick?: Function;
-  disabled?: Boolean;
+  onClick?: React.MouseEventHandler;
+  disabled?: boolean;
   buttonStyle?: ButtonStyle;
 }
 

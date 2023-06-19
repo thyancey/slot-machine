@@ -5,29 +5,29 @@ import { clamp } from '../utils';
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   score: number;
-  incrementScore: Function;
+  incrementScore: (increment: number) => void;
 
   selectedTileIdx: number;
-  setSelectedTileIdx: Function;
+  setSelectedTileIdx: (idx: number) => void;
 
   tileDeck: TileKeyCollection;
-  setTileDeck: Function;
+  setTileDeck: (value: TileKeyCollection) => void;
   
   deckState: DeckState;
-  setDeckState: Function;
+  setDeckState: (value: DeckState) => void;
 
   reelStates: ReelState[];
-  setReelStates: Function;
+  setReelStates: (values: ReelState[]) => void;
 
   upgradeTokens: number;
-  setUpgradeTokens: Function;
+  setUpgradeTokens: (value: number) => void;
 
   uiState: UiState;
-  setUiState: Function;
+  setUiState: (value: UiState) => void;
 
-  insertIntoReel: Function;
-  removeFromReel: Function;
-  insertReel: Function;
+  insertIntoReel: (reelIdx: number, positionIdx: number) => void;
+  removeFromReel: (reelIdx: number, positionIdx: number) => void;
+  insertReel: (positionIdx: number) => void;
 }
 
 export type ReelState = string[];
@@ -86,7 +86,7 @@ const AppProvider = ({ children }: Props) => {
     drawn: [], draw: [], discard: []
   });
 
-  const incrementScore = (increment: number = 0) => {
+  const incrementScore = (increment = 0) => {
     setScore((prevScore) => prevScore + increment);
   };
 

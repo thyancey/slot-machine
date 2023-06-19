@@ -73,7 +73,7 @@ export const drawTile = (deckState: DeckState, noRefill?: boolean) => {
 };
 
 export const drawTiles = (numToDraw: number, deckState: DeckState) => {
-  let availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
+  const availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
   const operations = Array.from(Array(availableToDraw).keys());
 
   return operations.reduce((acc, _) => {
@@ -99,7 +99,7 @@ interface HandTile {
 interface Props {
   active: boolean;
   selectedTileIdx: number;
-  onSelectTile: Function;
+  onSelectTile: (deckIdx: number) => void;
 }
 function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
   const { deckState, setDeckState, tileDeck } = useContext(AppContext);
