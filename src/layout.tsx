@@ -50,7 +50,7 @@ function Layout() {
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
       <MachineEditor />
-      <Deck />
+      {/* <Deck /> */}
     </ScWrapper>
   );
 }
