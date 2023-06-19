@@ -102,7 +102,7 @@ Error generating stack: `+l.message+`
   width: 100%;
   /* top is changed to spin the wheel */
   top: 0;
-`;function x0({reelItems:e,reelIdx:t,setCurReelItem:n,reelTarget:r}){const[o,l]=_.useState([]),[i,u]=_.useState(!1),s=_.useRef(null),[c,h]=_.useState(0),[m,p]=_.useState(0),[v,y]=_.useState(0),[A,P]=_.useState(0),[f,a]=_.useState(0),[d,g]=_.useState(0);_.useEffect(()=>{l(m0(e,Sa)),P(0),a(0),y(0),p(0)},[e]),_.useEffect(()=>{r&&r[0]!==-1&&!i&&k()},[r]),_.useEffect(()=>{i&&y(c)},[i]);const k=_.useCallback(()=>{const E=g0(e.length,m,r[0],3),D=v0(e.length,E,m),L=A+D;n(void 0),g(L),h(o0(t0)),u(!0)},[e,r,A,m]);_.useEffect(()=>()=>{clearTimeout(s.current)},[]),_.useEffect(()=>{if(i)if(v<1)s.current=window.setTimeout(()=>{const E=rd(v+c,0,1),D=f+ka(E,d,f);P(D),y(E)},y0);else if(v>1){const E=f+ka(1,d,f);P(E),C()}else console.log("<< done",v),C()},[v]);const C=_.useCallback(()=>{u(!1),a(A),p(r[0]),n(e[r[0]])},[r,p,e,A]),S=_.useMemo(()=>-1*A%(Kt*e.length)-Sa*Kt,[A,e]);return w.jsxs(w0,{className:i?"spinning":"",children:[w.jsx(A0,{children:w.jsx(k0,{style:{top:`${S}px`},children:o.map((E,D)=>w.jsx(Im,{reelItem:E,height:Kt},`${t}-${D}`))})}),w.jsx(S0,{})]})}const C0=z.div`
+`;function x0({reelItems:e,reelIdx:t,setCurReelItem:n,reelTarget:r}){const[o,l]=_.useState([]),[i,u]=_.useState(!1),s=_.useRef(null),[c,h]=_.useState(0),[m,p]=_.useState(0),[v,y]=_.useState(0),[A,P]=_.useState(0),[f,a]=_.useState(0),[d,g]=_.useState(0);_.useEffect(()=>{l(m0(e,Sa)),P(0),a(0),y(0),p(0)},[e]),_.useEffect(()=>{r&&r[0]!==-1&&!i&&k()},[r]),_.useEffect(()=>{i&&y(c)},[i]);const k=_.useCallback(()=>{const E=g0(e.length,m,r[0],3),D=v0(e.length,E,m),L=A+D;n(void 0),g(L),h(o0(t0)),u(!0)},[e,r,A,m]);_.useEffect(()=>()=>{clearTimeout(s.current)},[]),_.useEffect(()=>{if(i)if(v<1)s.current=window.setTimeout(()=>{const E=rd(v+c,0,1),D=f+ka(E,d,f);P(D),y(E)},y0);else if(v>1){const E=f+ka(1,d,f);P(E),C()}else C()},[v]);const C=_.useCallback(()=>{u(!1),a(A),p(r[0]),n(e[r[0]])},[r,p,e,A]),S=_.useMemo(()=>-1*A%(Kt*e.length)-Sa*Kt,[A,e]);return w.jsxs(w0,{className:i?"spinning":"",children:[w.jsx(A0,{children:w.jsx(k0,{style:{top:`${S}px`},children:o.map((E,D)=>w.jsx(Im,{reelItem:E,height:Kt},`${t}-${D}`))})}),w.jsx(S0,{})]})}const C0=z.div`
   width: 8rem;
   height: 2rem;
   margin: 0.5rem;
@@ -459,7 +459,7 @@ Error generating stack: `+l.message+`
   img {
     height: 100%;
   }
-`,og=4;function lg({active:e,selectedItemKey:t,onSelectItemKey:n}){const[r,o]=_.useState([]);return _.useEffect(()=>{e&&(console.log("set them keys"),o(a0(og,Object.keys(ue))))},[e]),w.jsx(ng,{children:r.map(l=>w.jsx(rg,{className:l===t?"chosen":"",onClick:()=>n(l),children:w.jsx("img",{src:ue[l].img||""})},l))})}const ig=z.ul`
+`,og=4;function lg({active:e,selectedItemKey:t,onSelectItemKey:n}){const[r,o]=_.useState([]);return _.useEffect(()=>{e&&o(a0(og,Object.keys(ue)))},[e]),w.jsx(ng,{children:r.map(l=>w.jsx(rg,{className:l===t?"chosen":"",onClick:()=>n(l),children:w.jsx("img",{src:ue[l].img||""})},l))})}const ig=z.ul`
   background-color: var(--color-grey);
   flex: 1;
 
