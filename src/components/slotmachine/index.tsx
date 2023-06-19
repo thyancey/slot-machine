@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, tileGlossary } from '../../store/data';
+import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, tileGlossary, defaultTileDeck } from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';
@@ -104,11 +104,18 @@ function SlotMachine() {
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
-  const { incrementScore, setReelStates, reelStates } = useContext(AppContext);
+  const { incrementScore, setReelStates, reelStates, setTileDeck, setDeckState } = useContext(AppContext);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
     setReelStates(defaultReelState);
+    setTileDeck(defaultTileDeck);
+    setDeckState({
+      drawn: [],
+      // populate and shuffle the deck
+      draw: Array.from(Array(defaultTileDeck.length).keys()).sort(() => Math.random() - 0.5),
+      discard: []
+    });
   }, []);
 
   useEffect(() => {

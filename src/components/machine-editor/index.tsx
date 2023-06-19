@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '../button';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
-import TileSelector from './tile-selector';
+import TileSelector, { discardTiles } from './tile-selector';
 import ReelEditor from './reel-editor';
 
 const ScWrapper = styled.aside`
@@ -82,6 +82,8 @@ function MachineEditor({}: Props) {
     insertReel,
     upgradeTokens,
     setUpgradeTokens,
+    setDeckState,
+    deckState,
   } = useContext(AppContext);
   const [preselectedTileKey, setPreselectedTileKey] = useState('');
   const [editorMode, setEditorMode] = useState<MachineEditorMode>('hand');
@@ -113,8 +115,9 @@ function MachineEditor({}: Props) {
   const closeEditor = useCallback(() => {
     setSelectedTileKey('');
     setPreselectedTileKey('');
+    setDeckState(discardTiles(deckState.drawn, deckState))
     setUiState('game');
-  }, [selectedTileKey]);
+  }, [selectedTileKey, deckState]);
 
   const onInsertIntoReel = useCallback(
     (reelIdx: number, tileIdx: number) => {

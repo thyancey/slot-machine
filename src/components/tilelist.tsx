@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import styled from 'styled-components';
-import { tileGlossary } from '../store/data';
+import { TileKeyCollection, tileGlossary } from '../store/data';
+import { AppContext } from '../store/appcontext';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -72,21 +73,32 @@ const ScTab = styled.div`
   }
 `;
 
-const renderTiles = () => {
-  return Object.keys(tileGlossary).map((key: string) => (
-    <ScTile key={key}>
-      <img src={tileGlossary[key].img || ''} />
-      <span>{` : ${tileGlossary[key].score}`}</span>
+// const renderTiles = () => {
+//   return Object.keys(tileGlossary).map((key: string) => (
+//     <ScTile key={key}>
+//       <img src={tileGlossary[key].img || ''} />
+//       <span>{` : ${tileGlossary[key].score}`}</span>
+//     </ScTile>
+//   ));
+// }
+
+const renderTiles = (tileDeck: TileKeyCollection) => {
+  return tileDeck.map((tileKey: string, idx: number) => (
+    <ScTile key={`${idx}-${tileKey}`}>
+      <img src={tileGlossary[tileKey].img || ''} />
+      <span>{` : ${tileGlossary[tileKey].score}`}</span>
     </ScTile>
   ));
 }
 
 function TileList() {
   const [open, setOpen] = useState(false);
+  const { tileDeck } = useContext(AppContext);
+
   return (
     <ScWrapper className={open ? 'panel-open' : ''}>
       <ScPanel>
-        {renderTiles().map(tile => (tile))}
+        {renderTiles(tileDeck).map(tile => (tile))}
       </ScPanel>
       <ScTab
         onClick={() => {

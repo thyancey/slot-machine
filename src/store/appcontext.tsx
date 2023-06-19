@@ -1,22 +1,33 @@
 import { ReactNode, createContext, useState } from 'react';
-import { MAX_REELS } from './data';
+import { DeckState, MAX_REELS, TileKeyCollection } from './data';
 import { clamp } from '../utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   score: number;
+  incrementScore: Function;
+
   selectedTileKey: string;
+  setSelectedTileKey: Function;
+
+  tileDeck: TileKeyCollection;
+  setTileDeck: Function;
+  
+  deckState: DeckState;
+  setDeckState: Function;
+
   reelStates: ReelState[];
+  setReelStates: Function;
+
   upgradeTokens: number;
+  setUpgradeTokens: Function;
+
   uiState: UiState;
   setUiState: Function;
-  incrementScore: Function;
-  setSelectedTileKey: Function;
-  setReelStates: Function;
+
   insertIntoReel: Function;
   removeFromReel: Function;
   insertReel: Function;
-  setUpgradeTokens: Function;
 }
 
 export type ReelState = string[];
@@ -70,6 +81,12 @@ const AppProvider = ({ children }: Props) => {
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
   const [selectedTileKey, setSelectedTileKey] = useState('');
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
+  const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
+  const [deckState, setDeckState] = useState<DeckState>({
+    drawn: [], draw: [], discard: []
+  });
+
+  console.log('deckState 1', deckState);
 
   const incrementScore = (increment: number = 0) => {
     setScore((prevScore) => prevScore + increment);
@@ -95,23 +112,56 @@ const AppProvider = ({ children }: Props) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   }
 
+  /*
+  const drawCard = () => {
+    if(deckState.draw.length > 0){
+      const idx = deckState.draw[deckState.draw.length - 1];
+      setDeckState({
+        draw: deckState.draw.slice(0, -1),
+        discard: deckState.discard
+      });
+      return idx;
+    } else{
+      // refill / shuffle the deck
+      const shuffledIdxs = Array.from(Array(tileDeck.length).keys()).sort(() => Math.random() - 0.5);
+      const idx = shuffledIdxs[shuffledIdxs.length - 1];
+      setDeckState({
+        draw: shuffledIdxs.slice(0, -1),
+        discard: []
+      });
+      return idx;
+    }
+  }
+  */
+
   return (
     <AppContext.Provider
       value={
         {
           score,
-          selectedTileKey,
-          reelStates,
-          upgradeTokens,
-          uiState,
           incrementScore,
+
+          selectedTileKey,
           setSelectedTileKey,
+
+          reelStates,
           setReelStates,
+
+          upgradeTokens,
+          setUpgradeTokens,
+
+          uiState,
+          setUiState,
+          
           insertIntoReel,
           removeFromReel,
           insertReel,
-          setUpgradeTokens,
-          setUiState,
+
+          tileDeck,
+          setTileDeck,
+          
+          deckState,
+          setDeckState
         } as AppContextType
       }
     >

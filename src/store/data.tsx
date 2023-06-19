@@ -156,12 +156,12 @@ export const reelComboDef: ReelCombo[] = [
 export type TileDeck = Tile[];
 // a TileDeck holds all tiles available for a player to draw. It may or may not contain all tiles defined in the glossary
 // (usually has less, the TileDeck changes as the player progresses)
-export const defaultTileDeck: TileDeck = [
-  tileGlossary.coins,
-  tileGlossary.coins,
-  tileGlossary.coins,
-  tileGlossary.crazy,
-  tileGlossary.flame,
+export const defaultTileDeck: TileKeyCollection = [
+  'coins',
+  'coins',
+  'coins',
+  'crazy',
+  'flame',
 ]
 
 /**
@@ -169,6 +169,16 @@ export const defaultTileDeck: TileDeck = [
  * for various things. Tiles can be looked up via the tileGlossary
  */
 export type TileKeyCollection = string[];
+
+/**
+ * Keeps track of TileDeck indicies while player is making choices
+ * Generally, when discard is full, it refills draw
+ */
+export type DeckState = {
+  drawn: number[],
+  draw: number[],
+  discard: number[]
+}
 
 export const defaultReelState: TileKeyCollection[] = [
   [
