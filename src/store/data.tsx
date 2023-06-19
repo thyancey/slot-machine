@@ -185,6 +185,8 @@ export const defaultTileDeck: TileKeyCollection = [
  */
 export type TileKeyCollection = string[];
 
+export type DeckIdxCollection = number[];
+
 /**
  * Keeps track of TileDeck indicies while player is making choices
  * Generally, when discard is full, it refills draw
@@ -195,38 +197,12 @@ export type DeckState = {
   discard: number[]
 }
 
-export const defaultReelState: TileKeyCollection[] = [
+export const defaultReelState: DeckIdxCollection[] = [
   [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
+    0,
+    3
   ],
   [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
-  ],
-  [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
+    3
   ]
 ];

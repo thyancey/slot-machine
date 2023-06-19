@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useState } from 'react';
-import { DeckState, MAX_REELS, INITIAL_TOKENS, MAX_REEL_TOKENS, UiState, TileKeyCollection } from './data';
+import { DeckState, MAX_REELS, INITIAL_TOKENS, MAX_REEL_TOKENS, UiState, TileKeyCollection, DeckIdxCollection } from './data';
 import { clamp } from '../utils';
-import { ReelState, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -17,8 +17,8 @@ interface AppContextType {
   deckState: DeckState;
   setDeckState: (value: DeckState) => void;
 
-  reelStates: ReelState[];
-  setReelStates: (values: ReelState[]) => void;
+  reelStates: DeckIdxCollection[];
+  setReelStates: (values: DeckIdxCollection[]) => void;
 
   upgradeTokens: number;
   setUpgradeTokens: (value: number) => void;
@@ -39,7 +39,7 @@ const AppProvider = ({ children }: Props) => {
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
-  const [reelStates, setReelStates] = useState<ReelState[]>([]);
+  const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
     drawn: [], draw: [], discard: []
@@ -50,8 +50,7 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    const selectedTileKey = tileDeck[selectedTileIdx];
-    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileKey, reelStates));
+    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
@@ -60,8 +59,7 @@ const AppProvider = ({ children }: Props) => {
 
   const insertReel = (positionIdx: number) => {
     if(reelStates.length < MAX_REELS){
-      const selectedTileKey = tileDeck[selectedTileIdx];
-      setReelStates(insertReelStateIntoReelStates(positionIdx, [ selectedTileKey ], reelStates));
+      setReelStates(insertReelStateIntoReelStates(positionIdx, [ selectedTileIdx ], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
