@@ -71,28 +71,6 @@ const AppProvider = ({ children }: Props) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   }
 
-  /*
-  const drawCard = () => {
-    if(deckState.draw.length > 0){
-      const idx = deckState.draw[deckState.draw.length - 1];
-      setDeckState({
-        draw: deckState.draw.slice(0, -1),
-        discard: deckState.discard
-      });
-      return idx;
-    } else{
-      // refill / shuffle the deck
-      const shuffledIdxs = Array.from(Array(tileDeck.length).keys()).sort(() => Math.random() - 0.5);
-      const idx = shuffledIdxs[shuffledIdxs.length - 1];
-      setDeckState({
-        draw: shuffledIdxs.slice(0, -1),
-        discard: []
-      });
-      return idx;
-    }
-  }
-  */
-
   return (
     <AppContext.Provider
       value={

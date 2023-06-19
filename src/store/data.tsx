@@ -167,6 +167,16 @@ export const defaultTileDeck: TileKeyCollection = [
   'coins',
   'crazy',
   'flame',
+  'crazy',
+  'flame',
+  'crazy',
+  'flame',
+  'crazy',
+  'flame',
+  'crazy',
+  'flame',
+  'crazy',
+  'flame',
 ]
 
 /**

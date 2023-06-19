@@ -65,9 +65,10 @@ function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
   useEffect(() => {
     if (active) {
       const afterState = drawTiles(MAX_HAND_SIZE, deckState);
+      console.log('setDeckState', afterState);
       setDeckState(afterState);
     }
-  }, [active, deckState, setDeckState]);
+  }, [active, setDeckState]);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
