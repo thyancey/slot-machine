@@ -162,7 +162,7 @@ export type TileDeck = Tile[];
 // a TileDeck holds all tiles available for a player to draw. It may or may not contain all tiles defined in the glossary
 // (usually has less, the TileDeck changes as the player progresses)
 export const defaultTileDeck: TileKeyCollection = [
-  'coins',
+  'slot_bar1',
   'slot_bar2',
   'slot_bar3'
 ]

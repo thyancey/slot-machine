@@ -138,6 +138,10 @@ function SlotMachine() {
     }
   }, [spinCount, spinLock, reelStates]);
 
+  const onSpinComplete = useCallback((reelIdx: number) => {
+    console.log(`reel [${reelIdx}] done spinning!`);
+  }, []);
+
   console.log('SlotMachine: reelStates', reelStates, targetSlotIdxs)
 
   return (
@@ -156,6 +160,7 @@ function SlotMachine() {
             tileDeck={tileDeck}
             spinCount={spinCount}
             targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
+            onSpinComplete={onSpinComplete}
           />
         ))}
       </ScReelContainer>

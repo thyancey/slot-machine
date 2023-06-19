@@ -146,10 +146,12 @@ export const buildReelLegacy = (tiles: Tile[], reelOverlap: number) => {
     .concat(loopAfter);
 };
 
-export const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastAngle: number) => {
-  return getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
+export const getProgressiveSpinAngle = (perc: number, targetLoopedIdx: number, curLoopedIdx: number, reelHeight: number) => {
+  const targetAngle = targetLoopedIdx * reelHeight;
+  const lastAngle = curLoopedIdx * reelHeight;
+  
+  return lastAngle + getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
 };
-
 
 /**
  * from a known starting position, move at least X positions, and whatever more needed to land on the desired idx
