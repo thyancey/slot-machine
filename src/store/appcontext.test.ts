@@ -168,7 +168,7 @@ describe('AppContext', () => {
       ]);
     });
 
-    it('should not remove last remaining reel and item', () => {
+    it('should not remove last remaining reel and tile', () => {
       const theseReelStates = [
         {
           items: ['apple']

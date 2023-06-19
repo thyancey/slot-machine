@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { reelItemDef } from '../slotmachine/data';
+import { tileGlossary } from '../slotmachine/data';
 import { useEffect, useState } from 'react';
 import { pickRandomFromArray } from '../../utils';
 
@@ -14,7 +14,7 @@ const ScWrapper = styled.ul`
   gap: 1rem;
 `;
 
-const ScItemOption = styled.li`
+const ScTile = styled.li`
   padding: 0;
   list-style: none;
   padding: 1rem;
@@ -51,31 +51,31 @@ const NUM_CHOICES = 4;
 
 interface Props {
   active: boolean;
-  selectedItemKey: string;
-  onSelectItemKey: Function;
+  selectedTileKey: string;
+  onSelectTileKey: Function;
 }
-function ItemSelector({ active, selectedItemKey, onSelectItemKey }: Props) {
-  const [itemKeys, setItemKeys] = useState<string[]>([]);
+function TileSelector({ active, selectedTileKey, onSelectTileKey }: Props) {
+  const [tiles, setTileKeys] = useState<string[]>([]);
 
   useEffect(() => {
     if (active) {
-      setItemKeys(pickRandomFromArray(NUM_CHOICES, Object.keys(reelItemDef)));
+      setTileKeys(pickRandomFromArray(NUM_CHOICES, Object.keys(tileGlossary)));
     }
   }, [active]);
 
   return (
     <ScWrapper>
-      {itemKeys.map((key: string) => (
-        <ScItemOption
-          className={key === selectedItemKey ? 'chosen' : ''}
+      {tiles.map((key: string) => (
+        <ScTile
+          className={key === selectedTileKey ? 'chosen' : ''}
           key={key}
-          onClick={() => onSelectItemKey(key)}
+          onClick={() => onSelectTileKey(key)}
         >
-          <img src={reelItemDef[key].img || ''} />
-        </ScItemOption>
+          <img src={tileGlossary[key].img || ''} />
+        </ScTile>
       ))}
     </ScWrapper>
   );
 }
 
-export default ItemSelector;
+export default TileSelector;

@@ -5,13 +5,13 @@ import { clamp } from '../utils';
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   score: number;
-  selectedItemKey: string;
+  selectedTileKey: string;
   reelStates: ReelState[];
   upgradeTokens: number;
   uiState: UiState;
   setUiState: Function;
   incrementScore: Function;
-  setSelectedItemKey: Function;
+  setSelectedTileKey: Function;
   setReelStates: Function;
   insertIntoReel: Function;
   removeFromReel: Function;
@@ -23,8 +23,7 @@ export interface ReelState {
   items: string[];
 }
 
-export const insertIntoArray = (positionIdx: number, item: any, array: any[]) => {
-  // console.log('insertIntoArray', itemKey, positionIdx, items);
+export const insertIntoArray = (positionIdx: number, newItem: any, array: any[]) => {
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > array.length) {
@@ -32,15 +31,14 @@ export const insertIntoArray = (positionIdx: number, item: any, array: any[]) =>
     return array;
   }
 
-  return [...array.slice(0, newPos), item, ...array.slice(newPos)];
+  return [...array.slice(0, newPos), newItem, ...array.slice(newPos)];
 };
 
-export const insertAfterPosition = (reelIdx: number, positionIdx: number, itemKey: string, reelStates: ReelState[]) => {
-  // console.log('insertIntoReel', reelIdx, positionIdx, itemKey, reelStates);
+export const insertAfterPosition = (reelIdx: number, positionIdx: number, tileKey: string, reelStates: ReelState[]) => {
   return reelStates.map((reelState, rIdx) => {
     if (rIdx === reelIdx) {
       return {
-        items: insertIntoArray(positionIdx, itemKey, reelState.items),
+        items: insertIntoArray(positionIdx, tileKey, reelState.items),
       };
     } else {
       return reelState;
@@ -76,7 +74,7 @@ const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
-  const [selectedItemKey, setSelectedItemKey] = useState('');
+  const [selectedTileKey, setSelectedTileKey] = useState('');
   const [reelStates, setReelStates] = useState<ReelState[]>([]);
 
   const incrementScore = (increment: number = 0) => {
@@ -84,7 +82,7 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedItemKey, reelStates));
+    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileKey, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
@@ -93,7 +91,7 @@ const AppProvider = ({ children }: Props) => {
 
   const insertReel = (positionIdx: number) => {
     if(reelStates.length < MAX_REELS){
-      setReelStates(insertIntoArray(positionIdx, { items: [ selectedItemKey ] }, reelStates));
+      setReelStates(insertIntoArray(positionIdx, { items: [ selectedTileKey ] }, reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
@@ -108,12 +106,12 @@ const AppProvider = ({ children }: Props) => {
       value={
         {
           score,
-          selectedItemKey,
+          selectedTileKey,
           reelStates,
           upgradeTokens,
           uiState,
           incrementScore,
-          setSelectedItemKey,
+          setSelectedTileKey,
           setReelStates,
           insertIntoReel,
           removeFromReel,

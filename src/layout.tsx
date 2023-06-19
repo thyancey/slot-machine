@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
 import Header from './components/header';
-import ItemList from './components/itemlist';
+import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 
 const ScWrapper = styled.main`
@@ -43,7 +43,7 @@ function Layout() {
   return (
     <ScWrapper>
       <Header/>
-      <ItemList />
+      <TileList />
       <ScStage>
         <SlotMachine />
       </ScStage>

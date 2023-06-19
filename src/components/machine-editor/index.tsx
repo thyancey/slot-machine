@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '../button';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
-import ItemSelector from './item-selector';
+import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
 
 const ScWrapper = styled.aside`
@@ -68,23 +68,23 @@ const ScFooterButtons = styled.div`
   }
 `;
 
-export type MachineEditorMode = 'item' | 'reel';
+export type MachineEditorMode = 'hand' | 'reel';
 
 interface Props {}
 function MachineEditor({}: Props) {
   const {
     uiState,
     setUiState,
-    selectedItemKey,
-    setSelectedItemKey,
+    selectedTileKey,
+    setSelectedTileKey,
     insertIntoReel,
     removeFromReel,
     insertReel,
     upgradeTokens,
     setUpgradeTokens,
   } = useContext(AppContext);
-  const [preselectedItemKey, setPreselectedItemKey] = useState('');
-  const [editorMode, setEditorMode] = useState<MachineEditorMode>('item');
+  const [preselectedTileKey, setPreselectedTileKey] = useState('');
+  const [editorMode, setEditorMode] = useState<MachineEditorMode>('hand');
 
   // close this sucker when you run out of money
   /*
@@ -100,27 +100,27 @@ function MachineEditor({}: Props) {
       if (upgradeTokens === 0) {
         setEditorMode('reel');
       } else {
-        setEditorMode('item');
+        setEditorMode('hand');
       }
-      setPreselectedItemKey('');
+      setPreselectedTileKey('');
     }
   }, [uiState]);
 
   // useEffect(() => {
-  //   setEditorMode(selectedItemKey ? 'item' : 'reel');
-  // }, [selectedItemKey]);
+  //   setEditorMode(selectedTileKey ? 'hand' : 'reel');
+  // }, [selectedTileKey]);
 
   const closeEditor = useCallback(() => {
-    setSelectedItemKey('');
-    setPreselectedItemKey('');
+    setSelectedTileKey('');
+    setPreselectedTileKey('');
     setUiState('game');
-  }, [selectedItemKey]);
+  }, [selectedTileKey]);
 
   const onInsertIntoReel = useCallback(
-    (reelIdx: number, itemIdx: number) => {
-      insertIntoReel(reelIdx, itemIdx);
-      setSelectedItemKey('');
-      setPreselectedItemKey('');
+    (reelIdx: number, tileIdx: number) => {
+      insertIntoReel(reelIdx, tileIdx);
+      setSelectedTileKey('');
+      setPreselectedTileKey('');
       setUpgradeTokens(upgradeTokens - 1);
     },
     [insertIntoReel, upgradeTokens]
@@ -128,17 +128,17 @@ function MachineEditor({}: Props) {
   const onInsertReel = useCallback(
     (reelIdx: number) => {
       insertReel(reelIdx);
-      setSelectedItemKey('');
-      setPreselectedItemKey('');
+      setSelectedTileKey('');
+      setPreselectedTileKey('');
       setUpgradeTokens(upgradeTokens - 1);
     },
     [insertIntoReel, upgradeTokens]
   );
   const onRemoveFromReel = useCallback(
-    (reelIdx: number, itemIdx: number) => {
-      removeFromReel(reelIdx, itemIdx);
-      setSelectedItemKey('');
-      setPreselectedItemKey('');
+    (reelIdx: number, tileIdx: number) => {
+      removeFromReel(reelIdx, tileIdx);
+      setSelectedTileKey('');
+      setPreselectedTileKey('');
       setUpgradeTokens(upgradeTokens + 1);
     },
     [insertIntoReel, upgradeTokens]
@@ -147,13 +147,13 @@ function MachineEditor({}: Props) {
   return (
     <ScWrapper className={uiState === 'editor' ? 'panel-open' : ''}>
       <ScPanel>
-        <h2>{editorMode === 'item' ? `choose your upgrade (${upgradeTokens} tokens)` : 'insert into reel'}</h2>
+        <h2>{editorMode === 'hand' ? `choose your upgrade (${upgradeTokens} tokens)` : 'insert into reel'}</h2>
         <ScBody>
-          {editorMode === 'item' ? (
-            <ItemSelector
+          {editorMode === 'hand' ? (
+            <TileSelector
               active={uiState === 'editor'}
-              selectedItemKey={preselectedItemKey}
-              onSelectItemKey={(itemKey: string) => setPreselectedItemKey(itemKey)}
+              selectedTileKey={preselectedTileKey}
+              onSelectTileKey={(tileKey: string) => setPreselectedTileKey(tileKey)}
             />
           ) : (
             <ReelEditor
@@ -167,10 +167,10 @@ function MachineEditor({}: Props) {
           <ScFooterButtons>
             {renderFooter(
               editorMode,
-              preselectedItemKey,
+              preselectedTileKey,
               upgradeTokens,
-              setSelectedItemKey,
-              setPreselectedItemKey,
+              setSelectedTileKey,
+              setPreselectedTileKey,
               setEditorMode,
               closeEditor
             )}
@@ -184,10 +184,10 @@ function MachineEditor({}: Props) {
 
 const renderFooter = (
   editorMode: MachineEditorMode,
-  preselectedItemKey: string,
+  preselectedTileKey: string,
   upgradeTokens: number,
-  setSelectedItemKey: Function,
-  setPreselectedItemKey: Function,
+  setSelectedTileKey: Function,
+  setPreselectedTileKey: Function,
   setEditorMode: Function,
   closeEditor: Function
 ) => {
@@ -201,18 +201,18 @@ const renderFooter = (
     </Button>
   );
 
-  if (editorMode === 'item') {
+  if (editorMode === 'hand') {
     return (
       <>
         <CloseButton />
         <Button
-          buttonStyle={preselectedItemKey === '' || upgradeTokens === 0 ? 'normal' : 'special'}
+          buttonStyle={preselectedTileKey === '' || upgradeTokens === 0 ? 'normal' : 'special'}
           onClick={() => {
-            setSelectedItemKey(preselectedItemKey);
+            setSelectedTileKey(preselectedTileKey);
             setEditorMode('reel');
           }}
         >
-          {!preselectedItemKey ? 'EDIT REEL' : 'INSERT'}
+          {!preselectedTileKey ? 'EDIT REEL' : 'INSERT'}
         </Button>
       </>
     );
@@ -221,14 +221,14 @@ const renderFooter = (
       return <CloseButton />;
     }
 
-    if (preselectedItemKey !== '') {
+    if (preselectedTileKey !== '') {
       return (
         <>
           <Button
             onClick={() => {
-              setSelectedItemKey('');
-              setPreselectedItemKey('');
-              setEditorMode('item');
+              setSelectedTileKey('');
+              setPreselectedTileKey('');
+              setEditorMode('hand');
             }}
           >
             {'<- CHANGE UPGRADE'}
@@ -243,9 +243,9 @@ const renderFooter = (
         <Button
           buttonStyle='special'
           onClick={() => {
-            setSelectedItemKey('');
-            setPreselectedItemKey('');
-            setEditorMode('item');
+            setSelectedTileKey('');
+            setPreselectedTileKey('');
+            setEditorMode('hand');
           }}
         >
           {'PICK ANOTHER'}

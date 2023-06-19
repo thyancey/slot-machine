@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Fragment, useContext, useMemo } from 'react';
 import { AppContext, MAX_REEL_TOKENS } from '../../store/appcontext';
-import { MAX_REELS, ReelItem, reelItemDef } from '../slotmachine/data';
+import { MAX_REELS, Tile, tileGlossary } from '../slotmachine/data';
 
 const ScWrapper = styled.ul`
   background-color: var(--color-grey);
@@ -18,7 +18,7 @@ const ScReelContainer = styled.li`
   max-width: 15rem;
 `;
 
-const ScReelItems = styled.ul``;
+const ScTiles = styled.ul``;
 
 const ScInsertButton = styled.button`
   font-size: 1rem;
@@ -32,7 +32,7 @@ const ScInsertButton = styled.button`
   }
 `;
 
-const ScInsertItemButton = styled(ScInsertButton)`
+const ScInsertTileButton = styled(ScInsertButton)`
   margin-bottom: 0.25rem;
   margin-top: 0.25rem;
   width: 100%;
@@ -128,14 +128,14 @@ const ScRemoveLabel = styled.div`
 
 interface InsertButtonProps {
   onClick: Function;
-  reelItem: ReelItem;
+  tile: Tile;
 }
-const InsertItemButton = ({ onClick, reelItem }: InsertButtonProps) => {
+const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
   return (
-    <ScInsertItemButton className={!!reelItem ? 'active' : ''} onClick={() => onClick()}>
+    <ScInsertTileButton className={!!tile ? 'active' : ''} onClick={() => onClick()}>
       <span>{'insert'}</span>
-      {reelItem && <img src={reelItem.img} />}
-    </ScInsertItemButton>
+      {tile && <img src={tile.img} />}
+    </ScInsertTileButton>
   );
 };
 
@@ -145,19 +145,19 @@ interface Props {
   onInsertReel: Function;
 }
 function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props) {
-  const { reelStates, selectedItemKey, upgradeTokens } = useContext(AppContext);
+  const { reelStates, selectedTileKey, upgradeTokens } = useContext(AppContext);
 
   const canAddReels = useMemo(() => {
     return reelStates.length < MAX_REELS;
   }, [reelStates]);
 
-  const canRemoveItems = useMemo(() => {
-    return !selectedItemKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].items.length === 1);
-  }, [ reelStates, selectedItemKey, upgradeTokens ]);
+  const canRemoveTiles = useMemo(() => {
+    return !selectedTileKey && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].items.length === 1);
+  }, [ reelStates, selectedTileKey, upgradeTokens ]);
 
-  const reelItem = useMemo(() => {
-    return reelItemDef[selectedItemKey];
-  }, [selectedItemKey]);
+  const tile = useMemo(() => {
+    return tileGlossary[selectedTileKey];
+  }, [selectedTileKey]);
 
 
   return (
@@ -165,33 +165,33 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
       {canAddReels && (
         <ScReelContainer>
           <h3>{'NEW REEL'}</h3>
-          <InsertItemButton reelItem={reelItem} onClick={() => onInsertReel(-1)} />
+          <InsertTileButton tile={tile} onClick={() => onInsertReel(-1)} />
         </ScReelContainer>
       )}
       {reelStates.map((rd, rIdx) => (
         <ScReelContainer key={rIdx}>
           <h3>{`REEL ${rIdx + 1}`}</h3>
-          <ScReelItems>
-            <InsertItemButton key={`rc_-1`} reelItem={reelItem} onClick={() => onInsertIntoReel(rIdx, -1)} />
-            {rd.items.map((ri, itemIdx) => (
-              <Fragment key={`rc_${itemIdx}`}>
+          <ScTiles>
+            <InsertTileButton key={`rc_-1`} tile={tile} onClick={() => onInsertIntoReel(rIdx, -1)} />
+            {rd.items.map((ri, tileIdx) => (
+              <Fragment key={`rc_${tileIdx}`}>
                 <ScReelContent>
-                  <img src={reelItemDef[ri].img} />
-                  {canRemoveItems && <ScRemoveLabel onClick={() => onRemoveFromReel(rIdx, itemIdx)}>
+                  <img src={tileGlossary[ri].img} />
+                  {canRemoveTiles && <ScRemoveLabel onClick={() => onRemoveFromReel(rIdx, tileIdx)}>
                     <span>{'REMOVE'}</span>
                     <div />
                   </ScRemoveLabel> }
                 </ScReelContent>
-                <InsertItemButton reelItem={reelItem} onClick={() => onInsertIntoReel(rIdx, itemIdx)} />
+                <InsertTileButton tile={tile} onClick={() => onInsertIntoReel(rIdx, tileIdx)} />
               </Fragment>
             ))}
-          </ScReelItems>
+          </ScTiles>
         </ScReelContainer>
       ))}
       {canAddReels && (
         <ScReelContainer>
           <h3>{'NEW REEL'}</h3>
-          <InsertItemButton reelItem={reelItem} onClick={() => onInsertReel(reelStates.length - 1)} />
+          <InsertTileButton tile={tile} onClick={() => onInsertReel(reelStates.length - 1)} />
         </ScReelContainer>
       )}
     </ScWrapper>

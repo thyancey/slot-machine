@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { buildReel, getActiveCombos, projectSpinTarget } from './utils';
-import { ReelCombo, ReelItem } from './data';
+import { ReelCombo, Tile } from './data';
 
 describe('slotmachine', () => {
   describe('slotmachine > reel', () => {
     describe('#buildReel', () => {
-      it('should keep reelItems the same when no reelOverlap provided', () => {
+      it('should keep tiles the same when no reelOverlap provided', () => {
         expect(buildReel(['A', 'B', 'C'], 0)).toEqual(
           ['A', 'B', 'C']
         );
@@ -31,7 +31,7 @@ describe('slotmachine', () => {
         );
       });
   
-      it('should handle repeat for a single item', () => {
+      it('should handle repeat for a single tile', () => {
         expect(buildReel(['A'], 3)).toEqual(
           [
             'A', 'A', 'A',
@@ -71,12 +71,12 @@ describe('slotmachine', () => {
   
   describe('#getActiveCombos', () => {
 
-    it('should match "same" reelItems', () => {
-      const reelItems = [
+    it('should match "same" tiles', () => {
+      const tiles = [
         { label: 'fire', attributes: ['attack', 'hot'] },
         { label: 'fire', attributes: ['attack', 'hot'] },
         { label: 'fire', attributes: ['attack', 'hot'] },
-      ] as ReelItem[];
+      ] as Tile[];
 
       const reelCombos = [
         {
@@ -99,15 +99,15 @@ describe('slotmachine', () => {
         }
       }
 
-      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+      expect(getActiveCombos(tiles, reelCombos)).toEqual([reelComboResult]);
     });
 
-    it('should match "unique" reelItems, and not do "any"', () => {
-      const reelItems = [
+    it('should match "unique" tiles, and not do "any"', () => {
+      const tiles = [
         { label: 'fire1', attributes: ['attack'] },
         { label: 'fire2', attributes: ['attack'] },
         { label: 'fire3', attributes: ['attack'] },
-      ] as ReelItem[];
+      ] as Tile[];
 
       const reelCombos = [
         {
@@ -130,15 +130,15 @@ describe('slotmachine', () => {
         }
       }
 
-      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+      expect(getActiveCombos(tiles, reelCombos)).toEqual([reelComboResult]);
     });
 
-    it('should match "any" reelItems, if it trumps another rule', () => {
-      const reelItems = [
+    it('should match "any" tiles, if it trumps another rule', () => {
+      const tiles = [
         { label: 'fire1', attributes: ['attack'] },
         { label: 'fire2', attributes: ['attack'] },
         { label: 'fire3', attributes: ['attack'] },
-      ] as ReelItem[];
+      ] as Tile[];
 
       const reelCombos = [
         {
@@ -161,15 +161,15 @@ describe('slotmachine', () => {
         }
       }
 
-      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+      expect(getActiveCombos(tiles, reelCombos)).toEqual([reelComboResult]);
     });
 
-    it('should match "any" reelItems, if other match types are bad', () => {
-      const reelItems = [
+    it('should match "any" tiles, if other match types are bad', () => {
+      const tiles = [
         { label: 'fire1', attributes: ['attack'] },
         { label: 'fire2', attributes: ['attack'] },
         { label: 'fire2', attributes: ['attack'] },
-      ] as ReelItem[];
+      ] as Tile[];
 
       const reelCombos = [
         {
@@ -192,7 +192,7 @@ describe('slotmachine', () => {
         }
       }
 
-      expect(getActiveCombos(reelItems, reelCombos)).toEqual([reelComboResult]);
+      expect(getActiveCombos(tiles, reelCombos)).toEqual([reelComboResult]);
     });
   });
 });

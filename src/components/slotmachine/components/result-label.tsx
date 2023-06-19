@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReelItem } from '../data';
+import { Tile } from '../data';
 import { useEffect, useState } from 'react';
 
 const ScWrapper = styled.div`
@@ -74,13 +74,13 @@ const ScAttrPill = styled(ScPill)`
 `
 
 interface Props {
-  reelItem?: ReelItem;
+  tile?: Tile;
 }
-function ResultLabel({ reelItem }: Props) {
+function ResultLabel({ tile }: Props) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
 
   useEffect(() => {
-    if (reelItem?.label) {
+    if (tile?.label) {
       setLifecycle('lf-new');
       window.setTimeout(() => {
         setLifecycle('lf-present');
@@ -88,16 +88,16 @@ function ResultLabel({ reelItem }: Props) {
     } else {
       setLifecycle('lf-none');
     }
-  }, [reelItem?.label]);
+  }, [tile?.label]);
 
   return (
     <ScWrapper className={lifecycle}>
       <ScAnimator>
         <ScPill>
-          <span>{reelItem?.label.toUpperCase()}</span>
+          <span>{tile?.label.toUpperCase()}</span>
         </ScPill>
         <ScAttrPill>
-          <span>{reelItem?.attributes?.join(',').toUpperCase()}</span>
+          <span>{tile?.attributes?.join(',').toUpperCase()}</span>
         </ScAttrPill>
       </ScAnimator>
     </ScWrapper>

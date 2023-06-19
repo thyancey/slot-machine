@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReelItem } from '../data';
+import { Tile } from '../data';
 
 interface ScProps {
   height: number;
@@ -41,14 +41,14 @@ const ScWrapper = styled.div<ScProps>`
 `;
 
 type Props = {
-  reelItem: ReelItem;
+  tile: Tile;
   height: number;
 };
 
-function ReelContent({ reelItem, height }: Props) {
+function ReelContent({ tile, height }: Props) {
   return (
     <ScWrapper height={height}>
-      <img src={reelItem.img || ''} />
+      <img src={tile.img || ''} />
     </ScWrapper>
   );
 }

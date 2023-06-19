@@ -6,7 +6,7 @@ export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel s
 export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
 export const MAX_REELS = 6;
 
-export type ReelItem = {
+export type Tile = {
   label: string;
   img?: string;
   effect?: string;
@@ -16,14 +16,14 @@ export type ReelItem = {
 };
 
 export interface ReelDef {
-  reelItems: ReelItem[];
+  tiles: Tile[];
 }
 
-export interface ReelItemDict {
-  [key: string]: ReelItem;
+export interface TileGlossary {
+  [key: string]: Tile;
 }
 
-export const reelItemDef: ReelItemDict = {
+export const tileGlossary: TileGlossary = {
   bat: { label: 'bat', img: AssetMap.Rbat, attributes: ['attack', 'creature'], effect: 'life steal', value: 1, score: 250 },
   coins: { label: 'coins', img: AssetMap.Rcoins, attributes: ['money'], effect: 'gold bonus', value: 5, score: 1000 },
   crazy: { label: 'crazy', img: AssetMap.Rcrazy, attributes: ['buff'], score: 0 },
@@ -57,42 +57,42 @@ export const reelItemDef: ReelItemDict = {
 
 export const reelsData: ReelDef[] = [
   {
-    reelItems: [
-      reelItemDef.coins,
-      reelItemDef.crazy,
-      reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+    tiles: [
+      tileGlossary.coins,
+      tileGlossary.crazy,
+      tileGlossary.flame,
+      // tileGlossary.halo,
+      // tileGlossary.lightning,
+      // tileGlossary.poison,
+      // tileGlossary.shield,
+      // tileGlossary.snowflake,
+      // tileGlossary.sword,
     ],
   },
   {
-    reelItems: [
-      reelItemDef.coins,
-      reelItemDef.crazy,
-      reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+    tiles: [
+      tileGlossary.coins,
+      tileGlossary.crazy,
+      tileGlossary.flame,
+      // tileGlossary.halo,
+      // tileGlossary.lightning,
+      // tileGlossary.poison,
+      // tileGlossary.shield,
+      // tileGlossary.snowflake,
+      // tileGlossary.sword,
     ],
   },
   {
-    reelItems: [
-      reelItemDef.coins,
-      reelItemDef.crazy,
-      reelItemDef.flame,
-      // reelItemDef.halo,
-      // reelItemDef.lightning,
-      // reelItemDef.poison,
-      // reelItemDef.shield,
-      // reelItemDef.snowflake,
-      // reelItemDef.sword,
+    tiles: [
+      tileGlossary.coins,
+      tileGlossary.crazy,
+      tileGlossary.flame,
+      // tileGlossary.halo,
+      // tileGlossary.lightning,
+      // tileGlossary.poison,
+      // tileGlossary.shield,
+      // tileGlossary.snowflake,
+      // tileGlossary.sword,
     ],
   },
 ];
