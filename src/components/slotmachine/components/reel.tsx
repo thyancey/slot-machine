@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ReelContent from './reel-content';
-import { REEL_HEIGHT, REEL_OVERLAP, ReelItem, SPIN_POWER_RANGE } from '../data';
+import { REEL_HEIGHT, REEL_OVERLAP, Tile, SPIN_POWER_RANGE } from '../../../store/data';
 import { clamp, randInRange } from '../../../utils';
 import { ReelTarget, buildReel, getProgressiveSpinAngle, projectSpinAngle, projectSpinTarget } from '../utils';
 
-// imagine the construction as a ribbon, rendering each reelItem top to bottom
-// to complete the looping effect, REEL_OVERLAP n of items are repeated at the top and bottom
+// imagine the construction as a ribbon, rendering each tile top to bottom
+// to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const SPIN_TICK: number = 30;
@@ -50,14 +50,14 @@ const ScReelTape = styled.div`
 
 
 type Props = {
-  reelItems: ReelItem[];
-  setCurReelItem: Function;
+  tiles: Tile[];
+  setCurTile: Function;
   reelTarget: ReelTarget;
   reelIdx: number; // mostly for identification / logging
 };
 
-function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
-  const [items, setItems] = useState<ReelItem[]>([]);
+function SlotReel({ tiles, reelIdx, setCurTile, reelTarget }: Props) {
+  const [reelTiles, setReelTiles] = useState<Tile[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const spinTimer = useRef<number | null>(null);
   const [spinPower, setSpinPower] = useState(0);
@@ -77,14 +77,14 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
 
   useEffect(() => {
     // console.log('---------- RESET REEL ---------');
-    setItems(buildReel(reelItems, REEL_OVERLAP));
+    setReelTiles(buildReel(tiles, REEL_OVERLAP));
     setSpinAngle(0);
 
     setLastSpinAngle(0);
     setSpinProgress(0);
      // reset the reel position, but maybe eventually keep it? itll be weird when adding/removing stuff
     setCurIdx(0);
-  }, [reelItems]);
+  }, [tiles]);
 
   useEffect(() => {
     if (reelTarget && reelTarget[0] !== -1 && !isSpinning) {
@@ -101,19 +101,19 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
 
   const triggerSpin = useCallback(() => {
     const nextSpinTarget = projectSpinTarget(
-      reelItems.length,
+      tiles.length,
       curIdx,
       reelTarget[0],
-      3 // TODO: refactor this out, base spins off of # of items in reel
+      3 // TODO: refactor this out, base spins off of # of tiles in reel
     );
-    const projectedSpinAngle = projectSpinAngle(reelItems.length, nextSpinTarget, curIdx);
+    const projectedSpinAngle = projectSpinAngle(tiles.length, nextSpinTarget, curIdx);
     const nextSpinAngle = spinAngle + projectedSpinAngle;
 
-    setCurReelItem(undefined);
+    setCurTile(undefined);
     setSpinAngleTarget(nextSpinAngle);
     setSpinPower(randInRange(SPIN_POWER_RANGE));
     setIsSpinning(true);
-  }, [reelItems, reelTarget, spinAngle, curIdx]);
+  }, [tiles, reelTarget, spinAngle, curIdx]);
 
   // remove timer when unmounting
   useEffect(() => {
@@ -153,22 +153,22 @@ function SlotReel({ reelItems, reelIdx, setCurReelItem, reelTarget }: Props) {
     setIsSpinning(false);
     setLastSpinAngle(spinAngle);
     setCurIdx(reelTarget[0]);
-    setCurReelItem(reelItems[reelTarget[0]]);
-  }, [reelTarget, setCurIdx, reelItems, spinAngle]);
+    setCurTile(tiles[reelTarget[0]]);
+  }, [reelTarget, setCurIdx, tiles, spinAngle]);
 
   const reelTop = useMemo(() => {
-    // console.log('there are this many', reelItems.length)
-    const reelTop = (-1 * spinAngle) % (REEL_HEIGHT * reelItems.length);
+    // console.log('there are this many', tiles.length)
+    const reelTop = (-1 * spinAngle) % (REEL_HEIGHT * tiles.length);
     // console.log('reelTop', reelTop)
     return reelTop - REEL_OVERLAP * REEL_HEIGHT;
-  }, [spinAngle, reelItems]);
+  }, [spinAngle, tiles]);
 
   return (
     <ScWrapper className={isSpinning ? 'spinning' : ''}>
       <ScReelCenterer>
         <ScReelTape style={{ top: `${reelTop}px` }}>
-          {items.map((reelItem, idx) => (
-            <ReelContent key={`${reelIdx}-${idx}`} reelItem={reelItem} height={REEL_HEIGHT} />
+          {reelTiles.map((tile, idx) => (
+            <ReelContent key={`${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} />
           ))}
         </ScReelTape>
       </ScReelCenterer>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ReelCombo, ReelComboResult } from '../data';
+import { ReelCombo, ReelComboResult } from '../../../store/data';
 
 const ScWrapper = styled.div`
   position: absolute;

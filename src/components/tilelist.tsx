@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import styled from 'styled-components';
-import { reelItemDef } from './slotmachine/data';
+import { TileKeyCollection, tileGlossary } from '../store/data';
+import { AppContext } from '../store/appcontext';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -25,7 +26,7 @@ const ScPanel = styled.div`
   overflow-y: auto;
 `;
 
-const ScItemLabel = styled.li`
+const ScTile = styled.li`
   margin: 0;
   padding: 0;
   list-style: none;
@@ -72,21 +73,32 @@ const ScTab = styled.div`
   }
 `;
 
-const getItems = () => {
-  return Object.keys(reelItemDef).map((key: string) => (
-    <ScItemLabel key={key}>
-      <img src={reelItemDef[key].img || ''} />
-      <span>{` : ${reelItemDef[key].score}`}</span>
-    </ScItemLabel>
+// const renderTiles = () => {
+//   return Object.keys(tileGlossary).map((key: string) => (
+//     <ScTile key={key}>
+//       <img src={tileGlossary[key].img || ''} />
+//       <span>{` : ${tileGlossary[key].score}`}</span>
+//     </ScTile>
+//   ));
+// }
+
+const renderTiles = (tileDeck: TileKeyCollection) => {
+  return tileDeck.map((tileKey: string, idx: number) => (
+    <ScTile key={`${idx}-${tileKey}`}>
+      <img src={tileGlossary[tileKey].img || ''} />
+      <span>{` : ${tileGlossary[tileKey].score}`}</span>
+    </ScTile>
   ));
 }
 
-function ItemList() {
+function TileList() {
   const [open, setOpen] = useState(false);
+  const { tileDeck } = useContext(AppContext);
+
   return (
     <ScWrapper className={open ? 'panel-open' : ''}>
       <ScPanel>
-        {getItems().map(item => (item))}
+        {renderTiles(tileDeck).map(tile => (tile))}
       </ScPanel>
       <ScTab
         onClick={() => {
@@ -94,11 +106,11 @@ function ItemList() {
         }}
       >
         <div>
-          <span>{'items'}</span>
+          <span>{'tiles'}</span>
         </div>
       </ScTab>
     </ScWrapper>
   );
 }
 
-export default ItemList;
+export default TileList;

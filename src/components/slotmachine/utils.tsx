@@ -1,7 +1,7 @@
 import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { ReelDef, ReelItem, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from './data';
+import { TileKeyCollection, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from '../../store/data';
 
-export type ReelTarget = [itemIdx: number, spinCount: number];
+export type ReelTarget = [tileIdx: number, spinCount: number];
 
 // later on, some factors should weight the "random"
 export const getRandomIdx = (array: any[]) => Math.floor(Math.random() * array.length);
@@ -9,20 +9,20 @@ export const getRandom2dIdxs = (arrayOfArrays: any[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
 };
 
-export const getRandomReelTargets = (reelSet: ReelDef[], spinCount: number) => {
-  return reelSet.map((reelDef) => [getRandomIdx(reelDef.reelItems), spinCount] as ReelTarget);
+export const getRandomReelTargets = (reelSet: TileKeyCollection[], spinCount: number) => {
+  return reelSet.map((tileKeys) => [getRandomIdx(tileKeys), spinCount] as ReelTarget);
 };
 
-export const getFirstMatchingBonus = (bonuses: BonusGroup[], reelItems: ReelItem[]) => {
+export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
   for (var i = 0; i < bonuses.length; i++) {
     switch (bonuses[i].bonusType) {
       case 'same':
-        if (checkSameStrings(reelItems.map((rI) => rI.label))) {
+        if (checkSameStrings(tiles.map((rI) => rI.label))) {
           return bonuses[i];
         }
         break;
       case 'unique':
-        if (checkUniqueStrings(reelItems.map((rI) => rI.label))) {
+        if (checkUniqueStrings(tiles.map((rI) => rI.label))) {
           return bonuses[i];
         }
         break;
@@ -34,21 +34,21 @@ export const getFirstMatchingBonus = (bonuses: BonusGroup[], reelItems: ReelItem
   return null;
 };
 
-export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) => {
+export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   // loop each combo
   let activeCombos = reelCombos.reduce((combos, rC) => {
     for (var a = 0; a < rC.attributes.length; a++) {
-      // if every item has a matching attribute
+      // if every tile has a matching attribute
       if (
-        reelItems.filter((rI) => {
+        tiles.filter((rI) => {
           return rI.attributes && rI.attributes?.indexOf(rC.attributes[a]) > -1;
-        }).length === reelItems.length
+        }).length === tiles.length
       ) {
         // you found one, this combo is validated
         combos.push({
           label: rC.label,
           attribute: rC.attributes[a],
-          bonus: getFirstMatchingBonus(rC.bonuses, reelItems),
+          bonus: getFirstMatchingBonus(rC.bonuses, tiles),
         });
 
         return combos;
@@ -60,16 +60,14 @@ export const getActiveCombos = (reelItems: ReelItem[], reelCombos: ReelCombo[]) 
   // gather groups of matching attributes
   // check labels for same or unique bonus
   // rank combos
-  // console.log('gac', reelItems, reelCombos, activeCombos);
+  // console.log('gac', tiles, reelCombos, activeCombos);
 
   return activeCombos;
 };
 
-export const getComboScore = (reelItems: ReelItem[], activeCombos: ReelComboResult[]) =>
+export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   activeCombos.reduce((totScore, aC) => {
-    console.log('reelItems', reelItems);
-    let baseScore = reelItems.reduce((acc, reelItem) => (acc += (reelItem.score || 0)), 0);
-    console.log('baseScore', baseScore);
+    let baseScore = tiles.reduce((acc, tile) => (acc += (tile.score || 0)), 0);
 
     if (aC.bonus?.multiplier) {
       totScore += aC.bonus.multiplier * baseScore;
@@ -81,27 +79,27 @@ export const getComboScore = (reelItems: ReelItem[], activeCombos: ReelComboResu
     return totScore;
   }, 0);
 
-// add redudant items to top and bottom of reel to make it seem continuous
-export const buildReel = (reelItems: any[], reelOverlap: number) => {
+// add redudant tiles to top and bottom of reel to make it seem continuous
+export const buildReel = (tiles: any[], reelOverlap: number) => {
   // starting with [ 0, 1, 2 ]
 
   // [ +1, +2, 0, 1, 2 ]
   const loopBefore = [];
   // the +1 here attached the last to the top, regardless of overlap value
   for (let i = 0; i < reelOverlap; i++) {
-    const offset = reelItems.length - (i % reelItems.length) - 1;
-    loopBefore.push(reelItems[offset]);
+    const offset = tiles.length - (i % tiles.length) - 1;
+    loopBefore.push(tiles[offset]);
   }
 
   // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
   const loopAfter = [];
   for (let i = 0; i < reelOverlap; i++) {
-    loopAfter.push(reelItems[i % reelItems.length]);
+    loopAfter.push(tiles[i % tiles.length]);
   }
 
   return ([] as any[])
     .concat(loopBefore.reverse())
-    .concat(reelItems.map((rI) => rI))
+    .concat(tiles.map((rI) => rI))
     .concat(loopAfter);
 };
 
@@ -115,31 +113,31 @@ export const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastA
 
   this could probably get cleaned up and simplified but im sick of messing with it.
 */
-export const projectSpinTarget = (numItems: number, curIdx: number, nextIdx: number, loops: number) => {
+export const projectSpinTarget = (numTiles: number, curIdx: number, nextIdx: number, loops: number) => {
   const change = nextIdx - curIdx;
 
   if (loops === 0) {
     if (change === 0) {
-      return curIdx + numItems;
+      return curIdx + numTiles;
     } else if (change > 0) {
       return curIdx + change;
     } else {
-      return curIdx + numItems + change;
+      return curIdx + numTiles + change;
     }
   } else {
     if (change === 0) {
-      return curIdx + numItems * loops;
+      return curIdx + numTiles * loops;
     } else if (change > 0) {
-      return curIdx + numItems * loops + change;
+      return curIdx + numTiles * loops + change;
     } else {
-      return curIdx + numItems * loops + (numItems + change);
+      return curIdx + numTiles * loops + (numTiles + change);
     }
   }
 };
 
-export const projectSpinAngle = (numItems: number, targetIdx: number, curIdx: number) => {
-  if (numItems === 1) {
+export const projectSpinAngle = (numTiles: number, targetIdx: number, curIdx: number) => {
+  if (numTiles === 1) {
     return targetIdx * REEL_HEIGHT;
   }
-  return (targetIdx / numItems) * (numItems * REEL_HEIGHT) - curIdx * REEL_HEIGHT;
+  return (targetIdx / numTiles) * (numTiles * REEL_HEIGHT) - curIdx * REEL_HEIGHT;
 };
