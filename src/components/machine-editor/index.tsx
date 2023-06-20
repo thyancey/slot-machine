@@ -180,6 +180,7 @@ const renderFooter = (
   setEditorMode: (str: MachineEditorMode) => void,
   closeEditor: () => void
 ) => {
+  console.log('preselectedTileIdx', preselectedTileIdx);
   const CloseButton = () => (
     <Button
       onClick={() => {
@@ -201,7 +202,7 @@ const renderFooter = (
             setEditorMode('reel');
           }}
         >
-          {!preselectedTileIdx ? 'EDIT REEL' : 'INSERT'}
+          {preselectedTileIdx === -1 ? 'EDIT REEL' : 'INSERT'}
         </Button>
       </>
     );

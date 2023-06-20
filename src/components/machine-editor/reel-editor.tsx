@@ -186,7 +186,7 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
                     <div />
                   </ScRemoveLabel> }
                 </ScReelContent>
-                <InsertTileButton tile={tile} onClick={() => onInsertIntoReel(rIdx, tileIdx)} />
+                <InsertTileButton tile={selectedTile} onClick={() => onInsertIntoReel(rIdx, tileIdx)} />
               </Fragment>
             ))}
           </ScTiles>
