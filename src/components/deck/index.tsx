@@ -21,7 +21,7 @@ const ScCardWrapper = styled.div`
 `
 
 function Deck() {
-  const { setDeckState, deckState } = useContext(AppContext);
+  const { deckState } = useContext(AppContext);
   console.log('deck', deckState);
 
   return (

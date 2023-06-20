@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
-import { getLoopedReelState, getProgressiveSpinAngle, getSpinTarget } from '../utils';
+import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
@@ -25,6 +25,7 @@ const ScWrapper = styled.div`
   clip-path: inset(0 0 round 10px);
 `;
 
+// shadow at top/bottom of reel to give depth effect
 const ScReelOverlay = styled.div`
   position: absolute;
   inset: -0.6rem;
@@ -62,7 +63,7 @@ type Props = {
   spinCount: number; // this helps determine when a spin started
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
 };
-function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpinComplete }: Props) {
+function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpinComplete }: Props) {
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
@@ -70,18 +71,14 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
   const [spinProgress, setSpinProgress] = useState(1);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
 
-  // const spinTimer = useRef<number | null>(null);
-
   // on initialize
   useEffect(() => {
-    // console.log(`Reel [${reelIdx}] initialized with reelState: `, reelState);
-    // setLastLoopedIdx(0);
     setLoopedIdxs([0, 0]);
   }, [reelState, reelIdx]);
 
   /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
-    console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
+    // console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
     // -1 happens on mount
     if (targetSlotIdx !== -1) {
       // allows the reel to spin again
@@ -112,7 +109,7 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
 
   const reelTop = useMemo(() => {
     const curAngle = getProgressiveSpinAngle(spinProgress, loopedIdxs[1], loopedIdxs[0], REEL_HEIGHT);
-    // reel moves UP (negative)
+    // reel moves UP (negative top value)
     const val = (-1 * curAngle) % (REEL_HEIGHT * reelState.length);
 
     // reel gets additonal offset from the repeated top items
@@ -120,7 +117,7 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
   }, [spinProgress, loopedIdxs, reelState.length]);
 
   const reelTileStates = useMemo(() => {
-    const loopedReelState = getLoopedReelState(reelState, REEL_OVERLAP);
+    const loopedReelState = getLoopedReel(reelState, REEL_OVERLAP);
     return getReelTileStateFromReelState(loopedReelState, tileDeck);
   }, [reelState, tileDeck]);
 
@@ -138,4 +135,4 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
   );
 }
 
-export default NewReel;
+export default Reel;

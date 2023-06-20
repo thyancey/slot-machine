@@ -106,7 +106,6 @@ const ScHandle = styled.div`
 `;
 
 function SlotMachine() {
-  // const [curTiles, setCurTiles] = useState<(Tile | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
@@ -116,7 +115,6 @@ function SlotMachine() {
   const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
   useEffect(() => {
-    // console.log('SlotMachine.initial load');
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
     setReelStates(defaultReelState);
     setTileDeck(defaultTileDeck);
@@ -156,9 +154,9 @@ function SlotMachine() {
   // at the moment, all these stupid checks are required to not have it go off on load
   useEffect(() => {
     if (spinCount > 0 && reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
-      console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
+      //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
       const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
-      // console.log('tiles', tiles);
+
       const activeCombos = getActiveCombos(tiles, reelCombos);
       setActiveCombos(activeCombos);
 
