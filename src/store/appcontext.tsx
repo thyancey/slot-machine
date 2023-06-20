@@ -10,6 +10,7 @@ import {
 } from './data';
 import { clamp } from '../utils';
 import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { discardTiles, drawTiles } from '../components/machine-editor/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -37,6 +38,9 @@ interface AppContextType {
   insertIntoReel: (reelIdx: number, positionIdx: number) => void;
   removeFromReel: (reelIdx: number, positionIdx: number) => void;
   insertReel: (positionIdx: number) => void;
+
+  drawCards: (numToDraw: number) => void;
+  discardCards: (ignoreIdx: number) => void;
 }
 
 interface Props {
@@ -55,9 +59,12 @@ const AppProvider = ({ children }: Props) => {
     discard: [],
   });
 
-  const incrementScore = useCallback((increment = 0) => {
-    setScore((prevScore) => prevScore + increment);
-  }, [ setScore ]);
+  const incrementScore = useCallback(
+    (increment = 0) => {
+      setScore((prevScore) => prevScore + increment);
+    },
+    [setScore]
+  );
 
   // TODO - these should probably use useCallback, but it wasnt necessary when i first
   // put them in here.
@@ -77,6 +84,27 @@ const AppProvider = ({ children }: Props) => {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
   };
+
+  const drawCards = useCallback(
+    (numToDraw: number) => {
+      console.log(`AppContext.drawCards(${numToDraw})`);
+      const afterState = drawTiles(numToDraw, deckState);
+      console.log('afterState:', afterState);
+
+      setDeckState(afterState);
+    },
+    [deckState]
+  );
+
+  const discardCards = useCallback(
+    (ignoreIdx: number) => {
+      console.log(`AppContext.discardCards(${ignoreIdx})`);
+      const afterState = discardTiles(deckState.drawn, deckState);
+      console.log('afterState:', afterState);
+      setDeckState(afterState);
+    },
+    [deckState]
+  );
 
   const setUpgradeTokens = (newAmount: number) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
@@ -110,6 +138,9 @@ const AppProvider = ({ children }: Props) => {
 
           deckState,
           setDeckState,
+
+          drawCards,
+          discardCards,
         } as AppContextType
       }
     >

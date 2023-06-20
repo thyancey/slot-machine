@@ -164,7 +164,14 @@ export type TileDeck = Tile[];
 export const defaultTileDeck: TileKeyCollection = [
   'slot_bar1',
   'slot_bar2',
-  'slot_bar3'
+  'slot_bar3',
+  'slot_seven',
+  'flame',
+  'halo',
+  'heart',
+  'lightning',
+  'sword',
+  'shield'
 ]
 
 /**

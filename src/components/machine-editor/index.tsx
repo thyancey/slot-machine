@@ -5,6 +5,7 @@ import { AppContext } from '../../store/appcontext';
 import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
 import { discardTiles } from './utils';
+import CardPile from './cardpile';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -37,15 +38,17 @@ const ScPanel = styled.div`
   }
 `;
 
-const ScBody = styled.ul`
+const ScBody = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
 
   justify-content: center;
   gap: 1rem;
+  position:relative;
 `;
 
 const ScBg = styled.div`
@@ -69,6 +72,17 @@ const ScFooterButtons = styled.div`
   }
 `;
 
+const ScDrawPile = styled.div`
+  position:absolute;
+  left:5rem;
+  bottom:2rem;
+`
+const ScDiscardPile = styled.div`
+  position:absolute;
+  right:5rem;
+  bottom:2rem;
+`
+
 export type MachineEditorMode = 'hand' | 'reel';
 
 function MachineEditor() {
@@ -83,6 +97,7 @@ function MachineEditor() {
     setUpgradeTokens,
     setDeckState,
     deckState,
+    discardCards,
   } = useContext(AppContext);
   const [preselectedTileIdx, setPreselectedTileIdx] = useState(-1);
   const [editorMode, setEditorMode] = useState<MachineEditorMode>('hand');
@@ -111,8 +126,9 @@ function MachineEditor() {
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
       setUpgradeTokens(upgradeTokens - 1);
+      discardCards(tileIdx);
     },
-    [insertIntoReel, upgradeTokens, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
+    [insertIntoReel, upgradeTokens, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens, discardCards]
   );
   const onInsertReel = useCallback(
     (reelIdx: number) => {
@@ -151,6 +167,12 @@ function MachineEditor() {
               onInsertReel={onInsertReel}
             />
           )}
+          <ScDrawPile>
+            <CardPile type={'draw'} cards={deckState.draw} />
+          </ScDrawPile>
+          <ScDiscardPile>
+            <CardPile type={'discard'} cards={deckState.discard} />
+          </ScDiscardPile>
         </ScBody>
         <ScFooter>
           <ScFooterButtons>
@@ -180,7 +202,7 @@ const renderFooter = (
   setEditorMode: (str: MachineEditorMode) => void,
   closeEditor: () => void
 ) => {
-  console.log('preselectedTileIdx', preselectedTileIdx);
+  // console.log('preselectedTileIdx', preselectedTileIdx);
   const CloseButton = () => (
     <Button
       onClick={() => {

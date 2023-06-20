@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { MAX_HAND_SIZE, Tile, tileGlossary } from '../../store/data';
+import { Tile, tileGlossary } from '../../store/data';
 import { useEffect, useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import { drawTiles } from './utils';
 
 const ScWrapper = styled.ul`
   display: flex;
@@ -49,8 +48,8 @@ const ScTile = styled.li`
 `;
 
 interface HandTile {
-  deckIdx: number,
-  tile: Tile
+  deckIdx: number;
+  tile: Tile;
 }
 
 interface Props {
@@ -59,28 +58,34 @@ interface Props {
   onSelectTile: (deckIdx: number) => void;
 }
 function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
-  const { deckState, setDeckState, tileDeck } = useContext(AppContext);
+  const { deckState, tileDeck, drawCards } = useContext(AppContext);
 
-  // when loading screen, draw some cards
+  // checks prevent an issue where the whole deck gets drawn at once
+  /*
   useEffect(() => {
     if (active) {
-      const afterState = drawTiles(MAX_HAND_SIZE, deckState);
-      console.log('setDeckState', afterState);
-      setDeckState(afterState);
+      if (deckState.drawn.length === 0) {
+        drawCards(3);
+      }
     }
-  }, [active, deckState, setDeckState]);
+  }, [active, drawCards, deckState]);
+  */
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
       deckIdx,
-      tile: tileGlossary[tileDeck[deckIdx]]
+      tile: tileGlossary[tileDeck[deckIdx]],
     }));
   }, [deckState, tileDeck]);
 
   return (
     <ScWrapper>
       {tiles.map((handTile) => (
-        <ScTile className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''} key={handTile.deckIdx} onClick={() => onSelectTile(handTile.deckIdx)}>
+        <ScTile
+          className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''}
+          key={handTile.deckIdx}
+          onClick={() => onSelectTile(handTile.deckIdx)}
+        >
           <img src={handTile.tile.img || ''} />
         </ScTile>
       ))}
