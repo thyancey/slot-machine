@@ -14,8 +14,6 @@ import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
 import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
-import ScoreBox from '../scorebox';
-import Button from '../button';
 import InfoTray from './components/infotray';
 
 const ScWrapper = styled.main`
@@ -115,8 +113,7 @@ function SlotMachine() {
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
-  const { upgradeTokens, setUiState, setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } =
-    useContext(AppContext);
+  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
@@ -184,13 +181,15 @@ function SlotMachine() {
       // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
       return [];
     }
-    return reelResults.map((slotIdx, reelIdx) => {
-      // the undefined check avoids a bug when deleting a reel in the editor
-      // while reelResults are populated
-      if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
-      const deckIdx = reelStates[reelIdx][slotIdx];
-      return getTileFromDeckIdx(deckIdx, tileDeck);
-    }).filter(rs => rs !== undefined); // since some were undefined, clear em out
+    return reelResults
+      .map((slotIdx, reelIdx) => {
+        // the undefined check avoids a bug when deleting a reel in the editor
+        // while reelResults are populated
+        if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
+        const deckIdx = reelStates[reelIdx][slotIdx];
+        return getTileFromDeckIdx(deckIdx, tileDeck);
+      })
+      .filter((rs) => rs !== undefined); // since some were undefined, clear em out
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
