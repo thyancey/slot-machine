@@ -13,6 +13,15 @@ const ScWrapper = styled.ul`
   justify-content: center;
 `;
 
+const ScHintText = styled.p`
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+
+  color: var(--color-white);
+`
+
 const ScReelContainer = styled.li`
   flex: 1;
   margin: 1rem;
@@ -159,8 +168,14 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
     return getReelTileStatesFromReelStates(reelStates, tileDeck);
   }, [ reelStates, tileDeck ])
 
+  const hintText = useMemo(() => {
+    if(canRemoveTiles) return '(you can delete items)';
+    return selectedTileIdx > -1 ? '(insert your item into the slot machine)' : '(no moves left)'
+  }, [canRemoveTiles, selectedTileIdx])
+
   return (
     <ScWrapper>
+      <ScHintText>{hintText}</ScHintText>
       {canAddReels && (
         <ScReelContainer>
           <h3>{'NEW REEL'}</h3>

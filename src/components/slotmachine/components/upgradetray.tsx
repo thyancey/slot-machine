@@ -24,14 +24,14 @@ const ScTokenContainer = styled.ul`
   flex: 1;
   padding-right: 0.75rem;
   margin-left: 0.5rem;
-  text-align:left;
+  text-align: left;
 `;
 
 const ScToken = styled.li`
   width: 3rem;
   height: 100%;
   display: inline-block;
-  vertical-align:middle;
+  vertical-align: middle;
   background: url(${AssetMap.UI_Token_Empty}) no-repeat center / contain;
   filter: brightness(0.5);
 
@@ -51,7 +51,7 @@ function UpgradeTray() {
     <ScWrapper>
       <Button
         // disabled={upgradeTokens <= 0}
-        buttonStyle={upgradeTokens > 0 ? 'special': 'normal'}
+        buttonStyle={upgradeTokens > 0 ? 'special' : 'normal'}
         onClick={() => setUiState('editor')}
       >{`modify`}</Button>
       <ScTokenContainer>

@@ -12,9 +12,11 @@ import {
 import ResultLabel from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
-import UpgradeTray from './components/upgradetray';
 import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
+import ScoreBox from '../scorebox';
+import Button from '../button';
+import InfoTray from './components/infotray';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -32,6 +34,11 @@ const ScWrapper = styled.main`
   text-align: center;
 
   border-radius: 0.5rem;
+`;
+
+const ScInfoTray = styled.div`
+  width: calc(100% - 2rem);
+  margin: 1rem auto;
 `;
 
 const ScDisplayContainer = styled.div`
@@ -54,10 +61,6 @@ const ScReelContainer = styled.div`
   > div {
     margin: 0rem 0.5rem;
   }
-`;
-const ScUpgradeTray = styled.div`
-  width: calc(100% - 2rem);
-  margin: 1rem auto;
 `;
 
 const ScReelLabels = styled.div`
@@ -112,7 +115,8 @@ function SlotMachine() {
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
-  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
+  const { upgradeTokens, setUiState, setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } =
+    useContext(AppContext);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
@@ -127,6 +131,7 @@ function SlotMachine() {
   }, [setDeckState, setReelStates, setTileDeck]);
 
   useEffect(() => {
+    console.log('resetReelResults', reelStates);
     setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
 
@@ -153,7 +158,12 @@ function SlotMachine() {
   // all reels are done spinning, check for points
   // at the moment, all these stupid checks are required to not have it go off on load
   useEffect(() => {
-    if (spinCount > 0 && reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
+    if (
+      spinCount > 0 &&
+      reelResults.length > 0 &&
+      reelResults.length === reelStates.length &&
+      !reelResults.includes(-1)
+    ) {
       //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
       const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
 
@@ -175,10 +185,12 @@ function SlotMachine() {
       return [];
     }
     return reelResults.map((slotIdx, reelIdx) => {
-      if (slotIdx === -1) return undefined;
+      // the undefined check avoids a bug when deleting a reel in the editor
+      // while reelResults are populated
+      if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
       const deckIdx = reelStates[reelIdx][slotIdx];
       return getTileFromDeckIdx(deckIdx, tileDeck);
-    });
+    }).filter(rs => rs !== undefined); // since some were undefined, clear em out
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
@@ -205,12 +217,12 @@ function SlotMachine() {
           <ResultLabel key={reelIdx} tile={tile} />
         ))}
       </ScReelLabels>
-      <ScUpgradeTray>
-        <UpgradeTray />
-      </ScUpgradeTray>
       <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
         <span>{'T R Y - A G A I N'}</span>
       </ScHandle>
+      <ScInfoTray>
+        <InfoTray />
+      </ScInfoTray>
     </ScWrapper>
   );
 }
