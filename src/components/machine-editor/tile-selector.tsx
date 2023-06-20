@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Tile, tileGlossary } from '../../store/data';
-import { useEffect, useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
 
 const ScWrapper = styled.ul`
@@ -53,23 +53,11 @@ interface HandTile {
 }
 
 interface Props {
-  active: boolean;
   selectedTileIdx: number;
   onSelectTile: (deckIdx: number) => void;
 }
-function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
-  const { deckState, tileDeck, drawCards } = useContext(AppContext);
-
-  // checks prevent an issue where the whole deck gets drawn at once
-  /*
-  useEffect(() => {
-    if (active) {
-      if (deckState.drawn.length === 0) {
-        drawCards(3);
-      }
-    }
-  }, [active, drawCards, deckState]);
-  */
+function TileSelector({ selectedTileIdx, onSelectTile }: Props) {
+  const { deckState, tileDeck } = useContext(AppContext);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({

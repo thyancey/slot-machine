@@ -167,7 +167,6 @@ function MachineEditor() {
         <ScBody>
           {editorMode === 'hand' ? (
             <TileSelector
-              active={uiState === 'editor'}
               selectedTileIdx={preselectedTileIdx}
               onSelectTile={(deckIdx: number) => setPreselectedTileIdx(deckIdx)}
             />

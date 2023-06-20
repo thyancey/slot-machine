@@ -75,7 +75,7 @@ function CardPile({ cards, type, disabled }: Props) {
   return (
     <ScWrapper className={canDraw ? 'active' : ''} onClick={onDraw}>
       <ScCardWrapper>
-        {cards.map((c, cIdx) => (
+        {cards.map((_, cIdx) => (
           <ScTile key={cIdx} style={renderCardStyle(cIdx)}>
             <p>{cards.length}</p>
           </ScTile>

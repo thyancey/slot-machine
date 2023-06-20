@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Fragment, useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import { MAX_REELS, MAX_REEL_TOKENS, Tile } from '../../store/data';
+import { MAX_REELS, Tile } from '../../store/data';
 import { getReelTileStatesFromReelStates, getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.ul`
