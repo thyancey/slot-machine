@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import SlotMachine from './components/slotmachine';
-import Header from './components/header';
 import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 
@@ -42,14 +41,12 @@ function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <Header/>
       <TileList />
       <ScStage>
         <SlotMachine />
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
       <MachineEditor />
-      {/* <Deck /> */}
     </ScWrapper>
   );
 }

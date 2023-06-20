@@ -73,7 +73,9 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
-    setReelStates(removeAtPosition(reelIdx, positionIdx, reelStates));
+    const afterRemove = removeAtPosition(reelIdx, positionIdx, reelStates);
+    console.log('afterRemove', afterRemove)
+    setReelStates(afterRemove);
   };
 
   const insertReel = (positionIdx: number) => {

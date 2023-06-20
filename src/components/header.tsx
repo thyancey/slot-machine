@@ -3,7 +3,7 @@ import { AppContext } from '../store/appcontext';
 import { useContext } from 'react';
 
 const ScWrapper = styled.header`
-  border-bottom: 0.75rem solid var(--color-pink);
+  /* border-bottom: 0.75rem solid var(--color-pink); */
   background-color: var(--color-grey);
   color: var(--color-white);
   z-index: 1;
@@ -17,17 +17,21 @@ const ScWrapper = styled.header`
 `;
 
 const ScScorebox = styled.div`
-  border: 1rem solid var(--color-pink);
-  border-radius: 1.5rem;
+  border: var(--border-width-small) solid var(--color-pink);
+  border-radius: 0 0 1rem 1rem;
   position: absolute;
-  margin-top: -1.75rem;
-  padding: 0 2rem;
-  font-size: 4rem;
+  border-top: none;
+  margin-top: -0.5rem;
+  padding: 0.25rem 0.25rem;
+  width: 50%;
   background-color: var(--color-grey);
+  text-align:left;
 
   p {
     margin: 0;
     padding: 0;
+    font-size: 3rem;
+    line-height: 3rem;
   }
 `;
 
