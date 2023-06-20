@@ -55,9 +55,10 @@ const renderCardStyle = (cardIdx: number) => ({
 
 interface Props {
   cards: number[];
+  disabled?: boolean;
   type: 'draw' | 'discard';
 }
-function CardPile({ cards, type }: Props) {
+function CardPile({ cards, type, disabled }: Props) {
   const { drawCards, deckState } = useContext(AppContext);
 
   const onDraw = useCallback(() => {
@@ -68,8 +69,8 @@ function CardPile({ cards, type }: Props) {
   }, [drawCards, deckState.drawn.length]);
 
   const canDraw = useMemo(() => {
-    return type === 'draw' && deckState.draw.length > 0 && deckState.drawn.length === 0;
-  }, [deckState.drawn.length, deckState.draw.length, type]);
+    return !disabled && type === 'draw' && deckState.draw.length > 0 && deckState.drawn.length === 0;
+  }, [deckState.drawn.length, deckState.draw.length, type, disabled]);
 
   return (
     <ScWrapper className={canDraw ? 'active' : ''} onClick={onDraw}>

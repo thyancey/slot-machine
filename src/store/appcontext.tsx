@@ -61,7 +61,7 @@ const AppProvider = ({ children }: Props) => {
 
   const incrementScore = useCallback(
     (increment = 0) => {
-      setScore((prevScore) => prevScore + increment);
+      setScore((prevScore) => Math.floor(prevScore + increment));
     },
     [setScore]
   );

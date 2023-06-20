@@ -11,7 +11,7 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const SPIN_TICK = 30;
-const SPIN_DURATION_RANGE = [0.005, 0.02] as MinMaxTouple;
+const SPIN_DURATION_RANGE = [0.01, 0.02] as MinMaxTouple;
 const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
 
 // kinda like the cutout you can see the reel through

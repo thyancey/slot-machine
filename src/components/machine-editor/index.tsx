@@ -31,10 +31,18 @@ const ScPanel = styled.div`
   background-color: var(--color-grey);
   border: var(--border-width) solid var(--color-white);
   border-radius: 1.5rem;
+`;
 
+const ScHeader = styled.div`
+  border-bottom: var(--border-width-small) solid var(--color-white);
+
+  p {
+    margin-top: -1rem;
+    margin-bottom: 0.5rem;
+  }
   h2 {
+    flex: 1;
     padding: 1rem;
-    border-bottom: var(--border-width-small) solid var(--color-white);
   }
 `;
 
@@ -48,7 +56,7 @@ const ScBody = styled.div`
 
   justify-content: center;
   gap: 1rem;
-  position:relative;
+  position: relative;
 `;
 
 const ScBg = styled.div`
@@ -73,15 +81,15 @@ const ScFooterButtons = styled.div`
 `;
 
 const ScDrawPile = styled.div`
-  position:absolute;
-  left:5rem;
-  bottom:2rem;
-`
+  position: absolute;
+  left: 5rem;
+  bottom: 2rem;
+`;
 const ScDiscardPile = styled.div`
-  position:absolute;
-  right:5rem;
-  bottom:2rem;
-`
+  position: absolute;
+  right: 5rem;
+  bottom: 2rem;
+`;
 
 export type MachineEditorMode = 'hand' | 'reel';
 
@@ -144,7 +152,7 @@ function MachineEditor() {
       removeFromReel(reelIdx, tileIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens + 1);
+      setUpgradeTokens(upgradeTokens - 1);
     },
     [upgradeTokens, removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
   );
@@ -152,7 +160,10 @@ function MachineEditor() {
   return (
     <ScWrapper className={uiState === 'editor' ? 'panel-open' : ''}>
       <ScPanel>
-        <h2>{editorMode === 'hand' ? `choose your upgrade (${upgradeTokens} tokens)` : 'insert into reel'}</h2>
+        <ScHeader>
+          <h2>{editorMode === 'hand' ? `choose your upgrade` : 'edit reel'}</h2>
+          <p>{`${upgradeTokens} moves available`}</p>
+        </ScHeader>
         <ScBody>
           {editorMode === 'hand' ? (
             <TileSelector
@@ -167,12 +178,16 @@ function MachineEditor() {
               onInsertReel={onInsertReel}
             />
           )}
-          <ScDrawPile>
-            <CardPile type={'draw'} cards={deckState.draw} />
-          </ScDrawPile>
-          <ScDiscardPile>
-            <CardPile type={'discard'} cards={deckState.discard} />
-          </ScDiscardPile>
+          {editorMode === 'hand' && (
+            <>
+              <ScDrawPile>
+                <CardPile type={'draw'} cards={deckState.draw} />
+              </ScDrawPile>
+              <ScDiscardPile>
+                <CardPile type={'discard'} cards={deckState.discard} />
+              </ScDiscardPile>
+            </>
+          )}
         </ScBody>
         <ScFooter>
           <ScFooterButtons>
@@ -182,7 +197,9 @@ function MachineEditor() {
               upgradeTokens,
               setSelectedTileIdx,
               setPreselectedTileIdx,
+              setUpgradeTokens,
               setEditorMode,
+              discardCards,
               closeEditor
             )}
           </ScFooterButtons>
@@ -199,7 +216,9 @@ const renderFooter = (
   upgradeTokens: number,
   setSelectedTileIdx: (idx: number) => void,
   setPreselectedTileIdx: (idx: number) => void,
+  setUpgradeTokens: (idx: number) => void,
   setEditorMode: (str: MachineEditorMode) => void,
+  discardCards: (idx: number) => void,
   closeEditor: () => void
 ) => {
   // console.log('preselectedTileIdx', preselectedTileIdx);
@@ -230,7 +249,19 @@ const renderFooter = (
     );
   } else if (editorMode === 'reel') {
     if (upgradeTokens === 0) {
-      return <CloseButton />;
+      return (
+        <>
+          <CloseButton />
+          <Button
+            buttonStyle="special"
+            onClick={() => {
+              setUpgradeTokens(3);
+            }}
+          >
+            {'(debug) MORE TOKENS'}
+          </Button>
+        </>
+      );
     }
 
     if (preselectedTileIdx !== -1) {
@@ -257,6 +288,7 @@ const renderFooter = (
           onClick={() => {
             setSelectedTileIdx(-1);
             setPreselectedTileIdx(-1);
+            discardCards(-1);
             setEditorMode('hand');
           }}
         >

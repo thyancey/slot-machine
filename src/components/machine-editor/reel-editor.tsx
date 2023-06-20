@@ -21,19 +21,12 @@ const ScReelContainer = styled.li`
 
 const ScTiles = styled.ul``;
 
-const ScInsertButton = styled.button`
+const ScInsertTileButton = styled.button`
   font-size: 1rem;
   background-color: var(--color-grey);
   border: 0.125rem dashed var(--color-pink);
-  cursor: pointer;
+  
 
-  &:hover {
-    background-color: var(--color-pink);
-    /* border: 0.25rem solid var(--color-pink); */
-  }
-`;
-
-const ScInsertTileButton = styled(ScInsertButton)`
   margin-bottom: 0.25rem;
   margin-top: 0.25rem;
   width: 100%;
@@ -48,6 +41,7 @@ const ScInsertTileButton = styled(ScInsertButton)`
   opacity: 0;
 
   &.active{
+    cursor: pointer;
     max-height: 2rem;
     opacity: 1;
   }
@@ -67,6 +61,7 @@ const ScInsertTileButton = styled(ScInsertButton)`
 
   &.active:hover {
     max-height: 5rem;
+    background-color: var(--color-pink);
     span{
       opacity:0;
     }
@@ -133,7 +128,7 @@ interface InsertButtonProps {
 }
 const InsertTileButton = ({ onClick, tile }: InsertButtonProps) => {
   return (
-    <ScInsertTileButton className={tile ? 'active' : ''} onClick={(e) => onClick(e)}>
+    <ScInsertTileButton className={tile ? 'active' : ''} onClick={(e) => tile && onClick(e)}>
       <span>{'insert'}</span>
       {tile && <img src={tile.img} />}
     </ScInsertTileButton>
@@ -149,11 +144,11 @@ function ReelEditor({ onInsertIntoReel, onRemoveFromReel, onInsertReel }: Props)
   const { reelStates, selectedTileIdx, upgradeTokens, tileDeck } = useContext(AppContext);
 
   const canAddReels = useMemo(() => {
-    return reelStates.length < MAX_REELS;
-  }, [reelStates]);
+    return selectedTileIdx > -1 && reelStates.length < MAX_REELS;
+  }, [reelStates, selectedTileIdx]);
 
   const canRemoveTiles = useMemo(() => {
-    return selectedTileIdx === -1 && upgradeTokens < MAX_REEL_TOKENS && !(reelStates.length === 1 && reelStates[0].length === 1);
+    return selectedTileIdx === -1 && upgradeTokens > 0 && !(reelStates.length === 1 && reelStates[0].length === 1);
   }, [ reelStates, selectedTileIdx, upgradeTokens ]);
 
   const selectedTile = useMemo(() => {
