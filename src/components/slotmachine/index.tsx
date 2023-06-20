@@ -1,12 +1,20 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import { Tile, defaultReelState, reelComboDef, ReelCombo, ReelComboResult, tileGlossary, defaultTileDeck } from '../../store/data';
+import {
+  defaultReelState,
+  reelComboDef,
+  ReelCombo,
+  ReelComboResult,
+  defaultTileDeck,
+  DeckIdxCollection,
+} from '../../store/data';
 import ResultLabel from './components/result-label';
 import Display from './components/display';
-import { ReelTarget, getActiveCombos, getComboScore, getRandom2dIdxs } from './utils';
 import { AppContext } from '../../store/appcontext';
 import UpgradeTray from './components/upgradetray';
+import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
+import { getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -98,13 +106,13 @@ const ScHandle = styled.div`
 `;
 
 function SlotMachine() {
-  const [reelTargets, setReelTargets] = useState<ReelTarget[]>([]);
-  const [curTiles, setCurTiles] = useState<(Tile | undefined)[]>([]);
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
-  const { incrementScore, setReelStates, reelStates, setTileDeck, setDeckState } = useContext(AppContext);
+  const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
+  const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
+  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
@@ -114,72 +122,87 @@ function SlotMachine() {
       drawn: [],
       // populate and shuffle the deck
       draw: Array.from(Array(defaultTileDeck.length).keys()).sort(() => Math.random() - 0.5),
-      discard: []
+      discard: [],
     });
   }, [setDeckState, setReelStates, setTileDeck]);
 
   useEffect(() => {
-    setReelTargets(Array(reelStates.length).fill([-1, 0]));
-    setCurTiles(Array(reelStates.length).fill(undefined));
+    setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
 
   const triggerSpin = useCallback(() => {
     if (!spinLock) {
-      const randomReelPositions = getRandom2dIdxs(reelStates.map((rs) => rs.map((r) => r)));
-      setReelTargets(randomReelPositions.map((r) => [r, spinCount]));
+      // determine what the next line of slots will be, someday make this weighted
+      setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
 
       setSpinCount(spinCount + 1);
+      setReelResults(Array(reelStates.length).fill(-1));
       setSpinLock(true);
       setActiveCombos([]);
     }
   }, [spinCount, spinLock, reelStates]);
 
-  const onCurTile = useCallback(
-    (tile: Tile | undefined, reelIdx: number) => {
-      // this mutation was the only way to get this working reliably...
-      curTiles[reelIdx] = tile;
-      setCurTiles([...curTiles]);
-
-      // if no undefined tiles, all tiles are done spinning.
-      if (curTiles.filter((rI) => rI === undefined).length === 0) {
-        const activeCombos = getActiveCombos(curTiles as Tile[], reelCombos);
-        setActiveCombos(activeCombos);
-
-        const comboScore = getComboScore(curTiles as Tile[], activeCombos);
-        if (comboScore !== 0) {
-          incrementScore(comboScore);
-        }
-        setSpinLock(false);
-      }
+  const onSpinComplete = useCallback(
+    (reelIdx: number, slotIdx: number) => {
+      // console.log(`(pre) reel [${reelIdx}] done spinning and landed on ${slotIdx}!`);
+      setReelResults((prev) => prev.map((sIdx, rIdx) => (rIdx === reelIdx ? slotIdx : sIdx)));
     },
-    [curTiles, reelCombos, setSpinLock, setCurTiles, incrementScore]
+    [setReelResults]
   );
 
-  const reelTiles = useMemo(() => {
-    return reelStates.map((reelState) => reelState.map((tileKey) => tileGlossary[tileKey]));
-  }, [reelStates]);
+  // all reels are done spinning, check for points
+  // at the moment, all these stupid checks are required to not have it go off on load
+  useEffect(() => {
+    if (spinCount > 0 && reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
+      //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
+      const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
+
+      const activeCombos = getActiveCombos(tiles, reelCombos);
+      setActiveCombos(activeCombos);
+
+      const comboScore = getComboScore(tiles, activeCombos);
+      if (comboScore !== 0) {
+        incrementScore(comboScore);
+      }
+
+      setSpinLock(false);
+    }
+  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore, spinCount]);
+
+  const resultSet = useMemo(() => {
+    if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
+      // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
+      return [];
+    }
+    return reelResults.map((slotIdx, reelIdx) => {
+      if (slotIdx === -1) return undefined;
+      const deckIdx = reelStates[reelIdx][slotIdx];
+      return getTileFromDeckIdx(deckIdx, tileDeck);
+    });
+  }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
     <ScWrapper>
       <ScDisplayContainer>
-        []
         <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelStates.length} />
       </ScDisplayContainer>
 
       <ScReelContainer>
-        {reelTiles.map((tiles, rdIdx) => (
+        {reelStates.map((reelState, reelIdx) => (
           <Reel
-            key={`reel-${rdIdx}`}
-            reelIdx={rdIdx}
-            tiles={tiles}
-            reelTarget={reelTargets[rdIdx]}
-            setCurTile={(tile: Tile | undefined) => onCurTile(tile, rdIdx)}
+            key={`reel-${reelIdx}`}
+            reelIdx={reelIdx}
+            reelState={reelState}
+            tileDeck={tileDeck}
+            spinCount={spinCount}
+            targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
+            onSpinComplete={onSpinComplete}
           />
         ))}
       </ScReelContainer>
       <ScReelLabels>
-        {curTiles.map((cri, idx) => (
-          <ResultLabel key={idx} tile={cri} />
+        {resultSet.map((tile, reelIdx) => (
+          <ResultLabel key={reelIdx} tile={tile} />
         ))}
       </ScReelLabels>
       <ScUpgradeTray>

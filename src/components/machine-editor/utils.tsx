@@ -27,7 +27,6 @@ export const drawTile = (deckState: DeckState, noRefill?: boolean) => {
 
 export const drawTiles = (numToDraw: number, deckState: DeckState) => {
   const availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
-  console.log('avialbale', availableToDraw)
   const operations = Array.from(Array(availableToDraw).keys());
 
   return operations.reduce((acc) => {

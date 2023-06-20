@@ -1,5 +1,5 @@
 import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { TileKeyCollection, Tile, ReelCombo, REEL_HEIGHT, ReelComboResult, BonusGroup } from '../../store/data';
+import { Tile, ReelCombo, ReelComboResult, BonusGroup, DeckIdxCollection } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
 
@@ -7,10 +7,6 @@ export type ReelTarget = [tileIdx: number, spinCount: number];
 export const getRandomIdx = (array: unknown[]) => Math.floor(Math.random() * array.length);
 export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
-};
-
-export const getRandomReelTargets = (reelSet: TileKeyCollection[], spinCount: number) => {
-  return reelSet.map((tileKeys) => [getRandomIdx(tileKeys), spinCount] as ReelTarget);
 };
 
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
@@ -80,88 +76,60 @@ export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   }, 0);
 
 // add redudant tiles to top and bottom of reel to make it seem continuous
-export const buildReel = (tileKeys: string[], reelOverlap: number) => {
+export const getLoopedReel = (deckIdxs: DeckIdxCollection, reelOverlap: number) => {
   // starting with [ 0, 1, 2 ]
 
   // [ +1, +2, 0, 1, 2 ]
   const loopBefore = [];
   // the +1 here attached the last to the top, regardless of overlap value
   for (let i = 0; i < reelOverlap; i++) {
-    const offset = tileKeys.length - (i % tileKeys.length) - 1;
-    loopBefore.push(tileKeys[offset]);
+    const offset = deckIdxs.length - (i % deckIdxs.length) - 1;
+    loopBefore.push(deckIdxs[offset]);
   }
 
   // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
   const loopAfter = [];
   for (let i = 0; i < reelOverlap; i++) {
-    loopAfter.push(tileKeys[i % tileKeys.length]);
+    loopAfter.push(deckIdxs[i % deckIdxs.length]);
   }
 
-  return ([] as string[])
+  return ([] as DeckIdxCollection)
     .concat(loopBefore.reverse())
-    .concat(tileKeys.map((tileKey) => tileKey))
+    .concat(deckIdxs)
     .concat(loopAfter);
 };
 
-// add redudant tiles to top and bottom of reel to make it seem continuous
-export const buildReelLegacy = (tiles: Tile[], reelOverlap: number) => {
-  // starting with [ 0, 1, 2 ]
-
-  // [ +1, +2, 0, 1, 2 ]
-  const loopBefore = [] as Tile[];
-  // the +1 here attached the last to the top, regardless of overlap value
-  for (let i = 0; i < reelOverlap; i++) {
-    const offset = tiles.length - (i % tiles.length) - 1;
-    loopBefore.push(tiles[offset]);
-  }
-
-  // [ 0, 1, 2 ] -> [ 0, 1, 2, +0, +1 ]
-  const loopAfter = [];
-  for (let i = 0; i < reelOverlap; i++) {
-    loopAfter.push(tiles[i % tiles.length]);
-  }
-
-  return ([] as Tile[])
-    .concat(loopBefore.reverse())
-    .concat(tiles)
-    .concat(loopAfter);
+export const getProgressiveSpinAngle = (perc: number, targetLoopedIdx: number, curLoopedIdx: number, reelHeight: number) => {
+  const targetAngle = targetLoopedIdx * reelHeight;
+  const lastAngle = curLoopedIdx * reelHeight;
+  
+  return lastAngle + getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
 };
 
-export const getProgressiveSpinAngle = (perc: number, targetAngle: number, lastAngle: number) => {
-  return getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
-};
+/**
+ * from a known starting position, move at least X positions, and whatever more needed to land on the desired idx
+ * ]
+ * @param curLoopedIdx the idx (spin position) of the reel
+ * @param targSlotIdx the idx (of slots in a reel) you want to land on
+ * @param reelLength # of slots in the reel 
+ * @param minSlots how many slots to rotate past before landing on the target
+ * @returns positionIndex of where the reel needs to go
+ */
+export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLength: number, minSlots: number) => {
+  const minLoopedIdx = curLoopedIdx + minSlots;
 
-/*
-  from an array like [ 'a', 'b' ], figure out how to do something like
-  "starting from "b", go to "a", and loop at least 2 times"
+  const minSlotIdx = minLoopedIdx % reelLength // what position the min value is at
 
-  this could probably get cleaned up and simplified but im sick of messing with it.
-*/
-export const projectSpinTarget = (numTiles: number, curIdx: number, nextIdx: number, loops: number) => {
-  const change = nextIdx - curIdx;
-
-  if (loops === 0) {
-    if (change === 0) {
-      return curIdx + numTiles;
-    } else if (change > 0) {
-      return curIdx + change;
-    } else {
-      return curIdx + numTiles + change;
-    }
+  if(minSlotIdx === targSlotIdx){
+    // youre on the spot you wanted to go to!
+    return minLoopedIdx;
+  } else if(minSlotIdx < targSlotIdx){
+    // ex, at idx 1, need to go to idx 2
+    // rotate a few more places to end up on your desired targSlotIdx
+    return minLoopedIdx + targSlotIdx - minSlotIdx;
   } else {
-    if (change === 0) {
-      return curIdx + numTiles * loops;
-    } else if (change > 0) {
-      return curIdx + numTiles * loops + change;
-    } else {
-      return curIdx + numTiles * loops + (numTiles + change);
-    }
+    // ex, at idx 2, need to go to idx 0
+    // rotate a few more places (loop around) to end up on your desired targSlotIdx
+    return minLoopedIdx + ((reelLength + targSlotIdx) - minSlotIdx);
   }
-};
-
-export const projectSpinAngle = (numTiles: number, targetIdx: number, curIdx: number) => {
-  if (numTiles === 1) {
-    return targetIdx * REEL_HEIGHT;
-  }
-  return (targetIdx / numTiles) * (numTiles * REEL_HEIGHT) - curIdx * REEL_HEIGHT;
-};
+}

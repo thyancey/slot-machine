@@ -162,21 +162,20 @@ export type TileDeck = Tile[];
 // a TileDeck holds all tiles available for a player to draw. It may or may not contain all tiles defined in the glossary
 // (usually has less, the TileDeck changes as the player progresses)
 export const defaultTileDeck: TileKeyCollection = [
-  'coins',
-  'coins',
-  'coins',
-  'crazy',
+  'slot_bar1',
+  'slot_bar2',
+  'slot_bar3',
   'flame',
+  'halo',
+  'heart',
+  'heart',
+  'heart',
+  'lightning',
+  'sword',
+  'shield',
   'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
-  'crazy',
-  'flame',
+  'bat',
+  'poison'
 ]
 
 /**
@@ -184,6 +183,8 @@ export const defaultTileDeck: TileKeyCollection = [
  * for various things. Tiles can be looked up via the tileGlossary
  */
 export type TileKeyCollection = string[];
+
+export type DeckIdxCollection = number[];
 
 /**
  * Keeps track of TileDeck indicies while player is making choices
@@ -195,38 +196,10 @@ export type DeckState = {
   discard: number[]
 }
 
-export const defaultReelState: TileKeyCollection[] = [
+export const defaultReelState: DeckIdxCollection[] = [
   [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
+    0,
+    1,
+    2
   ],
-  [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
-  ],
-  [
-    'coins',
-    // 'crazy',
-    'flame',
-    // 'halo',
-    'lightning',
-    // 'poison',
-    // 'shield',
-    // 'snowflake',
-    // 'sword',
-  ]
 ];

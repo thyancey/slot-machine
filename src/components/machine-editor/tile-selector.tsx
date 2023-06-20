@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { MAX_HAND_SIZE, Tile, tileGlossary } from '../../store/data';
-import { useEffect, useContext, useMemo } from 'react';
+import { Tile, tileGlossary } from '../../store/data';
+import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import { drawTiles } from './utils';
 
 const ScWrapper = styled.ul`
   display: flex;
@@ -49,38 +48,32 @@ const ScTile = styled.li`
 `;
 
 interface HandTile {
-  deckIdx: number,
-  tile: Tile
+  deckIdx: number;
+  tile: Tile;
 }
 
 interface Props {
-  active: boolean;
   selectedTileIdx: number;
   onSelectTile: (deckIdx: number) => void;
 }
-function TileSelector({ active, selectedTileIdx, onSelectTile }: Props) {
-  const { deckState, setDeckState, tileDeck } = useContext(AppContext);
-
-  // when loading screen, draw some cards
-  useEffect(() => {
-    if (active) {
-      const afterState = drawTiles(MAX_HAND_SIZE, deckState);
-      console.log('setDeckState', afterState);
-      setDeckState(afterState);
-    }
-  }, [active, setDeckState]);
+function TileSelector({ selectedTileIdx, onSelectTile }: Props) {
+  const { deckState, tileDeck } = useContext(AppContext);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
       deckIdx,
-      tile: tileGlossary[tileDeck[deckIdx]]
+      tile: tileGlossary[tileDeck[deckIdx]],
     }));
   }, [deckState, tileDeck]);
 
   return (
     <ScWrapper>
       {tiles.map((handTile) => (
-        <ScTile className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''} key={handTile.deckIdx} onClick={() => onSelectTile(handTile.deckIdx)}>
+        <ScTile
+          className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''}
+          key={handTile.deckIdx}
+          onClick={() => onSelectTile(handTile.deckIdx)}
+        >
           <img src={handTile.tile.img || ''} />
         </ScTile>
       ))}

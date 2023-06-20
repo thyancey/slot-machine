@@ -4,73 +4,73 @@ import { insertAfterPosition, insertIntoArray, removeAtPosition } from './utils'
 
 describe('AppContext', () => {
   describe('#insertIntoArray', () => {
-    const items = ['apple', 'banana', 'carrot'];
+    const items = [0, 1, 2];
 
     it('should insert before reel', () => {
-      const result = insertIntoArray(-1, 'NEW', items);
+      const result = insertIntoArray(-1, 9999, items);
       expect(result.length).toBe(4);
-      expect(result).toEqual(['NEW', 'apple', 'banana', 'carrot']);
+      expect(result).toEqual([9999, 0, 1, 2]);
     });
 
     it('should insert after first position', () => {
-      const result = insertIntoArray(0, 'NEW', items);
+      const result = insertIntoArray(0, 9999, items);
       expect(result.length).toBe(4);
-      expect(result).toEqual(['apple', 'NEW', 'banana', 'carrot']);
+      expect(result).toEqual([0, 9999, 1, 2]);
     });
 
     it('should insert after last position', () => {
-      const result = insertIntoArray(2, 'NEW', items);
+      const result = insertIntoArray(2, 9999, items);
       expect(result.length).toBe(4);
-      expect(result).toEqual(['apple', 'banana', 'carrot', 'NEW']);
+      expect(result).toEqual([0, 1, 2, 9999]);
     });
 
     it('should insert duplicate after first position', () => {
-      const result = insertIntoArray(0, 'apple', items);
+      const result = insertIntoArray(0, 0, items);
       expect(result.length).toBe(4);
-      expect(result).toEqual(['apple', 'apple', 'banana', 'carrot']);
+      expect(result).toEqual([0, 0, 1, 2]);
     });
 
     it('should not change input if index is under bounded', () => {
-      const result = insertIntoArray(-2, 'NEW', items);
+      const result = insertIntoArray(-2, 9999, items);
       expect(result.length).toBe(3);
-      expect(result).toEqual(['apple', 'banana', 'carrot']);
+      expect(result).toEqual([0, 1, 2]);
     });
 
     it('should not change input if index is over bounded', () => {
-      const result = insertIntoArray(3, 'NEW', items);
+      const result = insertIntoArray(3, 9999, items);
       expect(result.length).toBe(3);
-      expect(result).toEqual(['apple', 'banana', 'carrot']);
+      expect(result).toEqual([0, 1, 2]);
     });
   });
 
   
   describe('#insertAfterPosition', () => {
     const reelStates = [
-      ['apple', 'banana', 'carrot'],
-      ['apple', 'banana', 'carrot']
+      [0, 1, 2],
+      [0, 1, 2]
     ];
 
     it('should insert before first reel', () => {
-      const result = insertAfterPosition(0, -1, 'NEW', reelStates);
+      const result = insertAfterPosition(0, -1, 99999, reelStates);
       expect(result).toEqual([
-        ['NEW', 'apple', 'banana', 'carrot'],
-        ['apple', 'banana', 'carrot']
+        [99999, 0, 1, 2],
+        [0, 1, 2]
       ]);
     });
 
     it('should insert after last reel', () => {
-      const result = insertAfterPosition(1, 2, 'NEW', reelStates);
+      const result = insertAfterPosition(1, 2, 99999, reelStates);
       expect(result).toEqual([
-        ['apple', 'banana', 'carrot'],
-        ['apple', 'banana', 'carrot', 'NEW']
+        [0, 1, 2],
+        [0, 1, 2, 99999]
       ]);
     });
 
     it('should return same if bad reel index provided', () => {
-      const result = insertAfterPosition(10, 2, 'NEW', reelStates);
+      const result = insertAfterPosition(10, 2, 99999, reelStates);
       expect(result).toEqual([
-        ['apple', 'banana', 'carrot'],
-        ['apple', 'banana', 'carrot']
+        [0, 1, 2],
+        [0, 1, 2]
       ]);
     });
   });
@@ -78,62 +78,62 @@ describe('AppContext', () => {
   
   describe('#removeAtPosition', () => {
     const reelStates = [
-      ['apple', 'banana', 'carrot'],
-      ['apple', 'banana', 'carrot']
+      [0, 1, 2],
+      [0, 1, 2]
     ];
 
     it('should remove first value in first reel', () => {
       const result = removeAtPosition(0, 0, reelStates);
       expect(result).toEqual([
-        ['banana', 'carrot'],
-        ['apple', 'banana', 'carrot']
+        [1, 2],
+        [0, 1, 2]
       ]);
     });
 
     it('should remove second value in second reel', () => {
       const result = removeAtPosition(1, 1, reelStates);
       expect(result).toEqual([
-        ['apple', 'banana', 'carrot'],
-        ['apple', 'carrot']
+        [0, 1, 2],
+        [0, 2]
       ]);
     });
 
     it('should remove last value in first reel', () => {
       const result = removeAtPosition(0, 2, reelStates);
       expect(result).toEqual([
-        ['apple', 'banana'],
-        ['apple', 'banana', 'carrot']
+        [0, 1],
+        [0, 1, 2]
       ]);
     });
 
     it('should not break, if invalid position given', () => {
       const result = removeAtPosition(0, 4, reelStates);
       expect(result).toEqual([
-        ['apple', 'banana', 'carrot'],
-        ['apple', 'banana', 'carrot']
+        [0, 1, 2],
+        [0, 1, 2]
       ]);
     });
 
     it('should remove reel after clearing out all items', () => {
       const theseReelStates = [
-        ['apple'],
-        ['banana', 'carrot']
+        [0],
+        [1, 2]
       ];
 
       const result = removeAtPosition(0, 0, theseReelStates);
       expect(result).toEqual([
-        ['banana', 'carrot']
+        [1, 2]
       ]);
     });
 
     it('should not remove last remaining reel and tile', () => {
       const theseReelStates = [
-        ['apple']
+        [0]
       ];
 
       const result = removeAtPosition(0, 0, theseReelStates);
       expect(result).toEqual([
-        ['apple']
+        [0]
       ]);
     });
   });

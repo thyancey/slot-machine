@@ -1,6 +1,10 @@
-export type ReelState = string[];
+import { DeckIdxCollection, TileKeyCollection, tileGlossary } from './data';
 
-export const insertReelStateIntoReelStates = (positionIdx: number, newReelState: ReelState, reelStates: ReelState[]) => {
+export const insertReelStateIntoReelStates = (
+  positionIdx: number,
+  newReelState: DeckIdxCollection,
+  reelStates: DeckIdxCollection[]
+) => {
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > reelStates.length) {
@@ -11,7 +15,7 @@ export const insertReelStateIntoReelStates = (positionIdx: number, newReelState:
   return [...reelStates.slice(0, newPos), newReelState, ...reelStates.slice(newPos)];
 };
 
-export const insertIntoArray = (positionIdx: number, newItem: string, array: ReelState) => {
+export const insertIntoArray = (positionIdx: number, newItem: number, array: DeckIdxCollection) => {
   const newPos = positionIdx + 1;
 
   if (newPos < 0 || newPos > array.length) {
@@ -22,27 +26,46 @@ export const insertIntoArray = (positionIdx: number, newItem: string, array: Ree
   return [...array.slice(0, newPos), newItem, ...array.slice(newPos)];
 };
 
-export const insertAfterPosition = (reelIdx: number, positionIdx: number, tileKey: string, reelStates: ReelState[]) => {
+export const insertAfterPosition = (
+  reelIdx: number,
+  positionIdx: number,
+  deckIdx: number,
+  reelStates: DeckIdxCollection[]
+) => {
   return reelStates.map((reelState, rIdx) => {
     if (rIdx === reelIdx) {
-      return insertIntoArray(positionIdx, tileKey, reelState);
+      return insertIntoArray(positionIdx, deckIdx, reelState);
     } else {
       return reelState;
     }
   });
 };
 
-export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: ReelState[]) => {
-  if(reelStates.length === 1 && reelStates[0].length === 1){
+export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: DeckIdxCollection[]) => {
+  if (reelStates.length === 1 && reelStates[0].length === 1) {
     console.log('ARE YOU CRAZY?!?! YOU CANT HAVE NOTHING!!!!!');
     return reelStates;
   }
 
-  return reelStates.map((reelState, rIdx) => {
-    if(rIdx === reelIdx){
-      return reelState.filter((_, index) => index !== positionIdx);
-    } else {
-      return reelState;
-    }
-  }).filter(rs => rs.length > 0);
-}
+  return reelStates
+    .map((reelState, rIdx) => {
+      if (rIdx === reelIdx) {
+        return reelState.filter((_, index) => index !== positionIdx);
+      } else {
+        return reelState;
+      }
+    })
+    .filter((rs) => rs.length > 0);
+};
+
+export const getReelTileStatesFromReelStates = (reelStates: DeckIdxCollection[], tileDeck: TileKeyCollection) => {
+  return reelStates.map((reelState) => reelState.map((deckIdx) => tileGlossary[tileDeck[deckIdx]]));
+};
+
+export const getReelTileStateFromReelState = (reelState: DeckIdxCollection, tileDeck: TileKeyCollection) => {
+  return reelState.map((deckIdx) => tileGlossary[tileDeck[deckIdx]]);
+};
+
+export const getTileFromDeckIdx = (deckIdx: number, tileDeck: TileKeyCollection) => {
+  return tileGlossary[tileDeck[deckIdx]];
+};

@@ -1,7 +1,16 @@
-import { ReactNode, createContext, useState } from 'react';
-import { DeckState, MAX_REELS, INITIAL_TOKENS, MAX_REEL_TOKENS, UiState, TileKeyCollection } from './data';
+import { ReactNode, createContext, useCallback, useState } from 'react';
+import {
+  DeckState,
+  MAX_REELS,
+  INITIAL_TOKENS,
+  MAX_REEL_TOKENS,
+  UiState,
+  TileKeyCollection,
+  DeckIdxCollection,
+} from './data';
 import { clamp } from '../utils';
-import { ReelState, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { discardTiles, drawTiles } from '../components/machine-editor/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -13,12 +22,12 @@ interface AppContextType {
 
   tileDeck: TileKeyCollection;
   setTileDeck: (value: TileKeyCollection) => void;
-  
+
   deckState: DeckState;
   setDeckState: (value: DeckState) => void;
 
-  reelStates: ReelState[];
-  setReelStates: (values: ReelState[]) => void;
+  reelStates: DeckIdxCollection[];
+  setReelStates: (values: DeckIdxCollection[]) => void;
 
   upgradeTokens: number;
   setUpgradeTokens: (value: number) => void;
@@ -29,6 +38,9 @@ interface AppContextType {
   insertIntoReel: (reelIdx: number, positionIdx: number) => void;
   removeFromReel: (reelIdx: number, positionIdx: number) => void;
   insertReel: (positionIdx: number) => void;
+
+  drawCards: (numToDraw: number) => void;
+  discardCards: (ignoreIdx: number) => void;
 }
 
 interface Props {
@@ -39,19 +51,25 @@ const AppProvider = ({ children }: Props) => {
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
-  const [reelStates, setReelStates] = useState<ReelState[]>([]);
+  const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
-    drawn: [], draw: [], discard: []
+    drawn: [],
+    draw: [],
+    discard: [],
   });
 
-  const incrementScore = (increment = 0) => {
-    setScore((prevScore) => prevScore + increment);
-  };
+  const incrementScore = useCallback(
+    (increment = 0) => {
+      setScore((prevScore) => Math.floor(prevScore + increment));
+    },
+    [setScore]
+  );
 
+  // TODO - these should probably use useCallback, but it wasnt necessary when i first
+  // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    const selectedTileKey = tileDeck[selectedTileIdx];
-    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileKey, reelStates));
+    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
@@ -59,17 +77,38 @@ const AppProvider = ({ children }: Props) => {
   };
 
   const insertReel = (positionIdx: number) => {
-    if(reelStates.length < MAX_REELS){
-      const selectedTileKey = tileDeck[selectedTileIdx];
-      setReelStates(insertReelStateIntoReelStates(positionIdx, [ selectedTileKey ], reelStates));
+    if (reelStates.length < MAX_REELS) {
+      console.log('3');
+      setReelStates(insertReelStateIntoReelStates(positionIdx, [selectedTileIdx], reelStates));
     } else {
       console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
   };
 
+  const drawCards = useCallback(
+    (numToDraw: number) => {
+      console.log(`AppContext.drawCards(${numToDraw})`);
+      const afterState = drawTiles(numToDraw, deckState);
+      console.log('afterState:', afterState);
+
+      setDeckState(afterState);
+    },
+    [deckState]
+  );
+
+  const discardCards = useCallback(
+    (ignoreIdx: number) => {
+      console.log(`AppContext.discardCards(${ignoreIdx})`);
+      const afterState = discardTiles(deckState.drawn, deckState);
+      console.log('afterState:', afterState);
+      setDeckState(afterState);
+    },
+    [deckState]
+  );
+
   const setUpgradeTokens = (newAmount: number) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
-  }
+  };
 
   return (
     <AppContext.Provider
@@ -89,7 +128,7 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
-          
+
           insertIntoReel,
           removeFromReel,
           insertReel,
@@ -98,7 +137,10 @@ const AppProvider = ({ children }: Props) => {
           setTileDeck,
 
           deckState,
-          setDeckState
+          setDeckState,
+
+          drawCards,
+          discardCards,
         } as AppContextType
       }
     >
