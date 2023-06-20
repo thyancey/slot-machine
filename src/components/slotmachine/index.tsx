@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
 import {
-  Tile,
   defaultReelState,
   reelComboDef,
   ReelCombo,
@@ -154,9 +153,10 @@ function SlotMachine() {
   );
 
   // all reels are done spinning, check for points
+  // at the moment, all these stupid checks are required to not have it go off on load
   useEffect(() => {
-    if (reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
-      console.log('ALL REELS ARE DONE!');
+    if (spinCount > 0 && reelResults.length > 0 && reelResults.length === reelStates.length && !reelResults.includes(-1)) {
+      console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
       const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
       // console.log('tiles', tiles);
       const activeCombos = getActiveCombos(tiles, reelCombos);
@@ -164,16 +164,15 @@ function SlotMachine() {
 
       const comboScore = getComboScore(tiles, activeCombos);
       if (comboScore !== 0) {
-        console.log('INCREMENTSCORE', comboScore);
         incrementScore(comboScore);
       }
 
       setSpinLock(false);
     }
-  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore]);
+  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore, spinCount]);
 
   const resultSet = useMemo(() => {
-    if (reelStates.length === 0 || reelResults.length === 0) {
+    if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
       // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
       return [];
     }
@@ -182,7 +181,7 @@ function SlotMachine() {
       const deckIdx = reelStates[reelIdx][slotIdx];
       return getTileFromDeckIdx(deckIdx, tileDeck);
     });
-  }, [reelResults, reelStates, tileDeck]);
+  }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
     <ScWrapper>

@@ -11,8 +11,8 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const SPIN_TICK = 30;
-const SPIN_DURATION_RANGE = [ 0.005, 0.02 ] as MinMaxTouple;
-const SLOT_DISTANCE_RANGE = [ 20, 40 ] as MinMaxTouple;
+const SPIN_DURATION_RANGE = [0.005, 0.02] as MinMaxTouple;
+const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -54,7 +54,6 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
-
 type Props = {
   reelIdx: number;
   reelState: DeckIdxCollection;
@@ -82,14 +81,19 @@ function NewReel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpi
 
   /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
-    //console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
-
-    // allows the reel to spin again
-    setSpinProgress(0);
-    setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
-    // the targetLoopedIdx (index [1]) will now be come the previous, so assign it as such, and 
-    // use it to calculate the next targetLoopedIdx all at once
-    setLoopedIdxs((prev) => [prev[1], getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true))]);
+    console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
+    // -1 happens on mount
+    if (targetSlotIdx !== -1) {
+      // allows the reel to spin again
+      setSpinProgress(0);
+      setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
+      // the targetLoopedIdx (index [1]) will now be come the previous, so assign it as such, and
+      // use it to calculate the next targetLoopedIdx all at once
+      setLoopedIdxs((prev) => [
+        prev[1],
+        getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true)),
+      ]);
+    }
   }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed]);
 
   useEffect(() => {
