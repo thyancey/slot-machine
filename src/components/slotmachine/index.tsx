@@ -120,7 +120,8 @@ function SlotMachine() {
 
   const [sound_reelsComplete] = useSound(Sound.boop);
   const [sound_reelComplete] = useSound(Sound.beep);
-  const [sound_lever] = useSound(Sound.explosion);
+  const [sound_lever] = useSound(Sound.thump2);
+  const [sound_combo] = useSound(Sound.explosion);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
@@ -159,6 +160,7 @@ function SlotMachine() {
     [setReelResults]
   );
 
+  // PULL THAT LEVER
   useEffect(() => {
     if(spinCount > 0) sound_lever();
   }, [spinCount]);
@@ -177,12 +179,14 @@ function SlotMachine() {
       ) {
         // all reels are done spinning, check for points
         sound_reelComplete();
-        sound_reelsComplete();
         //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
         const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
 
         const activeCombos = getActiveCombos(tiles, reelCombos);
         setActiveCombos(activeCombos);
+        if(activeCombos.length > 0){
+          sound_combo();
+        }
 
         const comboScore = getComboScore(tiles, activeCombos);
         if (comboScore !== 0) {
@@ -215,7 +219,7 @@ function SlotMachine() {
         const deckIdx = reelStates[reelIdx][slotIdx];
         return getTileFromDeckIdx(deckIdx, tileDeck);
       })
-      .filter((rs) => rs !== undefined); // since some were undefined, clear em out
+      // .filter((rs) => rs !== undefined); // since some were undefined, clear em out
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
@@ -239,7 +243,7 @@ function SlotMachine() {
       </ScReelContainer>
       <ScReelLabels>
         {resultSet.map((tile, reelIdx) => (
-          <ResultLabel key={reelIdx} tile={tile} />
+          tile ? (<ResultLabel key={reelIdx} tile={tile} />) : (<ResultLabel key={reelIdx} />)
         ))}
       </ScReelLabels>
       <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
