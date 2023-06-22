@@ -15,6 +15,9 @@ import { AppContext } from '../../store/appcontext';
 import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
 import InfoTray from './components/infotray';
+// @ts-ignore
+import useSound from 'use-sound';
+import Sound from '../../assets/sounds';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -115,6 +118,10 @@ function SlotMachine() {
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
+  const [sound_reelsComplete] = useSound(Sound.boop);
+  const [sound_reelComplete] = useSound(Sound.beep);
+  const [sound_lever] = useSound(Sound.explosion);
+
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
     setReelStates(defaultReelState);
@@ -152,29 +159,48 @@ function SlotMachine() {
     [setReelResults]
   );
 
-  // all reels are done spinning, check for points
-  // at the moment, all these stupid checks are required to not have it go off on load
   useEffect(() => {
-    if (
+    if(spinCount > 0) sound_lever();
+  }, [spinCount]);
+
+
+  // events when the reels are done spinning. this could probably be simplified and moved to a custom hook
+  useEffect(() => {
+    if(
+      // if we're spinnin and have at least one reel completed
       spinCount > 0 &&
-      reelResults.length > 0 &&
-      reelResults.length === reelStates.length &&
-      !reelResults.includes(-1)
-    ) {
-      //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
-      const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
+      reelResults.length > 0
+    ){
+      if (
+        reelResults.length === reelStates.length &&
+        !reelResults.includes(-1)
+      ) {
+        // all reels are done spinning, check for points
+        sound_reelComplete();
+        sound_reelsComplete();
+        //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
+        const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
 
-      const activeCombos = getActiveCombos(tiles, reelCombos);
-      setActiveCombos(activeCombos);
+        const activeCombos = getActiveCombos(tiles, reelCombos);
+        setActiveCombos(activeCombos);
 
-      const comboScore = getComboScore(tiles, activeCombos);
-      if (comboScore !== 0) {
-        incrementScore(comboScore);
+        const comboScore = getComboScore(tiles, activeCombos);
+        if (comboScore !== 0) {
+          incrementScore(comboScore);
+        }
+
+        setSpinLock(false);
+      } else if (
+        // one reel is done spinning, this doesnt always hit for some reason
+        
+          // at least one reel lands, this prevents a misfire earlier on
+          reelResults.findIndex(r => r > -1) > -1
+        ){
+          sound_reelComplete();
       }
-
-      setSpinLock(false);
+      // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore, spinCount]);
+  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore, spinCount, sound_reelsComplete, sound_reelComplete]);
 
   const resultSet = useMemo(() => {
     if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
