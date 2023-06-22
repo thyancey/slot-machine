@@ -119,7 +119,9 @@ function SlotMachine() {
   const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
 
   const [sound_reelsComplete] = useSound(Sound.boop);
-  const [sound_reelComplete] = useSound(Sound.beep);
+  const [sound_reelComplete] = useSound(Sound.beep, {
+    playbackRate: .3 + reelResults.filter(r => r !== -1).length * .3
+  });
   const [sound_lever] = useSound(Sound.thump2);
   const [sound_combo] = useSound(Sound.explosion);
 

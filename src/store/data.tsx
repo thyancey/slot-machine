@@ -200,16 +200,28 @@ export const defaultReelState: DeckIdxCollection[] = [
   [
     0,
     1,
-    2
+    2,
+    5,
+    8
   ],
   [
     0,
     1,
-    2
+    2,
+    5,
+    8,
   ],
   [
     0,
+    3,
     1,
-    2
+    8,
+    9,
+    2,
+    13
+  ],
+  [
+    0,
+    5
   ],
 ];
