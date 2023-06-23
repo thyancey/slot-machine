@@ -9,7 +9,7 @@ import {
   defaultTileDeck,
   DeckIdxCollection,
 } from '../../store/data';
-import ResultLabel from './components/result-label';
+import ResultLabel, { EmptyResultLabel } from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
 import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
@@ -35,6 +35,13 @@ const ScWrapper = styled.main`
   text-align: center;
 
   border-radius: 0.5rem;
+
+  &.lit-up {
+    box-shadow: 
+      0 0 0 0.75rem var(--color-purple),
+      0 0 0 1.5rem var(--color-pink),
+      0 0 3rem 2rem var(--color-pink);
+  }
 `;
 
 const ScInfoTray = styled.div`
@@ -85,6 +92,12 @@ const ScHandle = styled.div`
   color: var(--color-grey);
   box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
 
+  .lit-up & {
+    box-shadow: 
+      0 0 0 0.75rem var(--color-purple),
+      0 0 0 1.5rem var(--color-pink),
+      0 0 3rem 2rem var(--color-pink);
+  }
   span {
     font-family: var(--font-8bit2);
     font-size: 4rem;
@@ -122,8 +135,8 @@ function SlotMachine() {
   const [sound_reelComplete] = useSound(Sound.beep, {
     playbackRate: .3 + reelResults.filter(r => r !== -1).length * .3
   });
-  const [sound_lever] = useSound(Sound.thump2);
-  const [sound_combo] = useSound(Sound.explosion);
+  const [sound_lever] = useSound(Sound.alarm, { volume: 0.2, playbackRate: .10, loop: false });
+  const [sound_combo] = useSound(Sound.powerUp);
 
   useEffect(() => {
     setReelCombos(reelComboDef.map((reelCombo) => reelCombo));
@@ -225,7 +238,7 @@ function SlotMachine() {
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
-    <ScWrapper>
+    <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
       <ScDisplayContainer>
         <Display reelCombos={reelCombos} activeCombos={activeCombos} numReels={reelStates.length} />
       </ScDisplayContainer>
@@ -245,7 +258,7 @@ function SlotMachine() {
       </ScReelContainer>
       <ScReelLabels>
         {resultSet.map((tile, reelIdx) => (
-          tile ? (<ResultLabel key={reelIdx} tile={tile} />) : (<ResultLabel key={reelIdx} />)
+          tile ? (<ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos}/>) : (<EmptyResultLabel key={reelIdx} />)
         ))}
       </ScReelLabels>
       <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>

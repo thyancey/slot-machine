@@ -1,3 +1,5 @@
+import { BonusGroup, Tile } from '../store/data';
+
 export type MinMaxTouple = [min: number, max: number];
 export const randInRange = (range: MinMaxTouple, isIndexes = false) => {
   const val = Math.random() * (range[1] - range[0]) + range[0];
@@ -28,6 +30,11 @@ export const checkUniqueStrings = (items: string[]) => {
   }, [] as string[]);
   return unique.length === items.length;
 };
+
+// if a tile has a wildcard AND a bonus accepts wildcards, then you can allow it
+export const checkForWildCards = (bonuses: BonusGroup[], tiles: Tile[]) => {
+  return !!tiles.find(t => t.attributes.includes('*')) && !!bonuses.find(b => b.bonusType === '*');
+}
 
 export const pickRandomFromArray = (numChoices: number, array: unknown[]) => {
   const idxs = Array.from(Array(array.length).keys());

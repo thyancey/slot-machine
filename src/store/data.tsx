@@ -30,7 +30,7 @@ export type Tile = {
   img?: string;
   effect?: string;
   value?: number;
-  attributes?: string[];
+  attributes: string[];
   score?: number;
 };
 
@@ -59,7 +59,7 @@ export const tileGlossary: TileGlossary = {
   },
   poison: { label: 'poison', img: AssetMap.Rpoison, attributes: ['attack'], effect: 'poison damage', value: 1.5, score: 200 },
   shield: { label: 'shield', img: AssetMap.Rshield, attributes: ['buff'], effect: 'defense', value: 1, score: 100 },
-  slot_seven: { label: 'seven', img: AssetMap.R7, effect: 'score', value: 7, score: 700 },
+  slot_seven: { label: 'seven', img: AssetMap.R7, attributes: [], effect: 'score', value: 7, score: 700 },
   slot_bar1: { label: 'bar1', img: AssetMap.Rbar1, attributes: ['bar', '*'], score: 100 },
   slot_bar2: { label: 'bar2', img: AssetMap.Rbar2, attributes: ['bar', '*'], score: 200 },
   slot_bar3: { label: 'bar3', img: AssetMap.Rbar3, attributes: ['bar', '*'], score: 300 },
@@ -86,7 +86,7 @@ export type MatchType = 'label' | 'attrAny' | 'attrUnique';
 // same: all reels must be bar, all labels must match
 // any: all reels must be bar
 // put "any" last, otherwise it could match ahead of others
-export type BonusType = 'any' | 'unique' | 'same';
+export type BonusType = 'any' | 'unique' | 'same' | '*';
 export interface BonusGroup {
   bonusType: BonusType;
   multiplier?: number;
@@ -116,39 +116,43 @@ export const reelComboDef: ReelCombo[] = [
   //   ]
   // },
   {
-    label: 'bar combo',
+    label: '"bar" combo',
     attributes: ['bar'],
     bonuses: [
-      { bonusType: 'unique', multiplier: 1.1 },
-      { bonusType: 'same', multiplier: 1.3 },
-      { bonusType: 'any', multiplier: 1 },
+      { bonusType: 'unique', multiplier: 1.2 },
+      { bonusType: 'same', multiplier: 1.4 },
+      { bonusType: 'any', multiplier: 1.3 },
+      { bonusType: '*', multiplier: 1.2 },
     ],
   },
+  // {
+  //   label: '"buff" combo',
+  //   attributes: ['buff'],
+  //   bonuses: [
+  //     { bonusType: 'unique', multiplier: 2 },
+  //     { bonusType: 'same', multiplier: 3 },
+  //     { bonusType: 'any', multiplier: 1.5 },
+  //     { bonusType: '*', multiplier: 1.2 },
+  //   ],
+  // },
   {
-    label: 'buff combo',
-    attributes: ['buff'],
-    bonuses: [
-      { bonusType: 'unique', multiplier: 2 },
-      { bonusType: 'same', multiplier: 3 },
-      { bonusType: 'any', multiplier: 1.5 },
-    ],
-  },
-  {
-    label: 'attack combo',
+    label: '"attack" combo',
     attributes: ['attack'],
     bonuses: [
       { bonusType: 'unique', multiplier: 2 },
       { bonusType: 'same', multiplier: 3 },
       { bonusType: 'any', multiplier: 1.5 },
+      { bonusType: '*', multiplier: 1.2 },
     ],
   },
   {
-    label: '$$$ combo',
+    label: '"$$$" combo',
     attributes: ['money'],
     bonuses: [
       { bonusType: 'unique', multiplier: 2 },
       { bonusType: 'same', multiplier: 3 },
       { bonusType: 'any', multiplier: 1.5 },
+      { bonusType: '*', multiplier: 1.2 },
     ],
   },
 ];
@@ -163,16 +167,16 @@ export type TileDeck = Tile[];
 // (usually has less, the TileDeck changes as the player progresses)
 export const defaultTileDeck: TileKeyCollection = [
   'slot_bar1',
-  'slot_bar2',
+  'slot_bar2', //1
   'slot_bar3',
   'flame',
   'halo',
-  'coins',
+  'coins', //5
   'coins',
   'coins',
   'lightning',
   'sword',
-  'shield',
+  'shield', //10
   'crazy',
   'bat',
   'poison'
@@ -201,27 +205,33 @@ export const defaultReelState: DeckIdxCollection[] = [
     0,
     1,
     2,
-    5,
-    8
-  ],
-  [
-    0,
-    1,
-    2,
-    5,
-    8,
-  ],
-  [
-    0,
     3,
-    1,
+    4,
+    5,
     8,
     9,
-    2,
     13
   ],
   [
     0,
-    5
+    1,
+    2,
+    3,
+    4,
+    5,
+    8,
+    9,
+    13
+  ],
+  [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    8,
+    9,
+    13
   ],
 ];
