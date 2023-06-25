@@ -2,7 +2,8 @@ import { ReactNode, SetStateAction, createContext, useCallback, useState } from 
 import {
   DeckState,
   MAX_REELS,
-  INITIAL_TOKENS,
+  INITIAL_UPGRADE_TOKENS,
+  INITIAL_SPIN_TOKENS,
   MAX_REEL_TOKENS,
   UiState,
   TileKeyCollection,
@@ -33,6 +34,9 @@ interface AppContextType {
   setUpgradeTokens: (value: number) => void;
   spinTokens: number;
   setSpinTokens: (value: SetStateAction<number>) => void;
+  turn: number;
+  setTurn: (value: SetStateAction<number>) => void;
+  nextTurn: () => void;
 
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
@@ -50,9 +54,10 @@ interface Props {
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
-  const [spinTokens, setSpinTokens] = useState(2);
+  const [turn, setTurn] = useState(-1);
+  const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
-  const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
+  const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
@@ -112,6 +117,12 @@ const AppProvider = ({ children }: Props) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
 
+  const nextTurn = useCallback(() => {
+    setTurn(prev => prev + 1);
+    setSpinTokens(INITIAL_SPIN_TOKENS);
+    setUpgradeTokens(INITIAL_UPGRADE_TOKENS);
+  }, [ setTurn, setSpinTokens, setUpgradeTokens ])
+
   return (
     <AppContext.Provider
       value={
@@ -130,6 +141,10 @@ const AppProvider = ({ children }: Props) => {
 
           spinTokens,
           setSpinTokens,
+
+          turn,
+          setTurn,
+          nextTurn,
 
           uiState,
           setUiState,

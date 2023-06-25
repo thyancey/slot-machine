@@ -153,7 +153,7 @@ function SlotMachine() {
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
-  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore, spinTokens, setSpinTokens } = useContext(AppContext);
+  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore, spinTokens, setSpinTokens, nextTurn } = useContext(AppContext);
 
   const [sound_reelsComplete] = useSound(Sound.boop);
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -177,6 +177,12 @@ function SlotMachine() {
   useEffect(() => {
     setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
+
+  // useEffect(() => {
+  //   if(spinTokens <= 0){
+  //     nextTurn();
+  //   }
+  // }, [spinTokens, nextTurn]);
 
   const triggerSpin = useCallback((reelStates: DeckIdxCollection[]) => {
     if (!spinLock && spinTokens > 0) {
