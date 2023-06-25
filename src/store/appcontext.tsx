@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useCallback, useState } from 'react';
+import { ReactNode, SetStateAction, createContext, useCallback, useState } from 'react';
 import {
   DeckState,
   MAX_REELS,
@@ -18,22 +18,24 @@ interface AppContextType {
   incrementScore: (increment: number) => void;
 
   selectedTileIdx: number;
-  setSelectedTileIdx: (idx: number) => void;
+  setSelectedTileIdx: (idx: SetStateAction<number>) => void;
 
   tileDeck: TileKeyCollection;
-  setTileDeck: (value: TileKeyCollection) => void;
+  setTileDeck: (value: SetStateAction<TileKeyCollection>) => void;
 
   deckState: DeckState;
-  setDeckState: (value: DeckState) => void;
+  setDeckState: (value: SetStateAction<DeckState>) => void;
 
   reelStates: DeckIdxCollection[];
-  setReelStates: (values: DeckIdxCollection[]) => void;
+  setReelStates: (values: SetStateAction<DeckIdxCollection[]>) => void;
 
   upgradeTokens: number;
   setUpgradeTokens: (value: number) => void;
+  spinTokens: number;
+  setSpinTokens: (value: SetStateAction<number>) => void;
 
   uiState: UiState;
-  setUiState: (value: UiState) => void;
+  setUiState: (value: SetStateAction<UiState>) => void;
 
   insertIntoReel: (reelIdx: number, positionIdx: number) => void;
   removeFromReel: (reelIdx: number, positionIdx: number) => void;
@@ -48,6 +50,7 @@ interface Props {
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
+  const [spinTokens, setSpinTokens] = useState(2);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
@@ -124,6 +127,9 @@ const AppProvider = ({ children }: Props) => {
 
           upgradeTokens,
           setUpgradeTokens,
+
+          spinTokens,
+          setSpinTokens,
 
           uiState,
           setUiState,

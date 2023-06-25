@@ -79,18 +79,26 @@ const ScReelLabels = styled.div`
 /* stick it to the side */
 const ScHandle = styled.div`
   position: absolute;
-  width: 4rem;
   height: 100%;
+  padding: 1.6rem 0; // hack to align temp spin counter
   left: calc(100% + 4rem);
   top: 0;
   z-index: 1;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  padding-top: 1rem;
 
-  background-color: var(--color-white);
-  color: var(--color-grey);
+  display:flex;
+  flex-direction:column;
+  >:first-child{
+    flex: 1;
+    margin-bottom: 4rem;
+  }
+`;
+const ScHandleChild = styled.div`
+  background-color: var(--color-yellow);
+  color: var(--color-purple);
   box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  border-radius: 0.5rem;
+  width: 4rem;
 
   .lit-up & {
     box-shadow: 
@@ -98,6 +106,7 @@ const ScHandle = styled.div`
       0 0 0 1.5rem var(--color-pink),
       0 0 3rem 2rem var(--color-pink);
   }
+
   span {
     font-family: var(--font-8bit2);
     font-size: 4rem;
@@ -106,13 +115,15 @@ const ScHandle = styled.div`
   }
 
   cursor: pointer;
-
+  
   &:hover {
-    background-color: var(--color-yellow);
+    background-color: var(--color-purple);
     color: var(--color-pink);
   }
 
-  &.disabled {
+
+  .spin-disabled & {
+    cursor: default;
     background-color: var(--color-grey);
     color: var(--color-black);
 
@@ -122,6 +133,19 @@ const ScHandle = styled.div`
   }
 `;
 
+const ScSpinHandle = styled(ScHandleChild)`
+  flex: 1;
+  margin-bottom: 4rem;
+  display:flex;
+  align-items: center;
+`
+
+const ScSpinTokens = styled(ScHandleChild)`
+  font-size: 3rem;
+  line-height: 3.3rem;
+  padding-bottom: 0.2rem;
+`
+
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
@@ -129,7 +153,7 @@ function SlotMachine() {
   const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
-  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore } = useContext(AppContext);
+  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore, spinTokens, setSpinTokens } = useContext(AppContext);
 
   const [sound_reelsComplete] = useSound(Sound.boop);
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -155,16 +179,17 @@ function SlotMachine() {
   }, [reelStates]);
 
   const triggerSpin = useCallback((reelStates: DeckIdxCollection[]) => {
-    if (!spinLock) {
+    if (!spinLock && spinTokens > 0) {
       // determine what the next line of slots will be, someday make this weighted
       setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
 
+      setSpinTokens(prev => prev - 1);
       setSpinCount(spinCount + 1);
       setReelResults(Array(reelStates.length).fill(-1));
       setSpinLock(true);
       setActiveCombos([]);
     }
-  }, [spinCount, spinLock]);
+  }, [spinCount, spinLock, spinTokens, setSpinTokens]);
 
   const onSpinComplete = useCallback(
     (reelIdx: number, slotIdx: number) => {
@@ -259,8 +284,11 @@ function SlotMachine() {
           tile ? (<ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos}/>) : (<EmptyResultLabel key={reelIdx} />)
         ))}
       </ScReelLabels>
-      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin(reelStates)}>
-        <span>{'T R Y - A G A I N'}</span>
+      <ScHandle className={(spinLock || spinTokens <= 0) ? 'spin-disabled' : ''} onClick={() => triggerSpin(reelStates)}>
+        <ScSpinHandle>
+          <span>{'S P I N'}</span>
+        </ScSpinHandle>
+        <ScSpinTokens>{spinTokens}</ScSpinTokens>
       </ScHandle>
       <ScInfoTray>
         <InfoTray />
