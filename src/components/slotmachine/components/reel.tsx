@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
+import AssetMap from '../../../assets';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
@@ -16,7 +17,7 @@ const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
-  border: 0.5rem solid var(--color-white);
+  /* border: 0.5rem solid var(--color-white); */
   width: 8rem;
   height: 12rem;
   position: relative;
@@ -55,6 +56,21 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
+interface ScReelBgProps {
+  bg?: string;
+}
+const ScReelBg = styled.div<ScReelBgProps>`
+  position:absolute;
+  inset: 0;
+  ${(props) => props.bg && css`
+    background: url(${props.bg});
+  `};
+  background-color: var(--color-white);
+  background-size: contain;
+  z-index: -1;
+
+`
+
 type Props = {
   reelIdx: number;
   reelState: DeckIdxCollection;
@@ -71,6 +87,8 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
   const [spinProgress, setSpinProgress] = useState(1);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
+  // const reelBg = ''; // eventually, stored in reel data
+  const reelBg = AssetMap.Reel_BG;
 
   // on initialize
   useEffect(() => {
@@ -132,6 +150,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
           {reelTileStates.map((tile, idx) => (
             <ReelContent key={`${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} />
           ))}
+          <ScReelBg bg={reelBg} />
         </ScReelTape>
       </ScReelCenterer>
       <ScReelOverlay />

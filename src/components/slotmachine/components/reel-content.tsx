@@ -7,7 +7,6 @@ interface ScProps {
 const ScWrapper = styled.div<ScProps>`
   width: 100%;
   height: ${(p) => p.height}px;
-  background-color: var(--color-white);
   color: var(--color-black);
   text-align: center;
   border-bottom: 0.25rem solid var(--color-blue);
