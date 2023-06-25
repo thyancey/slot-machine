@@ -151,11 +151,10 @@ function SlotMachine() {
   }, [setDeckState, setReelStates, setTileDeck]);
 
   useEffect(() => {
-    console.log('resetReelResults', reelStates);
     setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
 
-  const triggerSpin = useCallback(() => {
+  const triggerSpin = useCallback((reelStates: DeckIdxCollection[]) => {
     if (!spinLock) {
       // determine what the next line of slots will be, someday make this weighted
       setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
@@ -165,11 +164,10 @@ function SlotMachine() {
       setSpinLock(true);
       setActiveCombos([]);
     }
-  }, [spinCount, spinLock, reelStates]);
+  }, [spinCount, spinLock]);
 
   const onSpinComplete = useCallback(
     (reelIdx: number, slotIdx: number) => {
-      // console.log(`(pre) reel [${reelIdx}] done spinning and landed on ${slotIdx}!`);
       setReelResults((prev) => prev.map((sIdx, rIdx) => (rIdx === reelIdx ? slotIdx : sIdx)));
     },
     [setReelResults]
@@ -234,7 +232,6 @@ function SlotMachine() {
         const deckIdx = reelStates[reelIdx][slotIdx];
         return getTileFromDeckIdx(deckIdx, tileDeck);
       })
-      // .filter((rs) => rs !== undefined); // since some were undefined, clear em out
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
@@ -251,6 +248,7 @@ function SlotMachine() {
             reelState={reelState}
             tileDeck={tileDeck}
             spinCount={spinCount}
+            spinLock={spinLock}
             targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
             onSpinComplete={onSpinComplete}
           />
@@ -261,7 +259,7 @@ function SlotMachine() {
           tile ? (<ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos}/>) : (<EmptyResultLabel key={reelIdx} />)
         ))}
       </ScReelLabels>
-      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin()}>
+      <ScHandle className={spinLock ? 'disabled' : ''} onClick={() => triggerSpin(reelStates)}>
         <span>{'T R Y - A G A I N'}</span>
       </ScHandle>
       <ScInfoTray>

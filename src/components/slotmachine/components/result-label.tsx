@@ -107,6 +107,7 @@ interface Props {
 }
 function ResultLabel({ activeCombos, tile }: Props) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
+  
 
   useEffect(() => {
     setLifecycle('lf-new');
@@ -116,6 +117,7 @@ function ResultLabel({ activeCombos, tile }: Props) {
   }, [tile.label]);
 
   const matchingAttributes = useMemo(() => {
+    // console.log('matching with ',tile.attributes, activeCombos);
     return tile.attributes.filter(
       // if attribute matches with combo, or wildcard match for either
       (a) => !!activeCombos.find((aC) => aC.attribute === a || aC.attribute === '*' || a === '*')

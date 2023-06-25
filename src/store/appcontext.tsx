@@ -99,11 +99,8 @@ const AppProvider = ({ children }: Props) => {
   );
 
   const discardCards = useCallback(
-    (ignoreIdx: number) => {
-      console.log(`AppContext.discardCards(${ignoreIdx})`);
-      const afterState = discardTiles(deckState.drawn, deckState);
-      console.log('afterState:', afterState);
-      setDeckState(afterState);
+    (_: number) => {
+      setDeckState(discardTiles(deckState.drawn, deckState));
     },
     [deckState]
   );
