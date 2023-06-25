@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Tile } from '../../../store/data';
-import { useEffect, useState } from 'react';
+import { ReelComboResult, Tile } from '../../../store/data';
+import { useEffect, useMemo, useState } from 'react';
 
 const ScWrapper = styled.div`
   width: 8rem;
@@ -13,8 +13,7 @@ const ScAnimator = styled.div`
   position: absolute;
   inset: 0;
   top: 0rem;
-  transition: top .2s cubic-bezier(.62,3,.8,.68), opacity .2s;
-  
+  transition: top 0.2s cubic-bezier(0.62, 3, 0.8, 0.68), opacity 0.2s;
 
   .lf-present & {
     top: 0rem;
@@ -27,78 +26,113 @@ const ScAnimator = styled.div`
   .lf-none & {
     top: -2rem;
     opacity: 0;
-    >div{
-      height:1rem;
+    > div {
+      height: 1rem;
     }
-    transition: top .2s cubic-bezier(.46,0,.78,-0.71), opacity .2s .1s;
+    transition: top 0.2s cubic-bezier(0.46, 0, 0.78, -0.71), opacity 0.2s 0.1s;
   }
 `;
 
 const ScPill = styled.div`
-  width: 8rem;
   height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 1rem;
   box-shadow: 0px 2px 5px 1px var(--color-grey);
-
-  background-color: var(--color-grey);
-  transition: background-color .2s;
-  
+  text-align:center;
+  font-size: 1.5rem;
   font-family: var(--font-8bit2);
 
-  .lf-present & {
-    background-color: var(--color-pink);
-  }
   .lf-none & {
     height: 1rem;
     background-color: var(--color-grey);
-    transition: background-color 1s, height .2s;
+    transition: background-color 1s, height 0.2s;
   }
 `;
 
-const ScAttrPill = styled(ScPill)`
-  font-size: .5rem;
-  width: 4rem;
-  height: 1rem;
-  margin-left:2rem;
+const ScScorePill = styled(ScPill)`
+  background-color: var(--color-grey);
+  transition: background-color 0.2s;
+  color: var(--color-white);
 
-  .lf-present & {
+  .lit-up & {
     background-color: var(--color-purple);
   }
   .lf-none & {
     height: 1rem;
     background-color: var(--color-grey);
+    transition: background-color 1s, height 0.2s;
   }
-`
+`;
+
+const ScAttrPill = styled(ScPill)`
+  font-size: 1.5rem;
+  height: 1rem;
+  padding: 1rem;
+  margin-top: -2.5rem;
+  opacity: 0;
+  transition: margin-top .3s, opacity .3s;
+
+  &.active{
+    margin-top: -0.5rem;
+    opacity: 1;
+  }
+
+  .lf-present & {
+    background-color: var(--color-pink);
+    color: var(--color-white);
+    box-shadow: 0px 0px 15px 3px var(--color-pink);
+  }
+  .lf-none & {
+    height: 1rem;
+    background-color: var(--color-grey);
+  }
+`;
+
+export function EmptyResultLabel() {
+  return (
+    <ScWrapper className={'lf-none'}>
+      <ScAnimator>
+        <ScPill></ScPill>
+        <ScAttrPill></ScAttrPill>
+      </ScAnimator>
+    </ScWrapper>
+  );
+}
 
 interface Props {
-  tile?: Tile;
+  tile: Tile;
+  activeCombos: ReelComboResult[];
 }
-function ResultLabel({ tile }: Props) {
+function ResultLabel({ activeCombos, tile }: Props) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
+  
 
   useEffect(() => {
-    if (tile?.label) {
-      setLifecycle('lf-new');
-      window.setTimeout(() => {
-        setLifecycle('lf-present');
-      }, 1);
-    } else {
-      setLifecycle('lf-none');
-    }
-  }, [tile?.label]);
+    setLifecycle('lf-new');
+    window.setTimeout(() => {
+      setLifecycle('lf-present');
+    }, 1);
+  }, [tile.label]);
+
+  const matchingAttributes = useMemo(() => {
+    // console.log('matching with ',tile.attributes, activeCombos);
+    return tile.attributes.filter(
+      // if attribute matches with combo, or wildcard match for either
+      (a) => !!activeCombos.find((aC) => aC.attribute === a || aC.attribute === '*' || a === '*')
+    );
+  }, [ tile.attributes, activeCombos]);
 
   return (
     <ScWrapper className={lifecycle}>
       <ScAnimator>
-        <ScPill>
-          <span>{tile?.label.toUpperCase()}</span>
-        </ScPill>
-        <ScAttrPill>
-          <span>{tile?.attributes?.join(',').toUpperCase()}</span>
+        <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : '' }>
+          <span>{matchingAttributes.join(',').toUpperCase()}</span>
         </ScAttrPill>
+        <ScScorePill>
+          <span>{`$${tile.score || 0}`}</span>
+        </ScScorePill>
       </ScAnimator>
     </ScWrapper>
   );

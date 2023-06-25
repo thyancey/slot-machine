@@ -11,7 +11,7 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
 const SPIN_TICK = 30;
-const SPIN_DURATION_RANGE = [0.01, 0.02] as MinMaxTouple;
+const SPIN_DURATION_RANGE = [0.005, 0.02] as MinMaxTouple;
 const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
 
 // kinda like the cutout you can see the reel through
@@ -61,26 +61,26 @@ type Props = {
   tileDeck: TileKeyCollection;
   targetSlotIdx: number; // idx of tiles to go to, regardless of how much spinning to be done
   spinCount: number; // this helps determine when a spin started
+  spinLock: boolean;
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
 };
-function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpinComplete }: Props) {
+function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount, onSpinComplete }: Props) {
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
-  const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([0, 0]); // current, next
+  const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
   const [spinProgress, setSpinProgress] = useState(1);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
 
   // on initialize
   useEffect(() => {
-    setLoopedIdxs([0, 0]);
+    setLoopedIdxs([-1, 0]);
   }, [reelState, reelIdx]);
 
   /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
-    // console.log(`Reel [${reelIdx}] spin happened, new targetSlotIdx: `, targetSlotIdx);
     // -1 happens on mount
-    if (targetSlotIdx !== -1) {
+    if (spinLock && targetSlotIdx !== -1) {
       // allows the reel to spin again
       setSpinProgress(0);
       setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
@@ -91,14 +91,18 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinCount, onSpinCo
         getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true)),
       ]);
     }
-  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed]);
+  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, spinLock]);
 
   useEffect(() => {
     if (spinProgress >= 1) {
       // have to calculate the end result value here, over using "targetSlotIdx", because adding that
       // prop to this useEffect dependency array makes the reel think it finished spinning on a brand
       // new pull, cause spinProgress had not changed to 0 yet
-      onSpinComplete(reelIdx, loopedIdxs[1] % reelState.length);
+      
+      // this check avoids a false spin trigger after editing reel
+      if(loopedIdxs[0] > -1){
+        onSpinComplete(reelIdx, loopedIdxs[1] % reelState.length);
+      }
     } else {
       setTimeout(() => {
         // use an easing function to smoothly increment the % progress up to the value of 1

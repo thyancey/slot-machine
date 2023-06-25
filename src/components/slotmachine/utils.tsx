@@ -1,4 +1,4 @@
-import { checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
+import { checkForWildCards, checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
 import { Tile, ReelCombo, ReelComboResult, BonusGroup, DeckIdxCollection } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
@@ -9,25 +9,34 @@ export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
 };
 
+// what the hell is this, redo this
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
-  for (let i = 0; i < bonuses.length; i++) {
-    switch (bonuses[i].bonusType) {
-      case 'same':
-        if (checkSameStrings(tiles.map((rI) => rI.label))) {
-          return bonuses[i];
-        }
-        break;
-      case 'unique':
-        if (checkUniqueStrings(tiles.map((rI) => rI.label))) {
-          return bonuses[i];
-        }
-        break;
-      default:
-        return bonuses[i]; //any
+  const wildcard = bonuses.find(b => b.bonusType === '*');
+  if(wildcard){
+    if (checkForWildCards(bonuses, tiles)) {
+      return wildcard;
+    }
+  }
+  const same = bonuses.find(b => b.bonusType === 'same');
+  if(same){
+    if (checkSameStrings(tiles.map((rI) => rI.label))) {
+      return same;
+    }
+  }
+  const unique = bonuses.find(b => b.bonusType === 'unique');
+  if(unique){
+    if (checkUniqueStrings(tiles.map((rI) => rI.label))) {
+      return unique;
     }
   }
 
-  return null;
+  return bonuses[0] ? bonuses[0] : null;
+};
+
+export const compareAttributes = (tiles: Tile[], comboAttribute: string) => {
+  return tiles.filter((tile) => {
+    return comboAttribute === '*' || tile.attributes.includes('*') || tile.attributes.indexOf(comboAttribute) > -1;
+  }).length === tiles.length
 };
 
 export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
@@ -36,9 +45,7 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
     for (let a = 0; a < rC.attributes.length; a++) {
       // if every tile has a matching attribute
       if (
-        tiles.filter((rI) => {
-          return rI.attributes && rI.attributes?.indexOf(rC.attributes[a]) > -1;
-        }).length === tiles.length
+        compareAttributes(tiles, rC.attributes[a])
       ) {
         // you found one, this combo is validated
         combos.push({
