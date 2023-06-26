@@ -236,3 +236,12 @@ export const defaultReelState: DeckIdxCollection[] = [
     13
   ],
 ];
+
+// for the player and enemies, will need to be expanded in the future
+export type PlayerInfo = {
+  label: string,
+  img?: string,
+  hp: [current:number, max:number],
+  attack: number,
+  defense: number
+}

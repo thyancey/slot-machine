@@ -8,6 +8,7 @@ import {
   UiState,
   TileKeyCollection,
   DeckIdxCollection,
+  PlayerInfo,
 } from './data';
 import { clamp } from '../utils';
 import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
@@ -38,6 +39,11 @@ interface AppContextType {
   setTurn: (value: SetStateAction<number>) => void;
   nextTurn: () => void;
 
+  playerInfo: PlayerInfo;
+  setPlayerInfo: (value: SetStateAction<PlayerInfo>) => void;
+  enemyInfo: PlayerInfo | null;
+  setEnemyInfo: (value: SetStateAction<PlayerInfo>) => void;
+
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
 
@@ -55,6 +61,18 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
+    label: 'player',
+    hp: [10,10],
+    attack: 0,
+    defense: 0
+  });
+  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo>({
+    label: 'troll',
+    hp: [3,3],
+    attack: 3,
+    defense: 1
+  });
   const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
@@ -148,6 +166,12 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
+
+          playerInfo,
+          setPlayerInfo,
+          
+          enemyInfo,
+          setEnemyInfo,
 
           insertIntoReel,
           removeFromReel,
