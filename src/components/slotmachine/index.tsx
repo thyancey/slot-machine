@@ -268,7 +268,7 @@ function SlotMachine() {
   return (
     <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
       <ScDisplayContainer>
-        <Display />
+        <Display resultSet={resultSet} activeCombos={activeCombos} />
       </ScDisplayContainer>
 
       <ScReelContainer>

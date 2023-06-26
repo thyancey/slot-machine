@@ -9,6 +9,17 @@ export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
   return arrayOfArrays.map((array) => getRandomIdx(array));
 };
 
+export const pickRandomsFromArray = (numChoices: number, array: unknown[]) => {
+  const idxs = Array.from(Array(array.length).keys());
+  const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
+  
+  return shuffledIdxs.slice(0, numChoices).map(i => array[i]) as unknown[];
+};
+
+export const pickRandomFromArray = (array: unknown[]) => {
+  return array[getRandomIdx(array)];
+};
+
 // what the hell is this, redo this
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
   const wildcard = bonuses.find(b => b.bonusType === '*');

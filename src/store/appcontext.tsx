@@ -9,10 +9,12 @@ import {
   TileKeyCollection,
   DeckIdxCollection,
   PlayerInfo,
+  enemies,
 } from './data';
 import { clamp } from '../utils';
 import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
+import { pickRandomFromArray } from '../components/slotmachine/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -67,12 +69,7 @@ const AppProvider = ({ children }: Props) => {
     attack: 0,
     defense: 0
   });
-  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo>({
-    label: 'troll',
-    hp: [3,3],
-    attack: 3,
-    defense: 1
-  });
+  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo>(pickRandomFromArray(enemies) as PlayerInfo);
   const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
@@ -139,7 +136,8 @@ const AppProvider = ({ children }: Props) => {
     setTurn(prev => prev + 1);
     setSpinTokens(INITIAL_SPIN_TOKENS);
     setUpgradeTokens(INITIAL_UPGRADE_TOKENS);
-  }, [ setTurn, setSpinTokens, setUpgradeTokens ])
+    setEnemyInfo(pickRandomFromArray(enemies) as PlayerInfo);
+  }, [ setTurn, setSpinTokens, setUpgradeTokens, setEnemyInfo ])
 
   return (
     <AppContext.Provider

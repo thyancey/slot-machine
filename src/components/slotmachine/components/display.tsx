@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { AppContext } from '../../../store/appcontext';
+import { ReelComboResult, Tile } from '../../../store/data';
 
 const ScWrapper = styled.div`
   position: absolute;
@@ -63,14 +64,36 @@ const ScEnemy = styled(ScStatus)`
   }
 `;
 
-function Display() {
+interface Props {
+  resultSet: (Tile | undefined)[];
+  activeCombos: ReelComboResult[];
+}
+function Display({resultSet, activeCombos}: Props) {
   const { playerInfo, enemyInfo } = useContext(AppContext);
-  console.log('enemyInfo', enemyInfo)
+
+  const playerAttack = useMemo(() => {
+    return resultSet.reduce((val, rS) => {
+      if(rS?.effect === 'attack'){
+        return (val + (rS.value || 0));
+      }
+      return val;
+    }, 0);
+  }, [resultSet]);
+
+  const playerDefense = useMemo(() => {
+    return resultSet.reduce((val, rS) => {
+      if(rS?.effect === 'defense'){
+        return (val + (rS.value || 0));
+      }
+      return val;
+    }, 0);
+  }, [resultSet]);
+
   return (
     <ScWrapper>
       <ScPlayer>
-        <p>{`atk: ${playerInfo.attack}`}</p>
-        <p>{`def: ${playerInfo.defense}`}</p>
+        <p>{`atk: ${playerAttack}`}</p>
+        <p>{`def: ${playerDefense}`}</p>
         <p>{`hp: ${playerInfo.hp[0]} / ${playerInfo.hp[1]}`}</p>
         <h3>{playerInfo.label}</h3>
       </ScPlayer>
