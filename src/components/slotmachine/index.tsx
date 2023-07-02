@@ -12,7 +12,7 @@ import {
 import ResultLabel, { EmptyResultLabel } from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
-import { getActiveCombos, getComboScore, getRandomIdx } from './utils';
+import { getActiveCombos, getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
 import InfoTray from './components/infotray';
 // @ts-ignore
@@ -228,7 +228,11 @@ function SlotMachine() {
 
         const comboScore = getComboScore(tiles, activeCombos);
         if (comboScore !== 0) {
+          // apply BONUSES
           incrementScore(comboScore);
+        } else {
+          // just add up the raw scores then
+          incrementScore(getBasicScore(tiles));
         }
 
         setSpinLock(false);

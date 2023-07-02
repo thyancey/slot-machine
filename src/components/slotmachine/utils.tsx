@@ -12,8 +12,8 @@ export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
 export const pickRandomsFromArray = (numChoices: number, array: unknown[]) => {
   const idxs = Array.from(Array(array.length).keys());
   const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
-  
-  return shuffledIdxs.slice(0, numChoices).map(i => array[i]) as unknown[];
+
+  return shuffledIdxs.slice(0, numChoices).map((i) => array[i]) as unknown[];
 };
 
 export const pickRandomFromArray = (array: unknown[]) => {
@@ -22,20 +22,20 @@ export const pickRandomFromArray = (array: unknown[]) => {
 
 // what the hell is this, redo this
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
-  const wildcard = bonuses.find(b => b.bonusType === '*');
-  if(wildcard){
+  const wildcard = bonuses.find((b) => b.bonusType === '*');
+  if (wildcard) {
     if (checkForWildCards(bonuses, tiles)) {
       return wildcard;
     }
   }
-  const same = bonuses.find(b => b.bonusType === 'same');
-  if(same){
+  const same = bonuses.find((b) => b.bonusType === 'same');
+  if (same) {
     if (checkSameStrings(tiles.map((rI) => rI.label))) {
       return same;
     }
   }
-  const unique = bonuses.find(b => b.bonusType === 'unique');
-  if(unique){
+  const unique = bonuses.find((b) => b.bonusType === 'unique');
+  if (unique) {
     if (checkUniqueStrings(tiles.map((rI) => rI.label))) {
       return unique;
     }
@@ -45,9 +45,11 @@ export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
 };
 
 export const compareAttributes = (tiles: Tile[], comboAttribute: string) => {
-  return tiles.filter((tile) => {
-    return comboAttribute === '*' || tile.attributes.includes('*') || tile.attributes.indexOf(comboAttribute) > -1;
-  }).length === tiles.length
+  return (
+    tiles.filter((tile) => {
+      return comboAttribute === '*' || tile.attributes.includes('*') || tile.attributes.indexOf(comboAttribute) > -1;
+    }).length === tiles.length
+  );
 };
 
 export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
@@ -55,9 +57,7 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   const activeCombos = reelCombos.reduce((combos, rC) => {
     for (let a = 0; a < rC.attributes.length; a++) {
       // if every tile has a matching attribute
-      if (
-        compareAttributes(tiles, rC.attributes[a])
-      ) {
+      if (compareAttributes(tiles, rC.attributes[a])) {
         // you found one, this combo is validated
         combos.push({
           label: rC.label,
@@ -81,7 +81,7 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
 
 export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
   activeCombos.reduce((totScore, aC) => {
-    const baseScore = tiles.reduce((acc, tile) => (acc += (tile.score || 0)), 0);
+    const baseScore = tiles.reduce((totScore, tile) => (totScore += tile.score || 0), 0);
 
     if (aC.bonus?.multiplier) {
       totScore += aC.bonus.multiplier * baseScore;
@@ -92,6 +92,9 @@ export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
 
     return totScore;
   }, 0);
+
+export const getBasicScore = (tiles: Tile[]) =>
+  tiles.reduce((totScore, tile) => totScore + (tile.score || 0), 0);
 
 // add redudant tiles to top and bottom of reel to make it seem continuous
 export const getLoopedReel = (deckIdxs: DeckIdxCollection, reelOverlap: number) => {
@@ -111,16 +114,18 @@ export const getLoopedReel = (deckIdxs: DeckIdxCollection, reelOverlap: number) 
     loopAfter.push(deckIdxs[i % deckIdxs.length]);
   }
 
-  return ([] as DeckIdxCollection)
-    .concat(loopBefore.reverse())
-    .concat(deckIdxs)
-    .concat(loopAfter);
+  return ([] as DeckIdxCollection).concat(loopBefore.reverse()).concat(deckIdxs).concat(loopAfter);
 };
 
-export const getProgressiveSpinAngle = (perc: number, targetLoopedIdx: number, curLoopedIdx: number, reelHeight: number) => {
+export const getProgressiveSpinAngle = (
+  perc: number,
+  targetLoopedIdx: number,
+  curLoopedIdx: number,
+  reelHeight: number
+) => {
   const targetAngle = targetLoopedIdx * reelHeight;
   const lastAngle = curLoopedIdx * reelHeight;
-  
+
   return lastAngle + getEasing(perc, 'easeInOutQuad') * (targetAngle - lastAngle);
 };
 
@@ -129,25 +134,25 @@ export const getProgressiveSpinAngle = (perc: number, targetLoopedIdx: number, c
  * ]
  * @param curLoopedIdx the idx (spin position) of the reel
  * @param targSlotIdx the idx (of slots in a reel) you want to land on
- * @param reelLength # of slots in the reel 
+ * @param reelLength # of slots in the reel
  * @param minSlots how many slots to rotate past before landing on the target
  * @returns positionIndex of where the reel needs to go
  */
 export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLength: number, minSlots: number) => {
   const minLoopedIdx = curLoopedIdx + minSlots;
 
-  const minSlotIdx = minLoopedIdx % reelLength // what position the min value is at
+  const minSlotIdx = minLoopedIdx % reelLength; // what position the min value is at
 
-  if(minSlotIdx === targSlotIdx){
+  if (minSlotIdx === targSlotIdx) {
     // youre on the spot you wanted to go to!
     return minLoopedIdx;
-  } else if(minSlotIdx < targSlotIdx){
+  } else if (minSlotIdx < targSlotIdx) {
     // ex, at idx 1, need to go to idx 2
     // rotate a few more places to end up on your desired targSlotIdx
     return minLoopedIdx + targSlotIdx - minSlotIdx;
   } else {
     // ex, at idx 2, need to go to idx 0
     // rotate a few more places (loop around) to end up on your desired targSlotIdx
-    return minLoopedIdx + ((reelLength + targSlotIdx) - minSlotIdx);
+    return minLoopedIdx + (reelLength + targSlotIdx - minSlotIdx);
   }
-}
+};

@@ -142,7 +142,8 @@ function ResultLabel({ activeCombos, tile }: Props) {
     <ScWrapper className={lifecycle}>
       <ScAnimator>
         <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : ''}>
-          <span>{matchingAttributes.join(',').toUpperCase()}</span>
+          {/* <span>{matchingAttributes.join(',').toUpperCase()}</span> */}
+          <span>{'COMBO'}</span>
           {tile.effects.map((effect) => (
             <StatLabel key={effect.type} type={effect.type} value={effect.value} />
           ))}

@@ -39,7 +39,7 @@ function ScoreBox() {
 
   return (
     <ScScorebox className={highlighted ? 'highlighted' : ''}>
-      <p>{score}</p>
+      <p>{`$${score}`}</p>
     </ScScorebox>
   );
 }
