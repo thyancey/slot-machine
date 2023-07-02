@@ -209,12 +209,13 @@ const AppProvider = ({ children }: Props) => {
     const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo, activeTiles, activeCombos);
     console.log('roundResult', roundResult);
 
-    if(roundResult.player === 0){
+    if(roundResult.player.hp === 0){
       window.alert('you died!');
-    } else if(roundResult.enemy === 0){
+    } else if(roundResult.enemy.hp === 0){
       setPlayerInfo(prev => ({
         ...prev,
-        hp: [ roundResult.player, prev.hp[1] ]
+        hp: [ roundResult.player.hp, prev.hp[1] ],
+        defense: roundResult.player.defense
       }));
       setEnemyInfo(null);
 
@@ -222,13 +223,15 @@ const AppProvider = ({ children }: Props) => {
     } else {
       setPlayerInfo(prev => ({
         ...prev,
-        hp: [ roundResult.player, prev.hp[1] ]
+        hp: [ roundResult.player.hp, prev.hp[1] ],
+        defense: roundResult.player.defense
       }));
       setEnemyInfo(prev => {
         if(!prev) return null;
         return {
           ...prev,
-          hp: [ roundResult.enemy, prev.hp[1] ]
+          hp: [ roundResult.enemy.hp, prev.hp[1] ],
+          defense: roundResult.enemy.defense
         }
       });
       setTurn(prev => prev + 1);

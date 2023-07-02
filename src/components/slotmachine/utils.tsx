@@ -7,7 +7,6 @@ import {
   DeckIdxCollection,
   PlayerInfo,
   EffectType,
-  PlayerInfoDelta,
   AttackDelta,
 } from '../../store/data';
 
@@ -186,13 +185,15 @@ export const getPlayerAttackDelta = (
 
   const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
   console.log('player ATTACK POWER', attackPower);
-  const damage = attackPower - enemyInfo.defense;
+  const nextDefense = enemyInfo.defense - attackPower;
+  
+  const damage = nextDefense < 0 ? nextDefense : 0;
 
   const enemyResult = {
     // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: damage > 0 ? 0 - damage : 0,
+    hp: damage,
     attack: enemyInfo.attack, // todo - enemy stun?
-    defense: enemyInfo.defense, // todo - break enemy block?
+    defense: 0 - attackPower, // todo - break enemy block?
   };
 
   return {
@@ -223,14 +224,14 @@ export const getEnemyAttackDelta = (
     // do other wacky checking here in the future about flame/poison weakness, etc
     hp: damage > 0 ? 0 - damage : 0,
     attack: playerInfo.attack, // todo - stun player?
-    defense: playerInfo.defense, // todo - break player block?
+    defense: 0 - attackPower, // todo - break player block?
   };
 
   return {
     enemy: {
       hp: 0, // todo, apply thorns to enemy
       attack: attackPower,
-      defense: enemyInfo.defense,
+      defense: 0, // todo, apply thorns to enemy
     },
     player: playerResult,
   };
@@ -253,46 +254,57 @@ export const computeRound = (
     activeTiles
   );
   console.log('playerAttack response:', playerAttack);
+  
+  // knock off any block
+  curEnemy.defense += playerAttack.enemy.defense;
+  if(curEnemy.defense < 0) curEnemy.defense = 0;
+  curPlayer.defense += playerAttack.player.defense;
+  if(curPlayer.defense < 0) curPlayer.defense = 0;
 
   // player check for thorns, burning, poison
   curPlayer.hp[0] += playerAttack.player.hp;
-  // buff, heal or hurt player
   curPlayer.hp[0] = clamp(curPlayer.hp[0], 0, curPlayer.hp[1]);
   if (curPlayer.hp[0] <= 0) {
     // 1a. player dead
     return {
-      player: curPlayer.hp[0],
-      enemy: curEnemy.hp[0]
+      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
     }
   }
-  // since you survived, apply whatever defense you gained for the enemy attack
-  curPlayer.defense = playerAttack.player.defense;
-
 
   // 2. apply attack to enemy
-  curEnemy.hp[0] += playerAttack.enemy.hp;
   // buff, heal or hurt enemy
+  curEnemy.hp[0] += playerAttack.enemy.hp;
   curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
   if (curEnemy.hp[0] <= 0) {
     // 2b. enemy dead
     return {
-      player: curPlayer.hp[0],
-      enemy: curEnemy.hp[0]
+      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
     }
   }
+
+
 
   // 3. enemy attempt to attack player
   const enemyAttack = getEnemyAttackDelta(curPlayer as PlayerInfo, curEnemy as PlayerInfo, activeCombos, activeTiles);
   // enemy check for thorns, burning, poison
   console.log('enemyAttack response:', enemyAttack);
+  
+  // knock off any block
+  curEnemy.defense += enemyAttack.enemy.defense;
+  if(curEnemy.defense < 0) curEnemy.defense = 0;
+  curPlayer.defense += enemyAttack.player.defense;
+  if(curPlayer.defense < 0) curPlayer.defense = 0;
+
   curEnemy.hp[0] += enemyAttack.enemy.hp;
   // buff, heal or hurt enemy
   curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
   if (curEnemy.hp[0] <= 0) {
     // 3a. enemy dead
     return {
-      player: curPlayer.hp[0],
-      enemy: curEnemy.hp[0]
+      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
     }
   }
 
@@ -303,13 +315,13 @@ export const computeRound = (
   if (curPlayer.hp[0] <= 0) {
     // 4b. enemy dead
     return {
-      player: curPlayer.hp[0],
-      enemy: curEnemy.hp[0]
+      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
     }
   }
 
   return {
-    player: curPlayer.hp[0],
-    enemy: curEnemy.hp[0]
+    player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
+    enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
   }
 };
