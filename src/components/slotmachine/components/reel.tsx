@@ -18,8 +18,8 @@ const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
   /* border: 0.5rem solid var(--color-white); */
-  width: 8rem;
-  height: 12rem;
+  width: var(--val-reel-width);
+  height: var(--val-reel-height);
   position: relative;
 
   /* makes a cutout */
@@ -87,8 +87,8 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
   const [spinProgress, setSpinProgress] = useState(1);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
-  // const reelBg = ''; // eventually, stored in reel data
-  const reelBg = AssetMap.Reel_BG;
+  const reelBg = ''; // eventually, stored in reel data
+  // const reelBg = AssetMap.Reel_BG;
 
   // on initialize
   useEffect(() => {

@@ -26,8 +26,8 @@ const ScStage = styled.main`
 
 const ScBg = styled.div`
   position:absolute;
-  inset: -12rem;
-  font-size: 12rem;
+  inset: calc(-1 * var(--val-reel-height));
+  font-size: var(--val-reel-height);
   font-family: var(--font-8bit2);
   line-height: 10rem;
   z-index:-1;

@@ -71,37 +71,57 @@ interface Props {
 function Display({resultSet, activeCombos}: Props) {
   const { playerInfo, enemyInfo } = useContext(AppContext);
 
-  const playerAttack = useMemo(() => {
+  const attackDelta = useMemo(() => {
+    if(activeCombos.length === 0) return 0;
     return resultSet.reduce((val, rS) => {
-      if(rS?.effect === 'attack'){
-        return (val + (rS.value || 0));
+      const atk = rS?.effects.find(ef => ef.type === 'attack');
+      if(atk){
+        return (val + (atk.value));
       }
       return val;
     }, 0);
-  }, [resultSet]);
+  }, [resultSet, activeCombos.length]);
 
-  const playerDefense = useMemo(() => {
+  const defenseDelta = useMemo(() => {
+    if(activeCombos.length === 0) return 0;
     return resultSet.reduce((val, rS) => {
-      if(rS?.effect === 'defense'){
-        return (val + (rS.value || 0));
+      const def = rS?.effects.find(ef => ef.type === 'defense');
+      if(def){
+        return (val + (def.value));
       }
       return val;
     }, 0);
-  }, [resultSet]);
+  }, [resultSet, activeCombos.length]);
+
+  const healthDelta = useMemo(() => {
+    if(activeCombos.length === 0) return '';
+    const delta = resultSet.reduce((val, rS) => {
+      const def = rS?.effects.find(ef => ef.type === 'health');
+      if(def){
+        return (val + (def.value));
+      }
+      return val;
+    }, 0);
+
+    if(delta === 0){
+      return '';
+    }
+    return delta > 0 ? `(+${delta})` : `(${delta})`
+  }, [resultSet, activeCombos.length]);
 
   return (
     <ScWrapper>
       <ScPlayer>
-        <p>{`atk: ${playerAttack}`}</p>
-        <p>{`def: ${playerDefense}`}</p>
-        <p>{`hp: ${playerInfo.hp[0]} / ${playerInfo.hp[1]}`}</p>
+        <p>{`atk: ${0 + attackDelta}`}</p> 
+        <p>{`def: ${0 + defenseDelta}`}</p>
+        <p>{`hp: ${playerInfo.hp[0]}${healthDelta} / ${playerInfo.hp[1]}`}</p>
         <h3>{playerInfo.label}</h3>
       </ScPlayer>
       {enemyInfo && (
         <ScEnemy>
           <p>{`atk: ${enemyInfo.attack}`}</p>
           <p>{`def: ${enemyInfo.defense}`}</p>
-          <p>{`hp: ${enemyInfo.hp[0]} / ${enemyInfo.hp[1]}`}</p>
+          <p>{`hp: ${enemyInfo.hp[0]}/ ${enemyInfo.hp[1]}`}</p>
           <h3>{enemyInfo.label}</h3>
         </ScEnemy>
       )}

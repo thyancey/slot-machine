@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { ReelComboResult, Tile } from '../../../store/data';
 import { useEffect, useMemo, useState } from 'react';
+import StatLabel from './stat-label';
 
 const ScWrapper = styled.div`
-  width: 8rem;
+  width: var(--val-reel-width);
   height: 2rem;
   margin: 0.5rem;
   position: relative;
@@ -40,7 +41,7 @@ const ScPill = styled.div`
   justify-content: center;
   border-radius: 1rem;
   box-shadow: 0px 2px 5px 1px var(--color-grey);
-  text-align:center;
+  text-align: center;
   font-size: 1.5rem;
   font-family: var(--font-8bit2);
 
@@ -72,9 +73,9 @@ const ScAttrPill = styled(ScPill)`
   padding: 1rem;
   margin-top: -2.5rem;
   opacity: 0;
-  transition: margin-top .3s, opacity .3s;
+  transition: margin-top 0.3s, opacity 0.3s;
 
-  &.active{
+  &.active {
     margin-top: -0.5rem;
     opacity: 1;
   }
@@ -89,6 +90,19 @@ const ScAttrPill = styled(ScPill)`
     background-color: var(--color-grey);
   }
 `;
+
+const ScStatPlacement = styled.div`
+  position: absolute;
+
+  &.top{
+    right: 0.5rem;
+    top: -11.5rem;
+  }
+  &.bottom{
+    right: 0.5rem;
+    top: -5.5rem;
+  }
+`
 
 export function EmptyResultLabel() {
   return (
@@ -107,7 +121,6 @@ interface Props {
 }
 function ResultLabel({ activeCombos, tile }: Props) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
-  
 
   useEffect(() => {
     setLifecycle('lf-new');
@@ -122,13 +135,17 @@ function ResultLabel({ activeCombos, tile }: Props) {
       // if attribute matches with combo, or wildcard match for either
       (a) => !!activeCombos.find((aC) => aC.attribute === a || aC.attribute === '*' || a === '*')
     );
-  }, [ tile.attributes, activeCombos]);
+  }, [tile.attributes, activeCombos]);
+
 
   return (
     <ScWrapper className={lifecycle}>
       <ScAnimator>
-        <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : '' }>
+        <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : ''}>
           <span>{matchingAttributes.join(',').toUpperCase()}</span>
+          {tile.effects.map((effect) => (
+            <StatLabel key={effect.type} type={effect.type} value={effect.value} />
+          ))}
         </ScAttrPill>
         <ScScorePill>
           <span>{`$${tile.score || 0}`}</span>

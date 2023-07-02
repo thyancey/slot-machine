@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Tile } from '../../../store/data';
+import StatLabel from './stat-label';
 
 interface ScProps {
   height: number;

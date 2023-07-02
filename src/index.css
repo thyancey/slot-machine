@@ -35,6 +35,9 @@
 
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
 
+  --val-reel-width: 8rem;
+  --val-reel-height: 12rem; /* SHOULD MATCH REEL_HEIGHT */
+
   font-family: var(--font-base);
 
   background-color: var(--color-grey);
