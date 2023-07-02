@@ -1,5 +1,5 @@
 import { checkForWildCards, checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { Tile, ReelCombo, ReelComboResult, BonusGroup, DeckIdxCollection } from '../../store/data';
+import { Tile, ReelCombo, ReelComboResult, BonusGroup, DeckIdxCollection, PlayerInfo } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
 
@@ -156,3 +156,9 @@ export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLen
     return minLoopedIdx + (reelLength + targSlotIdx - minSlotIdx);
   }
 };
+
+
+const getPlayerInfoDelta = (playerInfo: PlayerInfo, activeCombos: ReelComboResult[]) => {
+  console.log('getPlayerInfoDelta', playerInfo, activeCombos)
+  return playerInfo;
+}

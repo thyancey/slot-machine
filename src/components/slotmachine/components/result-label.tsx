@@ -142,6 +142,7 @@ function ResultLabel({ activeCombos, tile }: Props) {
     <ScWrapper className={lifecycle}>
       <ScAnimator>
         <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : ''}>
+          {/* if you wanna show "attack" or "freeze" or "*" whatever */}
           {/* <span>{matchingAttributes.join(',').toUpperCase()}</span> */}
           <span>{'COMBO'}</span>
           {tile.effects.map((effect) => (

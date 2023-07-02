@@ -1,4 +1,4 @@
-import { ReactNode, SetStateAction, createContext, useCallback, useEffect, useState } from 'react';
+import { ReactNode, SetStateAction, createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DeckState,
   MAX_REELS,
@@ -10,14 +10,27 @@ import {
   DeckIdxCollection,
   PlayerInfo,
   enemies,
+  ReelComboResult,
+  ReelCombo,
+  Tile,
 } from './data';
 import { clamp } from '../utils';
-import { insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { pickRandomFromArray } from '../components/slotmachine/utils';
+import { getActiveCombos, pickRandomFromArray } from '../components/slotmachine/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
+  activeTiles: Tile[];
+
+  reelResults: DeckIdxCollection;
+  setReelResults: (values: SetStateAction<DeckIdxCollection>) => void;
+
+  activeCombos: ReelComboResult[];
+  
+  reelCombos: ReelCombo[];
+  setReelCombos:  (values: SetStateAction<ReelCombo[]>) => void;
+
   score: number;
   incrementScore: (increment: number) => void;
 
@@ -38,8 +51,11 @@ interface AppContextType {
   
   spinTokens: number;
   setSpinTokens: (value: SetStateAction<number>) => void;
+
   turn: number;
   setTurn: (value: SetStateAction<number>) => void;
+  finishTurn: () => void;
+
   round: number;
   setRound: (value: SetStateAction<number>) => void;
 
@@ -77,7 +93,10 @@ const AppProvider = ({ children }: Props) => {
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
+  const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
+  // const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
+  const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
     drawn: [],
@@ -115,10 +134,7 @@ const AppProvider = ({ children }: Props) => {
 
   const drawCards = useCallback(
     (numToDraw: number) => {
-      console.log(`AppContext.drawCards(${numToDraw})`);
       const afterState = drawTiles(numToDraw, deckState);
-      console.log('afterState:', afterState);
-
       setDeckState(afterState);
     },
     [deckState]
@@ -131,9 +147,29 @@ const AppProvider = ({ children }: Props) => {
     [deckState]
   );
 
+  const activeTiles = useMemo(() => {
+    if(reelResults.includes(-1)) return [];
+
+    return reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
+  }, [reelResults, tileDeck, reelStates]);
+  
+  const activeCombos = useMemo(() => {
+    if(activeTiles.length === 0){
+      return [];
+    }
+    return getActiveCombos(activeTiles, reelCombos);
+  }, [activeTiles, reelCombos]);
+
   const incrementUpgradeTokens = (newAmount: number) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
+
+  const getPlayerInfoDelta = (playerInfo: PlayerInfo, reelResults: DeckIdxCollection) => {
+    return playerInfo;
+  }
+
+  // console.log('Context, activeTiles', activeTiles);
+  // console.log('Context, reelCombos', reelCombos);
 
   // next round
   useEffect(() => {
@@ -144,21 +180,58 @@ const AppProvider = ({ children }: Props) => {
         // TODO: GAME WON?
         setEnemyInfo(pickRandomFromArray(enemies) as PlayerInfo);
       }
-      setTurn(-1);
+      // ideally, next turn effect does this, but when turn is already 0, it doesnt see
+      // a change
+      setSpinTokens(INITIAL_SPIN_TOKENS);
+      setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
+
       setTurn(0);
     }
-  }, [round, enemies, setEnemyInfo, setTurn]);
+  }, [round, enemies, setEnemyInfo, setTurn, setSpinTokens, setUpgradeTokensState]);
 
-  // next turn
+  // next turn, fight each other then reset or whatever
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
   }, [turn, setSpinTokens, setUpgradeTokensState]);
 
+
+  const finishTurn = useCallback(() => {
+    console.log('----> FINISH TURN');
+    if(!enemyInfo) setTurn(prev => prev + 1);
+    /*
+      > player attack enemy
+      ? player dead (via thorns, burning, poison)
+        > end game
+      ? enemy dead
+        > end round
+      
+      enemy attack player
+      ? player dead
+        > end game
+      ? enemy dead (via thorns, burning, poison)
+        > end round
+
+      > next turn
+    */
+
+    const playerDelta = getPlayerInfoDelta(enemyInfo as PlayerInfo, reelResults)
+    console.log('playerDelta', playerDelta);
+
+    setTurn(prev => prev + 1);
+  }, [playerInfo, enemyInfo, setTurn, setRound, reelResults]);
+
   return (
     <AppContext.Provider
       value={
         {
+          activeTiles,
+
+          reelCombos,
+          setReelCombos,
+
+          activeCombos,
+
           score,
           incrementScore,
 
@@ -168,6 +241,9 @@ const AppProvider = ({ children }: Props) => {
           reelStates,
           setReelStates,
 
+          reelResults,
+          setReelResults,
+
           upgradeTokens,
           incrementUpgradeTokens,
 
@@ -176,6 +252,8 @@ const AppProvider = ({ children }: Props) => {
 
           turn,
           setTurn,
+          finishTurn,
+
           round,
           setRound,
 

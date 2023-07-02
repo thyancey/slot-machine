@@ -37,10 +37,7 @@ const ScWrapper = styled.main`
   border-radius: 0.5rem;
 
   &.lit-up {
-    box-shadow: 
-      0 0 0 0.75rem var(--color-purple),
-      0 0 0 1.5rem var(--color-pink),
-      0 0 3rem 2rem var(--color-pink);
+    box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink);
   }
 `;
 
@@ -85,9 +82,9 @@ const ScHandle = styled.div`
   top: 0;
   z-index: 1;
 
-  display:flex;
-  flex-direction:column;
-  >:first-child{
+  display: flex;
+  flex-direction: column;
+  > :first-child {
     flex: 1;
     margin-bottom: 4rem;
   }
@@ -101,10 +98,7 @@ const ScHandleChild = styled.div`
   width: 4rem;
 
   .lit-up & {
-    box-shadow: 
-      0 0 0 0.75rem var(--color-purple),
-      0 0 0 1.5rem var(--color-pink),
-      0 0 3rem 2rem var(--color-pink);
+    box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink);
   }
 
   span {
@@ -115,12 +109,11 @@ const ScHandleChild = styled.div`
   }
 
   cursor: pointer;
-  
+
   &:hover {
     background-color: var(--color-purple);
     color: var(--color-pink);
   }
-
 
   .spin-disabled & {
     cursor: default;
@@ -136,30 +129,42 @@ const ScHandleChild = styled.div`
 const ScSpinHandle = styled(ScHandleChild)`
   flex: 1;
   margin-bottom: 4rem;
-  display:flex;
+  display: flex;
   align-items: center;
-`
+`;
 
 const ScSpinTokens = styled(ScHandleChild)`
   font-size: 3rem;
   line-height: 3.3rem;
   padding-bottom: 0.2rem;
-`
+`;
 
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
-  const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
-  const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
-  const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
-  const { setReelStates, reelStates, setTileDeck, setDeckState, tileDeck, incrementScore, spinTokens, setSpinTokens } = useContext(AppContext);
+  const {
+    reelCombos,
+    setReelCombos,
+    activeTiles,
+    activeCombos,
+    reelResults,
+    setReelResults,
+    setReelStates,
+    reelStates,
+    setTileDeck,
+    setDeckState,
+    tileDeck,
+    incrementScore,
+    spinTokens,
+    setSpinTokens,
+  } = useContext(AppContext);
 
   const [sound_reelsComplete] = useSound(Sound.boop);
   const [sound_reelComplete] = useSound(Sound.beep, {
-    playbackRate: .3 + reelResults.filter(r => r !== -1).length * .3
+    playbackRate: 0.3 + reelResults.filter((r) => r !== -1).length * 0.3,
   });
-  const [sound_lever] = useSound(Sound.alarm, { volume: 0.2, playbackRate: .10, loop: false });
+  const [sound_lever] = useSound(Sound.alarm, { volume: 0.2, playbackRate: 0.1, loop: false });
   const [sound_combo] = useSound(Sound.powerUp);
 
   useEffect(() => {
@@ -172,24 +177,26 @@ function SlotMachine() {
       draw: Array.from(Array(defaultTileDeck.length).keys()).sort(() => Math.random() - 0.5),
       discard: [],
     });
-  }, [setDeckState, setReelStates, setTileDeck]);
+  }, [setDeckState, setReelStates, setTileDeck, setReelCombos]);
 
   useEffect(() => {
     setReelResults(Array(reelStates.length).fill(-1));
   }, [reelStates]);
 
-  const triggerSpin = useCallback((reelStates: DeckIdxCollection[]) => {
-    if (!spinLock && spinTokens > 0) {
-      // determine what the next line of slots will be, someday make this weighted
-      setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
+  const triggerSpin = useCallback(
+    (reelStates: DeckIdxCollection[]) => {
+      if (!spinLock && spinTokens > 0) {
+        // determine what the next line of slots will be, someday make this weighted
+        setTargetSlotIdxs(reelStates.map((rs) => getRandomIdx(rs)));
 
-      setSpinTokens(prev => prev - 1);
-      setSpinCount(spinCount + 1);
-      setReelResults(Array(reelStates.length).fill(-1));
-      setSpinLock(true);
-      setActiveCombos([]);
-    }
-  }, [spinCount, spinLock, spinTokens, setSpinTokens]);
+        setSpinTokens((prev) => prev - 1);
+        setSpinCount(spinCount + 1);
+        setReelResults(Array(reelStates.length).fill(-1));
+        setSpinLock(true);
+      }
+    },
+    [spinCount, spinLock, spinTokens, setSpinTokens]
+  );
 
   const onSpinComplete = useCallback(
     (reelIdx: number, slotIdx: number) => {
@@ -200,67 +207,59 @@ function SlotMachine() {
 
   // PULL THAT LEVER
   useEffect(() => {
-    if(spinCount > 0) sound_lever();
+    if (spinCount > 0) sound_lever();
   }, [spinCount]);
-
 
   // events when the reels are done spinning. this could probably be simplified and moved to a custom hook
   useEffect(() => {
-    if(
+    if (
       // if we're spinnin and have at least one reel completed
       spinCount > 0 &&
       reelResults.length > 0
-    ){
-      if (
-        reelResults.length === reelStates.length &&
-        !reelResults.includes(-1)
-      ) {
+    ) {
+      if (reelResults.length === reelStates.length && !reelResults.includes(-1)) {
         // all reels are done spinning, check for points
         sound_reelComplete();
-        //console.log('ALL REELS ARE DONE!', reelResults, reelStates, spinCount);
-        const tiles = reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
-
-        const activeCombos = getActiveCombos(tiles, reelCombos);
-        setActiveCombos(activeCombos);
-        if(activeCombos.length > 0){
-          sound_combo();
-        }
-
-        const comboScore = getComboScore(tiles, activeCombos);
-        if (comboScore !== 0) {
-          // apply BONUSES
-          incrementScore(comboScore);
-        } else {
-          // just add up the raw scores then
-          incrementScore(getBasicScore(tiles));
-        }
-
         setSpinLock(false);
       } else if (
         // one reel is done spinning, this doesnt always hit for some reason
-        
-          // at least one reel lands, this prevents a misfire earlier on
-          reelResults.findIndex(r => r > -1) > -1
-        ){
-          sound_reelComplete();
+
+        // at least one reel lands, this prevents a misfire earlier on
+        reelResults.findIndex((r) => r > -1) > -1
+      ) {
+        sound_reelComplete();
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, tileDeck, reelCombos, incrementScore, spinCount, sound_reelsComplete, sound_reelComplete]);
+  }, [reelResults, reelStates, spinCount, sound_reelComplete]);
+
+  useEffect(() => {
+    if (activeCombos.length > 0) {
+      sound_combo();
+    }
+
+    const comboScore = getComboScore(activeTiles, activeCombos);
+    if (comboScore !== 0) {
+      // apply BONUSES
+      incrementScore(comboScore);
+    } else {
+      // just add up the raw scores then
+      incrementScore(getBasicScore(activeTiles));
+    }
+  }, [activeCombos, activeTiles, incrementScore]);
 
   const resultSet = useMemo(() => {
     if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
       // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
       return [];
     }
-    return reelResults
-      .map((slotIdx, reelIdx) => {
-        // the undefined check avoids a bug when deleting a reel in the editor
-        // while reelResults are populated
-        if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
-        const deckIdx = reelStates[reelIdx][slotIdx];
-        return getTileFromDeckIdx(deckIdx, tileDeck);
-      })
+    return reelResults.map((slotIdx, reelIdx) => {
+      // the undefined check avoids a bug when deleting a reel in the editor
+      // while reelResults are populated
+      if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
+      const deckIdx = reelStates[reelIdx][slotIdx];
+      return getTileFromDeckIdx(deckIdx, tileDeck);
+    });
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
@@ -284,11 +283,15 @@ function SlotMachine() {
         ))}
       </ScReelContainer>
       <ScReelLabels>
-        {resultSet.map((tile, reelIdx) => (
-          tile ? (<ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos}/>) : (<EmptyResultLabel key={reelIdx} />)
-        ))}
+        {resultSet.map((tile, reelIdx) =>
+          tile ? (
+            <ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos} />
+          ) : (
+            <EmptyResultLabel key={reelIdx} />
+          )
+        )}
       </ScReelLabels>
-      <ScHandle className={(spinLock || spinTokens <= 0) ? 'spin-disabled' : ''} onClick={() => triggerSpin(reelStates)}>
+      <ScHandle className={spinLock || spinTokens <= 0 ? 'spin-disabled' : ''} onClick={() => triggerSpin(reelStates)}>
         <ScSpinHandle>
           <span>{'S P I N'}</span>
         </ScSpinHandle>

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { AppContext } from '../store/appcontext';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import Button from './button';
 
 const ScWrapper = styled.header`
@@ -37,22 +37,26 @@ const ScTurnBox = styled.div`
 `;
 
 function Header() {
-  const { turn, setTurn, round, setRound } = useContext(AppContext);
+  const { turn, finishTurn, round, setRound, reelResults } = useContext(AppContext);
+  
+  const resultsReady = useMemo(() => {
+    return !reelResults.includes(-1);
+  }, [ reelResults ]);
 
   return (
     <ScWrapper>
+    <ScTurnBox>
+      <p>{`Round #${round + 1}`}</p>
+    </ScTurnBox>
+    {/* TODO, disable when enemy is alive */}
+    <Button onClick={() => setRound(prev => prev + 1)}>
+      {'Next round'}
+    </Button>
       <ScTurnBox>
         <p>{`Turn #${turn + 1}`}</p>
       </ScTurnBox>
-      <Button disabled={turn === -1} onClick={() => setTurn(prev => prev + 1)}>
+      <Button disabled={turn === -1 || !resultsReady} onClick={() => finishTurn()}>
         {'Next turn'}
-      </Button>
-      <ScTurnBox>
-        <p>{`Round #${round + 1}`}</p>
-      </ScTurnBox>
-      {/* TODO, disable when enemy is alive */}
-      <Button onClick={() => setRound(prev => prev + 1)}>
-        {'Next round'}
       </Button>
     </ScWrapper>
   );
