@@ -5,7 +5,6 @@ import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from 
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
-import AssetMap from '../../../assets';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom

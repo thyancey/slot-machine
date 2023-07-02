@@ -17,7 +17,7 @@ import {
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { getActiveCombos, pickRandomFromArray } from '../components/slotmachine/utils';
+import { getActiveCombos, getPlayerInfoDelta, pickRandomFromArray } from '../components/slotmachine/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -141,6 +141,7 @@ const AppProvider = ({ children }: Props) => {
   );
 
   const discardCards = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_: number) => {
       setDeckState(discardTiles(deckState.drawn, deckState));
     },
@@ -164,10 +165,6 @@ const AppProvider = ({ children }: Props) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
 
-  const getPlayerInfoDelta = (playerInfo: PlayerInfo, reelResults: DeckIdxCollection) => {
-    return playerInfo;
-  }
-
   // console.log('Context, activeTiles', activeTiles);
   // console.log('Context, reelCombos', reelCombos);
 
@@ -187,7 +184,7 @@ const AppProvider = ({ children }: Props) => {
 
       setTurn(0);
     }
-  }, [round, enemies, setEnemyInfo, setTurn, setSpinTokens, setUpgradeTokensState]);
+  }, [round, setEnemyInfo, setTurn, setSpinTokens, setUpgradeTokensState]);
 
   // next turn, fight each other then reset or whatever
   useEffect(() => {
@@ -197,7 +194,7 @@ const AppProvider = ({ children }: Props) => {
 
 
   const finishTurn = useCallback(() => {
-    console.log('----> FINISH TURN');
+    console.log('----> FINISH TURN', playerInfo, enemyInfo);
     if(!enemyInfo) setTurn(prev => prev + 1);
     /*
       > player attack enemy
@@ -215,11 +212,11 @@ const AppProvider = ({ children }: Props) => {
       > next turn
     */
 
-    const playerDelta = getPlayerInfoDelta(enemyInfo as PlayerInfo, reelResults)
+    const playerDelta = getPlayerInfoDelta(enemyInfo as PlayerInfo, reelResults, activeTiles)
     console.log('playerDelta', playerDelta);
 
     setTurn(prev => prev + 1);
-  }, [playerInfo, enemyInfo, setTurn, setRound, reelResults]);
+  }, [playerInfo, enemyInfo, setTurn, reelResults, activeTiles]);
 
   return (
     <AppContext.Provider

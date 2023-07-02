@@ -4,15 +4,13 @@ import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
 import {
   defaultReelState,
   reelComboDef,
-  ReelCombo,
-  ReelComboResult,
   defaultTileDeck,
   DeckIdxCollection,
 } from '../../store/data';
 import ResultLabel, { EmptyResultLabel } from './components/result-label';
 import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
-import { getActiveCombos, getBasicScore, getComboScore, getRandomIdx } from './utils';
+import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
 import InfoTray from './components/infotray';
 // @ts-ignore
@@ -144,7 +142,6 @@ function SlotMachine() {
   const [spinLock, setSpinLock] = useState(false);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const {
-    reelCombos,
     setReelCombos,
     activeTiles,
     activeCombos,
@@ -160,7 +157,6 @@ function SlotMachine() {
     setSpinTokens,
   } = useContext(AppContext);
 
-  const [sound_reelsComplete] = useSound(Sound.boop);
   const [sound_reelComplete] = useSound(Sound.beep, {
     playbackRate: 0.3 + reelResults.filter((r) => r !== -1).length * 0.3,
   });
@@ -181,7 +177,7 @@ function SlotMachine() {
 
   useEffect(() => {
     setReelResults(Array(reelStates.length).fill(-1));
-  }, [reelStates]);
+  }, [reelStates, setReelResults]);
 
   const triggerSpin = useCallback(
     (reelStates: DeckIdxCollection[]) => {
@@ -195,7 +191,7 @@ function SlotMachine() {
         setSpinLock(true);
       }
     },
-    [spinCount, spinLock, spinTokens, setSpinTokens]
+    [spinCount, spinLock, spinTokens, setSpinTokens, setReelResults]
   );
 
   const onSpinComplete = useCallback(
@@ -208,7 +204,7 @@ function SlotMachine() {
   // PULL THAT LEVER
   useEffect(() => {
     if (spinCount > 0) sound_lever();
-  }, [spinCount]);
+  }, [spinCount, sound_lever]);
 
   // events when the reels are done spinning. this could probably be simplified and moved to a custom hook
   useEffect(() => {
@@ -246,7 +242,7 @@ function SlotMachine() {
       // just add up the raw scores then
       incrementScore(getBasicScore(activeTiles));
     }
-  }, [activeCombos, activeTiles, incrementScore]);
+  }, [activeCombos, activeTiles, incrementScore, sound_combo]);
 
   const resultSet = useMemo(() => {
     if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {

@@ -91,19 +91,6 @@ const ScAttrPill = styled(ScPill)`
   }
 `;
 
-const ScStatPlacement = styled.div`
-  position: absolute;
-
-  &.top{
-    right: 0.5rem;
-    top: -11.5rem;
-  }
-  &.bottom{
-    right: 0.5rem;
-    top: -5.5rem;
-  }
-`
-
 export function EmptyResultLabel() {
   return (
     <ScWrapper className={'lf-none'}>

@@ -158,7 +158,7 @@ export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLen
 };
 
 
-const getPlayerInfoDelta = (playerInfo: PlayerInfo, activeCombos: ReelComboResult[]) => {
-  console.log('getPlayerInfoDelta', playerInfo, activeCombos)
+export const getPlayerInfoDelta = (playerInfo: PlayerInfo, activeCombos: DeckIdxCollection, activeTiles: Tile[]) => {
+  console.log('getPlayerInfoDelta', playerInfo, activeCombos, activeTiles)
   return playerInfo;
 }
