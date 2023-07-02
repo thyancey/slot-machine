@@ -37,15 +37,22 @@ const ScTurnBox = styled.div`
 `;
 
 function Header() {
-  const { turn, nextTurn, spinTokens } = useContext(AppContext);
+  const { turn, setTurn, round, setRound } = useContext(AppContext);
 
   return (
     <ScWrapper>
       <ScTurnBox>
         <p>{`Turn #${turn + 1}`}</p>
       </ScTurnBox>
-      <Button disabled={spinTokens > 0} onClick={() => nextTurn()}>
+      <Button disabled={turn === -1} onClick={() => setTurn(prev => prev + 1)}>
         {'Next turn'}
+      </Button>
+      <ScTurnBox>
+        <p>{`Round #${round + 1}`}</p>
+      </ScTurnBox>
+      {/* TODO, disable when enemy is alive */}
+      <Button onClick={() => setRound(prev => prev + 1)}>
+        {'Next round'}
       </Button>
     </ScWrapper>
   );

@@ -6,8 +6,8 @@ export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel s
 export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
 export const MAX_REELS = 6;
 export const INITIAL_UPGRADE_TOKENS = 1;
-export const INITIAL_SPIN_TOKENS = 20;
-export const MAX_REEL_TOKENS = 5;
+export const INITIAL_SPIN_TOKENS = 9;
+export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
 
 export type UiState = 'game' | 'editor';
@@ -290,15 +290,33 @@ export type PlayerInfo = {
 
 export const enemies: PlayerInfo[] = [
   {
-    label: 'TROLL',
-    hp: [20, 20],
-    attack: 3,
-    defense: 0,
-  },
-  {
     label: 'SQUIRREL',
     hp: [1, 1],
     attack: 1,
     defense: 0,
+  },
+  {
+    label: 'TORT',
+    hp: [10, 10],
+    attack: 1,
+    defense: 10,
+  },
+  {
+    label: 'OPOSSUM',
+    hp: [4, 4],
+    attack: 1,
+    defense: 0,
+  },
+  {
+    label: 'SNEK',
+    hp: [4, 4],
+    attack: 6,
+    defense: 0,
+  },
+  {
+    label: 'TROLL',
+    hp: [20, 20],
+    attack: 3,
+    defense: 10,
   },
 ];

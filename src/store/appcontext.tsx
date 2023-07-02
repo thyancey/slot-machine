@@ -1,4 +1,4 @@
-import { ReactNode, SetStateAction, createContext, useCallback, useState } from 'react';
+import { ReactNode, SetStateAction, createContext, useCallback, useEffect, useState } from 'react';
 import {
   DeckState,
   MAX_REELS,
@@ -34,12 +34,14 @@ interface AppContextType {
   setReelStates: (values: SetStateAction<DeckIdxCollection[]>) => void;
 
   upgradeTokens: number;
-  setUpgradeTokens: (value: number) => void;
+  incrementUpgradeTokens: (value: number) => void;
+  
   spinTokens: number;
   setSpinTokens: (value: SetStateAction<number>) => void;
   turn: number;
   setTurn: (value: SetStateAction<number>) => void;
-  nextTurn: () => void;
+  round: number;
+  setRound: (value: SetStateAction<number>) => void;
 
   playerInfo: PlayerInfo;
   setPlayerInfo: (value: SetStateAction<PlayerInfo>) => void;
@@ -63,13 +65,14 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const [round, setRound] = useState(-1);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
     hp: [10,10],
     attack: 0,
     defense: 0
   });
-  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo>(pickRandomFromArray(enemies) as PlayerInfo);
+  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo | null>(null);
   const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
@@ -128,16 +131,29 @@ const AppProvider = ({ children }: Props) => {
     [deckState]
   );
 
-  const setUpgradeTokens = (newAmount: number) => {
+  const incrementUpgradeTokens = (newAmount: number) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
 
-  const nextTurn = useCallback(() => {
-    setTurn(prev => prev + 1);
+  // next round
+  useEffect(() => {
+    if(round > -1){
+      if(round <= enemies.length - 1){
+        setEnemyInfo(enemies[round]);
+      } else {
+        // TODO: GAME WON?
+        setEnemyInfo(pickRandomFromArray(enemies) as PlayerInfo);
+      }
+      setTurn(-1);
+      setTurn(0);
+    }
+  }, [round, enemies, setEnemyInfo, setTurn]);
+
+  // next turn
+  useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
-    setUpgradeTokens(INITIAL_UPGRADE_TOKENS);
-    setEnemyInfo(pickRandomFromArray(enemies) as PlayerInfo);
-  }, [ setTurn, setSpinTokens, setUpgradeTokens, setEnemyInfo ])
+    setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
+  }, [turn, setSpinTokens, setUpgradeTokensState]);
 
   return (
     <AppContext.Provider
@@ -153,14 +169,15 @@ const AppProvider = ({ children }: Props) => {
           setReelStates,
 
           upgradeTokens,
-          setUpgradeTokens,
+          incrementUpgradeTokens,
 
           spinTokens,
           setSpinTokens,
 
           turn,
           setTurn,
-          nextTurn,
+          round,
+          setRound,
 
           uiState,
           setUiState,

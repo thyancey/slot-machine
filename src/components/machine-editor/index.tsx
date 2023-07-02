@@ -102,7 +102,7 @@ function MachineEditor() {
     removeFromReel,
     insertReel,
     upgradeTokens,
-    setUpgradeTokens,
+    incrementUpgradeTokens,
     setDeckState,
     deckState,
     discardCards,
@@ -133,28 +133,28 @@ function MachineEditor() {
       insertIntoReel(reelIdx, tileIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
       discardCards(tileIdx);
     },
-    [insertIntoReel, upgradeTokens, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens, discardCards]
+    [insertIntoReel, setSelectedTileIdx, setPreselectedTileIdx, incrementUpgradeTokens, discardCards]
   );
   const onInsertReel = useCallback(
     (reelIdx: number) => {
       insertReel(reelIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
     },
-    [upgradeTokens, setSelectedTileIdx, insertReel, setUpgradeTokens]
+    [setSelectedTileIdx, insertReel, incrementUpgradeTokens]
   );
   const onRemoveFromReel = useCallback(
     (reelIdx: number, tileIdx: number) => {
       removeFromReel(reelIdx, tileIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
     },
-    [upgradeTokens, removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
+    [removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, incrementUpgradeTokens]
   );
 
   return (
@@ -196,7 +196,7 @@ function MachineEditor() {
               upgradeTokens,
               setSelectedTileIdx,
               setPreselectedTileIdx,
-              setUpgradeTokens,
+              incrementUpgradeTokens,
               setEditorMode,
               discardCards,
               closeEditor
@@ -215,7 +215,7 @@ const renderFooter = (
   upgradeTokens: number,
   setSelectedTileIdx: (idx: number) => void,
   setPreselectedTileIdx: (idx: number) => void,
-  setUpgradeTokens: (idx: number) => void,
+  incrementUpgradeTokens: (idx: number) => void,
   setEditorMode: (str: MachineEditorMode) => void,
   discardCards: (idx: number) => void,
   closeEditor: () => void
@@ -254,7 +254,7 @@ const renderFooter = (
           <Button
             buttonStyle="special"
             onClick={() => {
-              setUpgradeTokens(3);
+              incrementUpgradeTokens(3);
             }}
           >
             {'(debug) MORE TOKENS'}
