@@ -288,6 +288,17 @@ export type PlayerInfo = {
   defense: number;
 };
 
+export type PlayerInfoDelta = {
+  hp: number;
+  attack: number;
+  defense: number;
+}
+
+export type AttackDelta = {
+  player: PlayerInfoDelta,
+  enemy: PlayerInfoDelta
+}
+
 export const enemies: PlayerInfo[] = [
   {
     label: 'SQUIRREL',

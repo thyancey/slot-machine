@@ -1,5 +1,15 @@
-import { checkForWildCards, checkSameStrings, checkUniqueStrings, getEasing } from '../../utils';
-import { Tile, ReelCombo, ReelComboResult, BonusGroup, DeckIdxCollection, PlayerInfo } from '../../store/data';
+import { checkForWildCards, checkSameStrings, checkUniqueStrings, clamp, getEasing } from '../../utils';
+import {
+  Tile,
+  ReelCombo,
+  ReelComboResult,
+  BonusGroup,
+  DeckIdxCollection,
+  PlayerInfo,
+  EffectType,
+  PlayerInfoDelta,
+  AttackDelta,
+} from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
 
@@ -93,8 +103,7 @@ export const getComboScore = (tiles: Tile[], activeCombos: ReelComboResult[]) =>
     return totScore;
   }, 0);
 
-export const getBasicScore = (tiles: Tile[]) =>
-  tiles.reduce((totScore, tile) => totScore + (tile.score || 0), 0);
+export const getBasicScore = (tiles: Tile[]) => tiles.reduce((totScore, tile) => totScore + (tile.score || 0), 0);
 
 // add redudant tiles to top and bottom of reel to make it seem continuous
 export const getLoopedReel = (deckIdxs: DeckIdxCollection, reelOverlap: number) => {
@@ -157,8 +166,150 @@ export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLen
   }
 };
 
+export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], activeCombos: ReelComboResult[]) =>
+  activeTiles.reduce((val, rS) => {
+    if (activeCombos.length === 0) return 0;
+    const atk = rS?.effects.find((ef) => ef.type === effectType);
+    if (atk) {
+      return val + atk.value;
+    }
+    return val;
+  }, 0);
 
-export const getPlayerInfoDelta = (playerInfo: PlayerInfo, activeCombos: DeckIdxCollection, activeTiles: Tile[]) => {
-  console.log('getPlayerInfoDelta', playerInfo, activeCombos, activeTiles)
-  return playerInfo;
-}
+export const getPlayerAttackDelta = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo,
+  activeCombos: ReelComboResult[],
+  activeTiles: Tile[]
+) => {
+  console.log('getPlayerAttackDelta', playerInfo, enemyInfo, activeCombos, activeTiles);
+
+  const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
+  console.log('player ATTACK POWER', attackPower);
+  const damage = attackPower - enemyInfo.defense;
+
+  const enemyResult = {
+    // do other wacky checking here in the future about flame/poison weakness, etc
+    hp: damage > 0 ? 0 - damage : 0,
+    attack: enemyInfo.attack, // todo - enemy stun?
+    defense: enemyInfo.defense, // todo - break enemy block?
+  };
+
+  return {
+    player: {
+      // check for heal or hurt modifiers
+      hp: getEffectDelta('health', activeTiles, activeCombos),
+      attack: attackPower,
+      // apply block for enemy attack
+      defense: getEffectDelta('defense', activeTiles, activeCombos),
+    },
+    enemy: enemyResult,
+  } as AttackDelta;
+};
+
+export const getEnemyAttackDelta = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo,
+  activeCombos: ReelComboResult[],
+  activeTiles: Tile[]
+) => {
+  console.log('getEnemyAttackDelta', playerInfo, enemyInfo, activeCombos, activeTiles);
+  const attackPower = enemyInfo.attack;
+  console.log('enemy ATTACK POWER', attackPower);
+
+  const damage = attackPower - playerInfo.defense;
+
+  const playerResult = {
+    // do other wacky checking here in the future about flame/poison weakness, etc
+    hp: damage > 0 ? 0 - damage : 0,
+    attack: playerInfo.attack, // todo - stun player?
+    defense: playerInfo.defense, // todo - break player block?
+  };
+
+  return {
+    enemy: {
+      hp: 0, // todo, apply thorns to enemy
+      attack: attackPower,
+      defense: enemyInfo.defense,
+    },
+    player: playerResult,
+  };
+};
+
+export const computeRound = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo,
+  activeTiles: Tile[],
+  activeCombos: ReelComboResult[]
+) => {
+  const curPlayer = { ...playerInfo };
+  const curEnemy = { ...enemyInfo };
+
+  // 1. player attempt to attack enemy
+  const playerAttack = getPlayerAttackDelta(
+    playerInfo as PlayerInfo,
+    enemyInfo as PlayerInfo,
+    activeCombos,
+    activeTiles
+  );
+  console.log('playerAttack response:', playerAttack);
+
+  // player check for thorns, burning, poison
+  curPlayer.hp[0] += playerAttack.player.hp;
+  // buff, heal or hurt player
+  curPlayer.hp[0] = clamp(curPlayer.hp[0], 0, curPlayer.hp[1]);
+  if (curPlayer.hp[0] <= 0) {
+    // 1a. player dead
+    return {
+      player: curPlayer.hp[0],
+      enemy: curEnemy.hp[0]
+    }
+  }
+  // since you survived, apply whatever defense you gained for the enemy attack
+  curPlayer.defense = playerAttack.player.defense;
+
+
+  // 2. apply attack to enemy
+  curEnemy.hp[0] += playerAttack.enemy.hp;
+  // buff, heal or hurt enemy
+  curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
+  if (curEnemy.hp[0] <= 0) {
+    // 2b. enemy dead
+    return {
+      player: curPlayer.hp[0],
+      enemy: curEnemy.hp[0]
+    }
+  }
+
+  // 3. enemy attempt to attack player
+  const enemyAttack = getEnemyAttackDelta(curPlayer as PlayerInfo, curEnemy as PlayerInfo, activeCombos, activeTiles);
+  // enemy check for thorns, burning, poison
+  console.log('enemyAttack response:', enemyAttack);
+  curEnemy.hp[0] += enemyAttack.enemy.hp;
+  // buff, heal or hurt enemy
+  curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
+  if (curEnemy.hp[0] <= 0) {
+    // 3a. enemy dead
+    return {
+      player: curPlayer.hp[0],
+      enemy: curEnemy.hp[0]
+    }
+  }
+
+  // 4. apply healing/hurt to player
+  curPlayer.hp[0] += enemyAttack.player.hp;
+  // buff, heal or hurt enemy
+  curPlayer.hp[0] = clamp(curPlayer.hp[0], 0, curPlayer.hp[1]);
+  if (curPlayer.hp[0] <= 0) {
+    // 4b. enemy dead
+    return {
+      player: curPlayer.hp[0],
+      enemy: curEnemy.hp[0]
+    }
+  }
+
+  return {
+    player: curPlayer.hp[0],
+    enemy: curEnemy.hp[0]
+  }
+};

@@ -17,7 +17,7 @@ import {
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { getActiveCombos, getPlayerInfoDelta, pickRandomFromArray } from '../components/slotmachine/utils';
+import { computeRound, getActiveCombos, pickRandomFromArray } from '../components/slotmachine/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -62,7 +62,7 @@ interface AppContextType {
   playerInfo: PlayerInfo;
   setPlayerInfo: (value: SetStateAction<PlayerInfo>) => void;
   enemyInfo: PlayerInfo | null;
-  setEnemyInfo: (value: SetStateAction<PlayerInfo>) => void;
+  setEnemyInfo: (value: SetStateAction<PlayerInfo | null>) => void;
 
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
@@ -190,33 +190,52 @@ const AppProvider = ({ children }: Props) => {
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
-  }, [turn, setSpinTokens, setUpgradeTokensState]);
+    setReelResults(Array(reelStates.length).fill(-1))
+  }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults, reelStates.length]);
 
+  const finishRound = useCallback(() => {
+    setRound(prev => prev + 1);
+  }, [ setRound ]);
 
   const finishTurn = useCallback(() => {
-    console.log('----> FINISH TURN', playerInfo, enemyInfo);
+    if(!enemyInfo){
+      setTurn(prev => prev + 1);
+      return;
+    }
+
+    console.log('----> FINISH TURN', playerInfo, enemyInfo, activeTiles, activeCombos);
     if(!enemyInfo) setTurn(prev => prev + 1);
-    /*
-      > player attack enemy
-      ? player dead (via thorns, burning, poison)
-        > end game
-      ? enemy dead
-        > end round
-      
-      enemy attack player
-      ? player dead
-        > end game
-      ? enemy dead (via thorns, burning, poison)
-        > end round
 
-      > next turn
-    */
+    const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo, activeTiles, activeCombos);
+    console.log('roundResult', roundResult);
 
-    const playerDelta = getPlayerInfoDelta(enemyInfo as PlayerInfo, reelResults, activeTiles)
-    console.log('playerDelta', playerDelta);
+    if(roundResult.player === 0){
+      window.alert('you died!');
+    } else if(roundResult.enemy === 0){
+      setPlayerInfo(prev => ({
+        ...prev,
+        hp: [ roundResult.player, prev.hp[1] ]
+      }));
+      setEnemyInfo(null);
 
-    setTurn(prev => prev + 1);
-  }, [playerInfo, enemyInfo, setTurn, reelResults, activeTiles]);
+      finishRound();
+    } else {
+      setPlayerInfo(prev => ({
+        ...prev,
+        hp: [ roundResult.player, prev.hp[1] ]
+      }));
+      setEnemyInfo(prev => {
+        if(!prev) return null;
+        return {
+          ...prev,
+          hp: [ roundResult.enemy, prev.hp[1] ]
+        }
+      });
+      setTurn(prev => prev + 1);
+    }
+
+
+  }, [playerInfo, enemyInfo, setTurn, activeTiles, activeCombos, setPlayerInfo, setEnemyInfo, finishRound]);
 
   return (
     <AppContext.Provider
