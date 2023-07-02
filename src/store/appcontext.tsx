@@ -183,8 +183,10 @@ const AppProvider = ({ children }: Props) => {
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
 
       setTurn(0);
+    } else {
+      setRound(0);
     }
-  }, [round, setEnemyInfo, setTurn, setSpinTokens, setUpgradeTokensState]);
+  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState]);
 
   // next turn, fight each other then reset or whatever
   useEffect(() => {
