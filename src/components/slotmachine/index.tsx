@@ -17,16 +17,20 @@ import InfoTray from './components/infotray';
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 
-const ScWrapper = styled.main`
-  position: absolute;
-
-  margin-left: -8rem;
-  min-width: 28rem;
+const ScWrapper = styled.div`
+  /* position: absolute; */
+  /* margin-left: -8rem; */
+  /* min-width: 28rem; */
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: min-content auto 4rem;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+
+  &.no-display{
+    grid-template-rows: auto 4rem;
+  }
 
   background-color: var(--color-white);
   box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
@@ -40,8 +44,8 @@ const ScWrapper = styled.main`
 `;
 
 const ScInfoTray = styled.div`
-  width: calc(100% - 2rem);
-  margin: 1rem auto;
+  width: calc(100%);
+  margin-top: 1rem;
 `;
 
 const ScDisplayContainer = styled.div`
@@ -55,7 +59,6 @@ const ScReelContainer = styled.div`
   background-color: var(--color-grey);
   height: 100%;
   display: flex;
-  margin: 1rem;
   padding: 0.5rem;
   border-radius: 0.5rem;
   align-items: center;
@@ -138,6 +141,7 @@ const ScSpinTokens = styled(ScHandleChild)`
 `;
 
 function SlotMachine() {
+  // function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
@@ -259,10 +263,10 @@ function SlotMachine() {
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
-    <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
-      <ScDisplayContainer>
+    <ScWrapper className={activeCombos.length > 0 ? 'lit-up no-display' : 'no-display'} >
+      {/* <ScDisplayContainer>
         <Display resultSet={resultSet} activeCombos={activeCombos} />
-      </ScDisplayContainer>
+      </ScDisplayContainer> */}
 
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (

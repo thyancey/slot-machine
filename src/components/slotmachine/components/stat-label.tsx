@@ -1,30 +1,24 @@
 import styled from 'styled-components';
 import AssetMap from '../../../assets';
 
-const ScWrapper = styled.div`
-  position:absolute;
-  right:0;
-  top:0;
-
+const ScWrapper = styled.li`
   z-index:1;
-  font-size: 1.3rem;
-  font-weight: bold;
   filter: var(--filter-shadow1);
 
   &.st-attack {
     color: var(--color-black);
-    right: 0.5rem;
-    top: -11.5rem;
+    /* right: 0.5rem; */
+    /* top: -11.5rem; */
   }
   &.st-defense {
     color: var(--color-black);
-    right: 0.5rem;
-    top: -8.5rem;
+    /* right: 0.5rem; */
+    /* top: -8.5rem; */
   }
   &.st-health {
     color: var(--color-black);
-    right: 0.5rem;
-    top: -5.5rem;
+    /* right: 0.5rem; */
+    /* top: -5.5rem; */
   }
 `;
 
@@ -40,6 +34,14 @@ const ScCenterer = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  font-size: 1.3rem;
+  font-weight: bold;
+
+  .size-lg >& {
+    width: 8rem;
+    height: 8rem;
+    font-size: 1.6rem;
+  }
   
   >img{
     position: absolute;
@@ -50,10 +52,6 @@ const ScCenterer = styled.div`
   }
 `;
 
-type Props = {
-  type: string;
-  value?: number;
-};
 
 const getAssetFromType = (type: string) => {
   switch (type) {
@@ -68,10 +66,15 @@ const getAssetFromType = (type: string) => {
   }
 };
 
-function StatLabel({ type, value }: Props) {
+type Props = {
+  type: string;
+  value?: number | string;
+  size?: 'lg' | 'sm';
+};
+function StatLabel({ type, value, size = 'sm' }: Props) {
   const asset = getAssetFromType(type);
   return (
-    <ScWrapper className={`st-${type}`}>
+    <ScWrapper className={`st-${type} size-${size}`}>
       <ScCenterer>
         {value !== undefined && <span>{value}</span>}
         <img src={asset} />

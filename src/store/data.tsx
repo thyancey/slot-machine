@@ -1,9 +1,7 @@
-import { MinMaxTouple } from '../utils';
 import AssetMap from '../assets';
 
 export const REEL_HEIGHT = 120; // height of each reel cell, should match --val-reel-height rem value
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
-export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
 export const MAX_REELS = 6;
 export const INITIAL_UPGRADE_TOKENS = 1;
 export const INITIAL_SPIN_TOKENS = 9;

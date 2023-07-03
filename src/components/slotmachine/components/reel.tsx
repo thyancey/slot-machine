@@ -10,9 +10,17 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
-const SPIN_TICK = 30;
-const SPIN_DURATION_RANGE = [0.005, 0.02] as MinMaxTouple;
-const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
+const Vars = {
+  SPIN_TICK: 30,
+  SPIN_DURATION_RANGE: [0.005, 0.02] as MinMaxTouple,
+  SLOT_DISTANCE_RANGE: [20, 40] as MinMaxTouple
+}
+
+const debug = window.location.search.indexOf('debug') > -1;
+if(debug){
+  Vars.SPIN_TICK = 10;
+  Vars.SPIN_DURATION_RANGE = [0.05, 0.1];
+}
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
@@ -100,12 +108,12 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
     if (spinLock && targetSlotIdx !== -1) {
       // allows the reel to spin again
       setSpinProgress(0);
-      setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
+      setSpinSpeed(randInRange(Vars.SPIN_DURATION_RANGE));
       // the targetLoopedIdx (index [1]) will now be come the previous, so assign it as such, and
       // use it to calculate the next targetLoopedIdx all at once
       setLoopedIdxs((prev) => [
         prev[1],
-        getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true)),
+        getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(Vars.SLOT_DISTANCE_RANGE, true)),
       ]);
     }
   }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, spinLock]);
@@ -124,7 +132,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
       setTimeout(() => {
         // use an easing function to smoothly increment the % progress up to the value of 1
         setSpinProgress((prevProgress) => clamp(prevProgress + spinSpeed, 0, 1));
-      }, SPIN_TICK);
+      }, Vars.SPIN_TICK);
     }
   }, [spinProgress, setSpinProgress, onSpinComplete, reelIdx, loopedIdxs, reelState.length, spinSpeed]);
 

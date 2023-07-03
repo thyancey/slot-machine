@@ -91,6 +91,18 @@ const ScAttrPill = styled(ScPill)`
   }
 `;
 
+const ScStatLabels = styled.ul`
+  position: absolute;
+  right: 0;
+  bottom: 5.5rem;
+  text-align: right;
+  > li {
+    display: inline-block;
+    vertical-align: middle;
+    width: 2rem;
+  }
+`;
+
 export function EmptyResultLabel() {
   return (
     <ScWrapper className={'lf-none'}>
@@ -124,7 +136,6 @@ function ResultLabel({ activeCombos, tile }: Props) {
     );
   }, [tile.attributes, activeCombos]);
 
-
   return (
     <ScWrapper className={lifecycle}>
       <ScAnimator>
@@ -132,9 +143,11 @@ function ResultLabel({ activeCombos, tile }: Props) {
           {/* if you wanna show "attack" or "freeze" or "*" whatever */}
           {/* <span>{matchingAttributes.join(',').toUpperCase()}</span> */}
           <span>{'COMBO'}</span>
-          {tile.effects.map((effect) => (
-            <StatLabel key={effect.type} type={effect.type} value={effect.value} />
-          ))}
+          <ScStatLabels>
+            {tile.effects.map((effect) => (
+              <StatLabel key={effect.type} type={effect.type} value={effect.value} />
+            ))}
+          </ScStatLabels>
         </ScAttrPill>
         <ScScorePill>
           <span>{`$${tile.score || 0}`}</span>
