@@ -5,18 +5,19 @@ const ScWrapper = styled.li`
   z-index:1;
   filter: var(--filter-shadow1);
 
+  color: var(--color-black);
   &.st-attack {
-    color: var(--color-black);
+    /* color: var(--color-black); */
     /* right: 0.5rem; */
     /* top: -11.5rem; */
   }
   &.st-defense {
-    color: var(--color-black);
+    /* color: var(--color-black); */
     /* right: 0.5rem; */
     /* top: -8.5rem; */
   }
   &.st-health {
-    color: var(--color-black);
+    /* color: var(--color-black); */
     /* right: 0.5rem; */
     /* top: -5.5rem; */
   }
@@ -38,9 +39,11 @@ const ScCenterer = styled.div`
   font-weight: bold;
 
   .size-lg >& {
-    width: 8rem;
-    height: 8rem;
-    font-size: 1.6rem;
+    width: 10rem;
+    height: 10rem;
+    font-size: 2rem;
+    line-height: 2rem;
+    padding-bottom: 0.3rem;
   }
   
   >img{
@@ -59,6 +62,8 @@ const getAssetFromType = (type: string) => {
       return AssetMap.UI_IconAttack;
     case 'defense':
       return AssetMap.UI_IconDefense;
+    case 'hp':
+      return AssetMap.UI_IconHealth;
     case 'health':
       return AssetMap.UI_IconHealth;
     default:

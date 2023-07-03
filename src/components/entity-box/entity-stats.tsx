@@ -1,53 +1,54 @@
 import styled from 'styled-components';
-import { getEffectDelta } from '../slotmachine/utils';
-import { useContext, useMemo } from 'react';
-import { AppContext } from '../../store/appcontext';
 import StatLabel from '../slotmachine/components/stat-label';
 
 const ScWrapper = styled.div`
-  background-color: var(--color-purple);
+  /* background-color: var(--color-purple); */
   position: absolute;
+  left:0;
   bottom: 100%;
+  width: 100%;
+  padding: 0 2rem;
+
+  display:flex;
+  justify-content: space-between;
 `;
 
 const ScStatLabels = styled.ul`
   > li {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: bottom;
     width: 3rem;
   }
 `;
 
-const EntityStats = () => {
-  const { activeTiles, activeCombos, playerInfo } = useContext(AppContext);
+export interface StatInfo {
+  [key: string]: number;
+}
 
-  const attackPower = useMemo(() => {
-    return getEffectDelta('attack', activeTiles, activeCombos);
-  }, [activeTiles, activeCombos]);
-  const defense = useMemo(() => {
-    return getEffectDelta('defense', activeTiles, activeCombos);
-  }, [activeTiles, activeCombos]);
-  const healthDelta = useMemo(() => {
-    return getEffectDelta('health', activeTiles, activeCombos);
-  }, [activeTiles, activeCombos]);
-  const health = useMemo(() => {
-    return playerInfo.hp;
-  }, [playerInfo]);
+interface PropsEntityStats {
+  statInfo: StatInfo;
+  hp: number;
+}
+const EntityStats = ({ statInfo, hp }: PropsEntityStats) => {
+  if (!statInfo) {
+    return null;
+  }
 
-  console.log('attackPower', attackPower);
-  console.log('defense', defense);
-  console.log('health', health);
-  console.log('healthDelta', healthDelta);
+  const keysToShow = ['attack', 'health'];
 
   return (
     <ScWrapper>
       <ScStatLabels>
-        {attackPower && <StatLabel type='attack' size={'lg'} value={attackPower}></StatLabel> || null}
-        {defense && <StatLabel type='defense' size={'lg'} value={defense}></StatLabel> || null}
-        {healthDelta && <StatLabel type='health' size={'lg'} value={healthDelta}></StatLabel> || null}
+        {keysToShow.map((k: string) => {
+          if(!statInfo[k]) return null;
+          return <StatLabel key={k} type={k} size={'lg'} value={statInfo[k]}></StatLabel>;
+        }).filter(l => l !== null)}
+      </ScStatLabels>
+      <ScStatLabels>
+        {statInfo.defense && <StatLabel type="defense" size={'lg'} value={statInfo.defense}></StatLabel> || null}
+        <StatLabel type={'hp'} size={'lg'} value={hp}></StatLabel>
       </ScStatLabels>
     </ScWrapper>
   );
 };
-
 export default EntityStats;

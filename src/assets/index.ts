@@ -20,6 +20,8 @@ import UI_IconAttack from './ui/icon-attack.gif';
 import UI_IconDefense from './ui/icon-defense.gif';
 import UI_IconCoin from './ui/icon-coin.gif';
 import UI_IconHealth from './ui/icon-health.gif';
+import Enemy_Squirrel from './enemies/enemy-squirrel.gif';
+import Enemy_Tortoise from './enemies/enemy-tortoise.gif';
 
 const AssetMap = {
   R7,
@@ -44,6 +46,8 @@ const AssetMap = {
   UI_IconDefense,
   UI_IconCoin,
   UI_IconHealth,
+  Enemy_Squirrel,
+  Enemy_Tortoise,
 }
 
 export default AssetMap;

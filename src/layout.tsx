@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import SlotMachine from './components/slotmachine';
-import {PlayerEntityBox} from './components/entity-box';
+import {EnemyEntityBox, PlayerEntityBox} from './components/entity-box';
 import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 import Header from './components/header';
@@ -16,20 +15,13 @@ const ScWrapper = styled.main`
 
 const ScStage = styled.main`
   flex: 1;
-
-  /* display: flex;
-  align-items: center;
-  justify-content: center;
-
-   */
   padding: 5rem;
   position: relative;
 
   display:flex;
-  justify-content:center;
-  align-items:center;
+  align-items:start;
+  justify-content: space-around;
   flex-direction: row;
-
 `;
 
 const ScBg = styled.div`
@@ -54,7 +46,7 @@ function Layout() {
       <Header />
       <ScStage>
         <PlayerEntityBox/>
-        {/* <PlayerEntityBox/> */}
+        <EnemyEntityBox/>
       </ScStage>
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
       <MachineEditor />

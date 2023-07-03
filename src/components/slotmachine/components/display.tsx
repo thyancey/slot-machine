@@ -114,14 +114,14 @@ function Display({resultSet, activeCombos}: Props) {
       <ScPlayer>
         <p>{`atk: ${0 + attackDelta}`}</p> 
         <p>{`def: ${0 + defenseDelta}`}</p>
-        <p>{`hp: ${playerInfo.hp[0]}${healthDelta} / ${playerInfo.hp[1]}`}</p>
+        <p>{`hp: ${playerInfo.hp}${healthDelta} / ${playerInfo.hpMax}`}</p>
         <h3>{playerInfo.label}</h3>
       </ScPlayer>
       {enemyInfo && (
         <ScEnemy>
           <p>{`atk: ${enemyInfo.attack}`}</p>
           <p>{`def: ${enemyInfo.defense}`}</p>
-          <p>{`hp: ${enemyInfo.hp[0]}/ ${enemyInfo.hp[1]}`}</p>
+          <p>{`hp: ${enemyInfo.hp}/ ${enemyInfo.hpMax}`}</p>
           <h3>{enemyInfo.label}</h3>
         </ScEnemy>
       )}

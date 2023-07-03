@@ -84,7 +84,8 @@ const AppProvider = ({ children }: Props) => {
   const [round, setRound] = useState(-1);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
-    hp: [10,10],
+    hp: 10,
+    hpMax: 10,
     attack: 0,
     defense: 0
   });
@@ -216,7 +217,7 @@ const AppProvider = ({ children }: Props) => {
     } else if(roundResult.enemy.hp === 0){
       setPlayerInfo(prev => ({
         ...prev,
-        hp: [ roundResult.player.hp, prev.hp[1] ],
+        hp: roundResult.player.hp,
         defense: roundResult.player.defense
       }));
       setEnemyInfo(null);
@@ -225,14 +226,14 @@ const AppProvider = ({ children }: Props) => {
     } else {
       setPlayerInfo(prev => ({
         ...prev,
-        hp: [ roundResult.player.hp, prev.hp[1] ],
+        hp: roundResult.player.hp,
         defense: roundResult.player.defense
       }));
       setEnemyInfo(prev => {
         if(!prev) return null;
         return {
           ...prev,
-          hp: [ roundResult.enemy.hp, prev.hp[1] ],
+          hp: roundResult.enemy.hp,
           defense: roundResult.enemy.defense
         }
       });

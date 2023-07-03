@@ -262,25 +262,25 @@ export const computeRound = (
   if(curPlayer.defense < 0) curPlayer.defense = 0;
 
   // player check for thorns, burning, poison
-  curPlayer.hp[0] += playerAttack.player.hp;
-  curPlayer.hp[0] = clamp(curPlayer.hp[0], 0, curPlayer.hp[1]);
-  if (curPlayer.hp[0] <= 0) {
+  curPlayer.hp += playerAttack.player.hp;
+  curPlayer.hp = clamp(curPlayer.hp, 0, curPlayer.hpMax);
+  if (curPlayer.hp <= 0) {
     // 1a. player dead
     return {
-      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
+      player: { hp: curPlayer.hp, defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
     }
   }
 
   // 2. apply attack to enemy
   // buff, heal or hurt enemy
-  curEnemy.hp[0] += playerAttack.enemy.hp;
-  curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
-  if (curEnemy.hp[0] <= 0) {
+  curEnemy.hp += playerAttack.enemy.hp;
+  curEnemy.hp = clamp(curEnemy.hp, 0, curEnemy.hpMax);
+  if (curEnemy.hp <= 0) {
     // 2b. enemy dead
     return {
-      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
+      player: { hp: curPlayer.hp, defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
     }
   }
 
@@ -297,31 +297,31 @@ export const computeRound = (
   curPlayer.defense += enemyAttack.player.defense;
   if(curPlayer.defense < 0) curPlayer.defense = 0;
 
-  curEnemy.hp[0] += enemyAttack.enemy.hp;
+  curEnemy.hp += enemyAttack.enemy.hp;
   // buff, heal or hurt enemy
-  curEnemy.hp[0] = clamp(curEnemy.hp[0], 0, curEnemy.hp[1]);
-  if (curEnemy.hp[0] <= 0) {
+  curEnemy.hp = clamp(curEnemy.hp, 0, curEnemy.hpMax);
+  if (curEnemy.hp <= 0) {
     // 3a. enemy dead
     return {
-      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
+      player: { hp: curPlayer.hp, defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
     }
   }
 
   // 4. apply healing/hurt to player
-  curPlayer.hp[0] += enemyAttack.player.hp;
+  curPlayer.hp += enemyAttack.player.hp;
   // buff, heal or hurt enemy
-  curPlayer.hp[0] = clamp(curPlayer.hp[0], 0, curPlayer.hp[1]);
-  if (curPlayer.hp[0] <= 0) {
+  curPlayer.hp = clamp(curPlayer.hp, 0, curPlayer.hpMax);
+  if (curPlayer.hp <= 0) {
     // 4b. enemy dead
     return {
-      player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
+      player: { hp: curPlayer.hp, defense: curPlayer.defense },
+      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
     }
   }
 
   return {
-    player: { hp: curPlayer.hp[0], defense: curPlayer.defense },
-    enemy: { hp: curEnemy.hp[0], defense: curEnemy.defense }
+    player: { hp: curPlayer.hp, defense: curPlayer.defense },
+    enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
   }
 };

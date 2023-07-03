@@ -8,7 +8,6 @@ import {
   DeckIdxCollection,
 } from '../../store/data';
 import ResultLabel, { EmptyResultLabel } from './components/result-label';
-import Display from './components/display';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
@@ -46,13 +45,6 @@ const ScWrapper = styled.div`
 const ScInfoTray = styled.div`
   width: calc(100%);
   margin-top: 1rem;
-`;
-
-const ScDisplayContainer = styled.div`
-  height: 10rem;
-  width: calc(100% - 2rem);
-  margin: 1rem auto;
-  position: relative;
 `;
 
 const ScReelContainer = styled.div`

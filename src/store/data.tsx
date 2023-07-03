@@ -281,7 +281,8 @@ export const defaultReelState: DeckIdxCollection[] = [
 export type PlayerInfo = {
   label: string;
   img?: string;
-  hp: [current: number, max: number];
+  hp: number;
+  hpMax: number;
   attack: number;
   defense: number;
 };
@@ -300,32 +301,42 @@ export type AttackDelta = {
 export const enemies: PlayerInfo[] = [
   {
     label: 'SQUIRREL',
-    hp: [1, 1],
+    hp: 1,
+    hpMax: 1,
     attack: 1,
     defense: 0,
+    img: AssetMap.Enemy_Squirrel
   },
   {
     label: 'TORT',
-    hp: [10, 10],
+    hp: 10,
+    hpMax: 10,
     attack: 1,
     defense: 10,
+    img: AssetMap.Enemy_Tortoise
   },
   {
     label: 'OPOSSUM',
-    hp: [4, 4],
+    hp: 10,
+    hpMax: 10,
     attack: 1,
     defense: 0,
+    img: AssetMap.Enemy_Squirrel
   },
   {
     label: 'SNEK',
-    hp: [4, 4],
+    hp: 4,
+    hpMax: 4,
     attack: 6,
     defense: 0,
+    img: AssetMap.Enemy_Squirrel
   },
   {
     label: 'TROLL',
-    hp: [20, 20],
+    hp: 20,
+    hpMax: 20,
     attack: 3,
     defense: 10,
+    img: AssetMap.Enemy_Squirrel
   },
 ];
