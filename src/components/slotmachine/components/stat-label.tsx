@@ -65,7 +65,7 @@ const getAssetFromType = (type: string) => {
     case 'hp':
       return AssetMap.UI_IconHealth;
     case 'health':
-      return AssetMap.UI_IconHealth;
+      return AssetMap.UI_IconCurse;
     default:
       return AssetMap.UI_IconCoin;
   }
@@ -79,7 +79,7 @@ type Props = {
 function StatLabel({ type, value, size = 'sm' }: Props) {
   const asset = getAssetFromType(type);
   return (
-    <ScWrapper className={`st-${type} size-${size}`}>
+    <ScWrapper className={`st-${type} size-${size}`} title={type}>
       <ScCenterer>
         {value !== undefined && <span>{value}</span>}
         <img src={asset} />

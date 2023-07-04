@@ -7,7 +7,7 @@ const ScWrapper = styled.div`
   color: var(--color-white);
   border-radius: 0.6rem;
   padding: 1rem;
-  height: 8rem;
+  min-height: 8rem;
 
   font-family: var(--font-8bit2);
   transition: background-color ease-out 0.2s, color ease-out 0.2s;

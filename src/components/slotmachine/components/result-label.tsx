@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { ReelComboResult, Tile } from '../../../store/data';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import StatLabel from './stat-label';
 
 const ScWrapper = styled.div`
@@ -102,7 +102,6 @@ const ScStatLabels = styled.ul`
     width: 2rem;
   }
 `;
-
 export function EmptyResultLabel() {
   return (
     <ScWrapper className={'lf-none'}>
@@ -118,7 +117,7 @@ interface Props {
   tile: Tile;
   activeCombos: ReelComboResult[];
 }
-function ResultLabel({ activeCombos, tile }: Props) {
+function ResultLabel({ tile }: Props) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
 
   useEffect(() => {
@@ -128,6 +127,7 @@ function ResultLabel({ activeCombos, tile }: Props) {
     }, 1);
   }, [tile.label]);
 
+  /*
   const matchingAttributes = useMemo(() => {
     // console.log('matching with ',tile.attributes, activeCombos);
     return tile.attributes.filter(
@@ -135,6 +135,7 @@ function ResultLabel({ activeCombos, tile }: Props) {
       (a) => !!activeCombos.find((aC) => aC.attribute === a || aC.attribute === '*' || a === '*')
     );
   }, [tile.attributes, activeCombos]);
+  */
 
   return (
     <ScWrapper className={lifecycle}>
@@ -149,6 +150,11 @@ function ResultLabel({ activeCombos, tile }: Props) {
           </ScStatLabels>
         </ScAttrPill>
         */}
+        <ScStatLabels>
+          {tile.effects.map((effect) => (
+            <StatLabel key={effect.type} type={effect.type} value={effect.value} />
+          ))}
+        </ScStatLabels>
         <ScScorePill>
           <span>{`$${tile.score || 0}`}</span>
         </ScScorePill>

@@ -20,18 +20,24 @@ import Display from './components/display';
 const ScWrapper = styled.div`
   padding: 1rem;
 
+  filter: var(--filter-shadow2);
+
   &.no-display{
     grid-template-rows: auto 4rem;
   }
 
+  border-radius: 1.5rem;
+  border: 0.75rem solid var(--color-purple);
+  
   background-color: var(--color-white);
-  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
   text-align: center;
 
-  border-radius: 0.5rem;
+  border-radius: 1.5rem;
 
   &.lit-up {
-    box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink);
+    /* box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink); */
+    border: 0.75rem solid var(--color-pink);
+  background-color: var(--color-yellow);
   }
 `;
 
