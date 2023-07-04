@@ -11,7 +11,7 @@ const ScWrapper = styled.div`
   max-width: 40rem;
   max-height: 40rem;
 
-  min-width: 20rem;
+  min-width: 26rem;
   min-height: 20rem;
 `;
 

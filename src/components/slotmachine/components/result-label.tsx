@@ -139,16 +139,16 @@ function ResultLabel({ activeCombos, tile }: Props) {
   return (
     <ScWrapper className={lifecycle}>
       <ScAnimator>
+        {/*
         <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : ''}>
-          {/* if you wanna show "attack" or "freeze" or "*" whatever */}
-          {/* <span>{matchingAttributes.join(',').toUpperCase()}</span> */}
-          <span>{'COMBO'}</span>
+          <span>{matchingAttributes.join(',').toUpperCase()}</span>
           <ScStatLabels>
             {tile.effects.map((effect) => (
               <StatLabel key={effect.type} type={effect.type} value={effect.value} />
             ))}
           </ScStatLabels>
         </ScAttrPill>
+        */}
         <ScScorePill>
           <span>{`$${tile.score || 0}`}</span>
         </ScScorePill>

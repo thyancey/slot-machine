@@ -3,11 +3,6 @@ import { PlayerInfo } from '../../store/data';
 
 const ScWrapper = styled.div`
   position: relative;
-  max-width: 40rem;
-  max-height: 40rem;
-
-  min-width: 20rem;
-  min-height: 10rem;
 
   font-size: 2rem;
   text-align: center;

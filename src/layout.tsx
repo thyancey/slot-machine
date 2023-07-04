@@ -3,6 +3,7 @@ import {EnemyEntityBox, PlayerEntityBox} from './components/entity-box';
 import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 import Header from './components/header';
+import Footer from './components/footer';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -42,12 +43,13 @@ function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <TileList />
       <Header />
+      <TileList />
       <ScStage>
         <PlayerEntityBox/>
         <EnemyEntityBox/>
       </ScStage>
+      <Footer />
       <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
       <MachineEditor />
     </ScWrapper>

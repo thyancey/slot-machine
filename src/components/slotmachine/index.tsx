@@ -11,20 +11,13 @@ import ResultLabel, { EmptyResultLabel } from './components/result-label';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
-import InfoTray from './components/infotray';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
+import Controls from './components/controls';
+import Display from './components/display';
 
 const ScWrapper = styled.div`
-  /* position: absolute; */
-  /* margin-left: -8rem; */
-  /* min-width: 28rem; */
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: min-content auto 4rem;
-  justify-content: center;
-  align-items: center;
   padding: 1rem;
 
   &.no-display{
@@ -42,10 +35,6 @@ const ScWrapper = styled.div`
   }
 `;
 
-const ScInfoTray = styled.div`
-  width: calc(100%);
-  margin-top: 1rem;
-`;
 
 const ScReelContainer = styled.div`
   background-color: var(--color-grey);
@@ -55,6 +44,7 @@ const ScReelContainer = styled.div`
   border-radius: 0.5rem;
   align-items: center;
   justify-content: center;
+  margin-top: 1rem;
 
   > div {
     margin: 0rem 0.5rem;
@@ -64,76 +54,10 @@ const ScReelContainer = styled.div`
 const ScReelLabels = styled.div`
   display: flex;
   justify-content: center;
-`;
-
-/* stick it to the side */
-const ScHandle = styled.div`
-  position: absolute;
-  height: 100%;
-  padding: 1.6rem 0; // hack to align temp spin counter
-  left: calc(100% + 4rem);
-  top: 0;
-  z-index: 1;
-
-  display: flex;
-  flex-direction: column;
-  > :first-child {
-    flex: 1;
-    margin-bottom: 4rem;
-  }
-`;
-const ScHandleChild = styled.div`
-  background-color: var(--color-yellow);
-  color: var(--color-purple);
-  box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink);
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  border-radius: 0.5rem;
-  width: 4rem;
-
-  .lit-up & {
-    box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink);
-  }
-
-  span {
-    font-family: var(--font-8bit2);
-    font-size: 4rem;
-    line-height: 3rem;
-    text-align: center;
-  }
-
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--color-purple);
-    color: var(--color-pink);
-  }
-
-  .spin-disabled & {
-    cursor: default;
-    background-color: var(--color-grey);
-    color: var(--color-black);
-
-    &:hover {
-      background-color: var(--color-grey);
-    }
-  }
-`;
-
-const ScSpinHandle = styled(ScHandleChild)`
-  flex: 1;
-  margin-bottom: 4rem;
-  display: flex;
-  align-items: center;
-`;
-
-const ScSpinTokens = styled(ScHandleChild)`
-  font-size: 3rem;
-  line-height: 3.3rem;
-  padding-bottom: 0.2rem;
+  height: 3.25rem;
 `;
 
 function SlotMachine() {
-  // function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
@@ -256,9 +180,7 @@ function SlotMachine() {
 
   return (
     <ScWrapper className={activeCombos.length > 0 ? 'lit-up no-display' : 'no-display'} >
-      {/* <ScDisplayContainer>
-        <Display resultSet={resultSet} activeCombos={activeCombos} />
-      </ScDisplayContainer> */}
+      <Display />
 
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (
@@ -283,15 +205,7 @@ function SlotMachine() {
           )
         )}
       </ScReelLabels>
-      <ScHandle className={spinLock || spinTokens <= 0 ? 'spin-disabled' : ''} onClick={() => triggerSpin(reelStates)}>
-        <ScSpinHandle>
-          <span>{'S P I N'}</span>
-        </ScSpinHandle>
-        <ScSpinTokens>{spinTokens}</ScSpinTokens>
-      </ScHandle>
-      <ScInfoTray>
-        <InfoTray />
-      </ScInfoTray>
+      <Controls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)}/>
     </ScWrapper>
   );
 }
