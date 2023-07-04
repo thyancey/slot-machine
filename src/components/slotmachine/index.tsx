@@ -1,13 +1,8 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
-import {
-  defaultReelState,
-  reelComboDef,
-  defaultTileDeck,
-  DeckIdxCollection,
-} from '../../store/data';
-import ResultLabel, { EmptyResultLabel } from './components/result-label';
+import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
+import { BasicLabel, EmptyResultLabel, StatsLabel } from './components/result-label';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
@@ -22,25 +17,23 @@ const ScWrapper = styled.div`
 
   filter: var(--filter-shadow2);
 
-  &.no-display{
+  &.no-display {
     grid-template-rows: auto 4rem;
   }
 
   border-radius: 1.5rem;
   border: 0.75rem solid var(--color-purple);
-  
+
   background-color: var(--color-white);
   text-align: center;
 
   border-radius: 1.5rem;
 
   &.lit-up {
-    /* box-shadow: 0 0 0 0.75rem var(--color-purple), 0 0 0 1.5rem var(--color-pink), 0 0 3rem 2rem var(--color-pink); */
     border: 0.75rem solid var(--color-pink);
-  background-color: var(--color-yellow);
+    background-color: var(--color-yellow);
   }
 `;
-
 
 const ScReelContainer = styled.div`
   background-color: var(--color-grey);
@@ -58,14 +51,24 @@ const ScReelContainer = styled.div`
 `;
 
 const ScReelLabels = styled.div`
-  display: flex;
-  justify-content: center;
   height: 3.25rem;
+
+  > div {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+  }
+`;
+
+const ScItemLabels = styled.div`
+  position: absolute;
+  display: flex;
 `;
 
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinLock, setSpinLock] = useState(false);
+  const [spinScore, setSpinScore] = useState(0);
   const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const {
     setReelCombos,
@@ -163,12 +166,16 @@ function SlotMachine() {
     const comboScore = getComboScore(activeTiles, activeCombos);
     if (comboScore !== 0) {
       // apply BONUSES
-      incrementScore(comboScore);
+      setSpinScore(comboScore);
     } else {
       // just add up the raw scores then
-      incrementScore(getBasicScore(activeTiles));
+      setSpinScore(getBasicScore(activeTiles));
     }
-  }, [activeCombos, activeTiles, incrementScore, sound_combo]);
+  }, [activeCombos, activeTiles, sound_combo, setSpinScore]);
+
+  useEffect(() => {
+    incrementScore(spinScore);
+  }, [spinScore, incrementScore]);
 
   const resultSet = useMemo(() => {
     if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
@@ -185,9 +192,8 @@ function SlotMachine() {
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
-    <ScWrapper className={activeCombos.length > 0 ? 'lit-up no-display' : 'no-display'} >
+    <ScWrapper className={activeCombos.length > 0 ? 'lit-up no-display' : 'no-display'}>
       <Display />
-
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (
           <Reel
@@ -202,16 +208,21 @@ function SlotMachine() {
           />
         ))}
       </ScReelContainer>
+      <ScItemLabels>
+        {resultSet.map((tile, reelIdx) => {
+          return tile ? <StatsLabel key={reelIdx} tile={tile} /> : null;
+        })}
+      </ScItemLabels>
+
       <ScReelLabels>
-        {resultSet.map((tile, reelIdx) =>
-          tile ? (
-            <ResultLabel key={reelIdx} tile={tile} activeCombos={activeCombos} />
-          ) : (
-            <EmptyResultLabel key={reelIdx} />
-          )
-        )}
+        <div>
+          {resultSet.map((tile, reelIdx) =>
+            tile ? <BasicLabel key={reelIdx} label={`$${tile.score || 0}`} /> : <EmptyResultLabel key={reelIdx} />
+          )}
+          {spinScore > 0 && <BasicLabel isSpecial={true} key='total' label={`$${spinScore}`} />}
+        </div>
       </ScReelLabels>
-      <Controls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)}/>
+      <Controls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
     </ScWrapper>
   );
 }

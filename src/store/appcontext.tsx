@@ -27,9 +27,9 @@ interface AppContextType {
   setReelResults: (values: SetStateAction<DeckIdxCollection>) => void;
 
   activeCombos: ReelComboResult[];
-  
+
   reelCombos: ReelCombo[];
-  setReelCombos:  (values: SetStateAction<ReelCombo[]>) => void;
+  setReelCombos: (values: SetStateAction<ReelCombo[]>) => void;
 
   score: number;
   incrementScore: (increment: number) => void;
@@ -48,7 +48,7 @@ interface AppContextType {
 
   upgradeTokens: number;
   incrementUpgradeTokens: (value: number) => void;
-  
+
   spinTokens: number;
   setSpinTokens: (value: SetStateAction<number>) => void;
 
@@ -87,7 +87,7 @@ const AppProvider = ({ children }: Props) => {
     hp: 10,
     hpMax: 10,
     attack: 0,
-    defense: 0
+    defense: 0,
   });
   const [enemyInfo, setEnemyInfo] = useState<PlayerInfo | null>(null);
   const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
@@ -120,7 +120,7 @@ const AppProvider = ({ children }: Props) => {
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
     const afterRemove = removeAtPosition(reelIdx, positionIdx, reelStates);
-    console.log('afterRemove', afterRemove)
+    console.log('afterRemove', afterRemove);
     setReelStates(afterRemove);
   };
 
@@ -150,13 +150,13 @@ const AppProvider = ({ children }: Props) => {
   );
 
   const activeTiles = useMemo(() => {
-    if(reelResults.includes(-1)) return [];
+    if (reelResults.includes(-1)) return [];
 
     return reelResults.map((slotIdx, reelIdx) => getTileFromDeckIdx(reelStates[reelIdx][slotIdx], tileDeck));
   }, [reelResults, tileDeck, reelStates]);
-  
+
   const activeCombos = useMemo(() => {
-    if(activeTiles.length === 0){
+    if (activeTiles.length === 0) {
       return [];
     }
     return getActiveCombos(activeTiles, reelCombos);
@@ -171,8 +171,8 @@ const AppProvider = ({ children }: Props) => {
 
   // next round
   useEffect(() => {
-    if(round > -1){
-      if(round <= enemies.length - 1){
+    if (round > -1) {
+      if (round <= enemies.length - 1) {
         setEnemyInfo(enemies[round]);
       } else {
         // TODO: GAME WON?
@@ -182,65 +182,64 @@ const AppProvider = ({ children }: Props) => {
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
+      setReelResults(Array(reelStates.length).fill(-1));
 
       setTurn(0);
     } else {
       setRound(0);
     }
-  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState]);
+  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults, reelStates]);
 
   // next turn, fight each other then reset or whatever
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
-    setReelResults(Array(reelStates.length).fill(-1))
+    setReelResults(Array(reelStates.length).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults, reelStates.length]);
 
   const finishRound = useCallback(() => {
-    setRound(prev => prev + 1);
-  }, [ setRound ]);
+    setRound((prev) => prev + 1);
+  }, [setRound]);
 
   const finishTurn = useCallback(() => {
-    if(!enemyInfo){
-      setTurn(prev => prev + 1);
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
       return;
     }
 
     console.log('----> FINISH TURN', playerInfo, enemyInfo, activeTiles, activeCombos);
-    if(!enemyInfo) setTurn(prev => prev + 1);
+    if (!enemyInfo) setTurn((prev) => prev + 1);
 
     const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo, activeTiles, activeCombos);
     console.log('roundResult', roundResult);
 
-    if(roundResult.player.hp === 0){
+    if (roundResult.player.hp === 0) {
       window.alert('you died!');
-    } else if(roundResult.enemy.hp === 0){
-      setPlayerInfo(prev => ({
+    } else if (roundResult.enemy.hp === 0) {
+      setPlayerInfo((prev) => ({
         ...prev,
         hp: roundResult.player.hp,
-        defense: roundResult.player.defense
+        defense: roundResult.player.defense,
       }));
       setEnemyInfo(null);
 
       finishRound();
     } else {
-      setPlayerInfo(prev => ({
+      setPlayerInfo((prev) => ({
         ...prev,
         hp: roundResult.player.hp,
-        defense: roundResult.player.defense
+        defense: roundResult.player.defense,
       }));
-      setEnemyInfo(prev => {
-        if(!prev) return null;
+      setEnemyInfo((prev) => {
+        if (!prev) return null;
         return {
           ...prev,
           hp: roundResult.enemy.hp,
-          defense: roundResult.enemy.defense
-        }
+          defense: roundResult.enemy.defense,
+        };
       });
-      setTurn(prev => prev + 1);
+      setTurn((prev) => prev + 1);
     }
-
-
   }, [playerInfo, enemyInfo, setTurn, activeTiles, activeCombos, setPlayerInfo, setEnemyInfo, finishRound]);
 
   return (
@@ -284,7 +283,7 @@ const AppProvider = ({ children }: Props) => {
 
           playerInfo,
           setPlayerInfo,
-          
+
           enemyInfo,
           setEnemyInfo,
 

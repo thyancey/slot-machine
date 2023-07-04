@@ -8,6 +8,7 @@ const ScWrapper = styled.div`
   bottom: 100%;
   width: 100%;
   padding: 0 2rem;
+  z-index: 2; // just makes the hover state of the cards simpler
 
   display:flex;
   justify-content: space-between;

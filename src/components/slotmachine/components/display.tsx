@@ -19,7 +19,7 @@ const ScWrapper = styled.div`
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     line-height: 1.85rem;
   }
 
@@ -37,14 +37,14 @@ function Display() {
       {activeCombos[0] ? (
         <ul>
           <li>{`${activeCombos[0].label}`}</li>
-          <li>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</li>
+          {/* <li>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</li> */}
           <li>{`x${activeCombos[0].bonus?.multiplier} multiplier`}</li>
         </ul>
       ) : (
         <ul>
-          <li>{`spin to get points`}</li>
+          <li>{`spin to get money`}</li>
           <li>{`combos make you stronger`}</li>
-          <li>{`click NEXT TURN to attack`}</li>
+          <li>{`click enemy to lock in your move`}</li>
         </ul>
       )}
     </ScWrapper>

@@ -3,7 +3,6 @@ import SlotMachine from '../slotmachine';
 import EntityStats from './entity-stats';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import Enemy from './enemy';
 import { getEffectDelta } from '../slotmachine/utils';
 
 const ScCard = styled.div`
@@ -11,25 +10,41 @@ const ScCard = styled.div`
   padding: 3rem 2rem 2rem 2rem;
   margin: 1rem;
 
-  &.entity-player {
-    min-width: 30rem;
-    background-color: var(--color-grey);
-    border: 0.75rem solid var(--color-pink);
-    filter: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
+  min-width: 30rem;
+  background-color: var(--color-grey);
+  border: 0.75rem solid var(--color-pink);
+  filter: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
+  cursor: pointer;
+`;
+
+const ScHoverTip = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-yellow);
+  color: var(--color-pink);
+
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+
+  span {
+    font-size: 3rem;
   }
 
-  &.entity-enemy {
-    min-width: 20rem;
-    min-height: 20rem;
-    background-color: var(--color-grey);
-    color: var(--color-pink);
-    border: 0.75rem solid var(--color-pink);
-    filter: drop-shadow(0.25rem 0.25rem 1rem var(--color-black));
+  ${ScCard}:hover & {
+    opacity: 1;
+    transition: opacity 0.2s ease-out;
   }
 `;
 
-export const PlayerEntityBox = () => {
+export const Player = () => {
   const { activeTiles, activeCombos, playerInfo } = useContext(AppContext);
+  const showHoverTip = false;
 
   const attack = useMemo(() => {
     return getEffectDelta('attack', activeTiles, activeCombos);
@@ -47,28 +62,14 @@ export const PlayerEntityBox = () => {
   return (
     <ScCard className='entity-player'>
       <EntityStats statInfo={{ attack: attack, defense: defense, health: health }} hp={hp} />
+      {showHoverTip && (
+        <ScHoverTip>
+          <span>{'SPIN?'}</span>
+        </ScHoverTip>
+      )}
       <SlotMachine />
     </ScCard>
   );
 };
 
-export const EnemyEntityBox = () => {
-  const { enemyInfo } = useContext(AppContext);
-  if (!enemyInfo) {
-    return null;
-  }
-  return (
-    <ScCard className='entity-enemy'>
-      <EntityStats
-        statInfo={{
-          attack: enemyInfo.attack,
-          defense: enemyInfo.defense,
-        }}
-        hp={enemyInfo.hp}
-      />
-      <Enemy enemyInfo={enemyInfo} />
-    </ScCard>
-  );
-};
-
-export default {};
+export default Player;
