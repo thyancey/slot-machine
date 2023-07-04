@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
-import { BasicLabel, EmptyResultLabel, StatsLabel } from './components/result-label';
+import { BasicLabel, EmptyResultLabel } from './components/result-label';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
@@ -58,11 +58,6 @@ const ScReelLabels = styled.div`
     display: flex;
     justify-content: center;
   }
-`;
-
-const ScItemLabels = styled.div`
-  position: absolute;
-  display: flex;
 `;
 
 function SlotMachine() {
@@ -208,12 +203,6 @@ function SlotMachine() {
           />
         ))}
       </ScReelContainer>
-      <ScItemLabels>
-        {resultSet.map((tile, reelIdx) => {
-          return tile ? <StatsLabel key={reelIdx} tile={tile} /> : null;
-        })}
-      </ScItemLabels>
-
       <ScReelLabels>
         <div>
           {resultSet.map((tile, reelIdx) =>

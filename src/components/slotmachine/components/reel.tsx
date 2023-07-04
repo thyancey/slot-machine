@@ -13,11 +13,11 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 const Vars = {
   SPIN_TICK: 30,
   SPIN_DURATION_RANGE: [0.005, 0.02] as MinMaxTouple,
-  SLOT_DISTANCE_RANGE: [20, 40] as MinMaxTouple
-}
+  SLOT_DISTANCE_RANGE: [20, 40] as MinMaxTouple,
+};
 
 const debug = window.location.search.indexOf('debug') > -1;
-if(debug){
+if (debug) {
   Vars.SPIN_TICK = 10;
   Vars.SPIN_DURATION_RANGE = [0.05, 0.1];
 }
@@ -67,16 +67,17 @@ interface ScReelBgProps {
   bg?: string;
 }
 const ScReelBg = styled.div<ScReelBgProps>`
-  position:absolute;
+  position: absolute;
   inset: 0;
-  ${(props) => props.bg && css`
-    background: url(${props.bg});
-  `};
+  ${(props) =>
+    props.bg &&
+    css`
+      background: url(${props.bg});
+    `};
   background-color: var(--color-white);
   background-size: contain;
   z-index: -1;
-
-`
+`;
 
 type Props = {
   reelIdx: number;
@@ -123,9 +124,9 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
       // have to calculate the end result value here, over using "targetSlotIdx", because adding that
       // prop to this useEffect dependency array makes the reel think it finished spinning on a brand
       // new pull, cause spinProgress had not changed to 0 yet
-      
+
       // this check avoids a false spin trigger after editing reel
-      if(loopedIdxs[0] > -1){
+      if (loopedIdxs[0] > -1) {
         onSpinComplete(reelIdx, loopedIdxs[1] % reelState.length);
       }
     } else {
@@ -155,7 +156,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (
-            <ReelContent key={`${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} />
+            <ReelContent key={`s${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} isActive={idx - REEL_OVERLAP === targetSlotIdx} />
           ))}
           <ScReelBg bg={reelBg} />
         </ScReelTape>

@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import { Tile } from '../../../store/data';
 import { useEffect, useMemo, useState } from 'react';
-import StatLabel from './stat-label';
 
 const ScWrapper = styled.div`
   width: var(--val-reel-width);
@@ -83,17 +81,6 @@ const ScScorePill = styled(ScPill)`
   }
 `;
 
-const ScStatLabels = styled.ul`
-  position: absolute;
-  right: 0;
-  bottom: 5.5rem;
-  text-align: right;
-  > li {
-    display: inline-block;
-    vertical-align: middle;
-    width: 2rem;
-  }
-`;
 export function EmptyResultLabel() {
   return (
     <ScWrapper className={'lf-none'}>
@@ -131,21 +118,6 @@ export function BasicLabel({ label, isSpecial }: BasicLabelProps) {
           <span>{label}</span>
         </ScScorePill>
       </ScAnimator>
-    </ScWrapper>
-  );
-}
-
-interface StatsLabelProps {
-  tile: Tile;
-}
-export function StatsLabel({ tile }: StatsLabelProps) {
-  return (
-    <ScWrapper className={'lf-present'}>
-      <ScStatLabels>
-        {tile.effects.map((effect) => (
-          <StatLabel key={effect.type} type={effect.type} value={effect.value} />
-        ))}
-      </ScStatLabels>
     </ScWrapper>
   );
 }

@@ -110,27 +110,21 @@ export const tileGlossary: TileGlossary = {
     img: AssetMap.Rbar1,
     attributes: ['bar', '*'],
     score: 100,
-    effects: [
-      { type: 'defense', value: 1 }
-    ],
+    effects: [{ type: 'defense', value: 1 }],
   },
   slot_bar2: {
     label: 'bar2',
     img: AssetMap.Rbar2,
     attributes: ['bar', '*'],
     score: 200,
-    effects: [
-      { type: 'defense', value: 2 }
-    ],
+    effects: [{ type: 'defense', value: 2 }],
   },
   slot_bar3: {
     label: 'bar3',
     img: AssetMap.Rbar3,
     attributes: ['bar', '*'],
     score: 300,
-    effects: [
-      { type: 'defense', value: 3 }
-    ],
+    effects: [{ type: 'defense', value: 3 }],
   },
   snowflake: {
     label: 'snowflake',
@@ -276,6 +270,13 @@ export const defaultReelState: DeckIdxCollection[] = [
   [0, 1, 2, 3, 4, 5, 8, 9, 13],
   [0, 1, 2, 3, 4, 5, 8, 9, 13],
 ];
+/*
+export const defaultReelState: DeckIdxCollection[] = [
+  [0, 1, 2],
+  [0, 1, 2],
+  [0, 1, 2],
+];
+*/
 
 // for the player and enemies, will need to be expanded in the future
 export type PlayerInfo = {
@@ -291,12 +292,12 @@ export type PlayerInfoDelta = {
   hp: number;
   attack: number;
   defense: number;
-}
+};
 
 export type AttackDelta = {
-  player: PlayerInfoDelta,
-  enemy: PlayerInfoDelta
-}
+  player: PlayerInfoDelta;
+  enemy: PlayerInfoDelta;
+};
 
 export const enemies: PlayerInfo[] = [
   {
@@ -305,7 +306,7 @@ export const enemies: PlayerInfo[] = [
     hpMax: 1,
     attack: 1,
     defense: 0,
-    img: AssetMap.Enemy_Squirrel
+    img: AssetMap.Enemy_Squirrel,
   },
   {
     label: 'TORT',
@@ -313,7 +314,7 @@ export const enemies: PlayerInfo[] = [
     hpMax: 10,
     attack: 1,
     defense: 10,
-    img: AssetMap.Enemy_Tortoise
+    img: AssetMap.Enemy_Tortoise,
   },
   {
     label: 'OPOSSUM',
@@ -321,7 +322,7 @@ export const enemies: PlayerInfo[] = [
     hpMax: 10,
     attack: 1,
     defense: 0,
-    img: AssetMap.Enemy_Squirrel
+    img: AssetMap.Enemy_Squirrel,
   },
   {
     label: 'SNEK',
@@ -329,7 +330,7 @@ export const enemies: PlayerInfo[] = [
     hpMax: 4,
     attack: 6,
     defense: 0,
-    img: AssetMap.Enemy_Squirrel
+    img: AssetMap.Enemy_Squirrel,
   },
   {
     label: 'TROLL',
@@ -337,6 +338,6 @@ export const enemies: PlayerInfo[] = [
     hpMax: 20,
     attack: 3,
     defense: 10,
-    img: AssetMap.Enemy_Squirrel
+    img: AssetMap.Enemy_Squirrel,
   },
 ];
