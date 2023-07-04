@@ -3,7 +3,13 @@ import AssetMap from '../../../assets';
 
 const ScWrapper = styled.li`
   z-index:1;
+  position:relative;
   filter: var(--filter-shadow1);
+  
+  &:hover{
+    filter: var(--filter-shadow2);
+    z-index:2;
+  }
 
   color: var(--color-black);
   &.st-attack {
@@ -26,32 +32,35 @@ const ScWrapper = styled.li`
 const ScCenterer = styled.div`
   position: absolute;
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 6rem;
-  height: 6rem;
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
   font-size: 1.3rem;
   font-weight: bold;
+  text-align: center;
 
   .size-lg >& {
-    width: 10rem;
-    height: 10rem;
+    width: 6rem;
+    height: 6rem;
+    line-height: 6rem;
+
     font-size: 2rem;
-    line-height: 2rem;
-    padding-bottom: 0.3rem;
   }
   
   >img{
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    width: 200%;
+    height: 200%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     z-index: -1;
+    pointer-events: none;
   }
 `;
 

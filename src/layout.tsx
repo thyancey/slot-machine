@@ -22,7 +22,7 @@ const ScStage = styled.main`
 
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-direction: row;
 `;
 

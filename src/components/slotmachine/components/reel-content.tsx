@@ -33,7 +33,7 @@ const ScWrapper = styled.div<ScProps>`
       -2px 2px 0 var(--color-black), 2px 2px 0 var(--color-black);
   }
 
-  img {
+  >img {
     height: 100%;
     filter: var(--filter-shadow1);
   }
