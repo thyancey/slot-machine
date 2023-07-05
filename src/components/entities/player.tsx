@@ -20,10 +20,9 @@ const ScCard = styled.div`
 const ScHoverTip = styled.div`
   position: absolute;
   inset: 0;
-  background-color: var(--color-yellow);
-  color: var(--color-pink);
+  background-color: var(--color-pink);
+  color: var(--color-white);
 
-  pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease-in;
 
@@ -43,8 +42,7 @@ const ScHoverTip = styled.div`
 `;
 
 export const Player = () => {
-  const { activeTiles, activeCombos, playerInfo } = useContext(AppContext);
-  const showHoverTip = false;
+  const { activeTiles, activeCombos, playerInfo, playerFocused, setPlayerFocused } = useContext(AppContext);
 
   const attack = useMemo(() => {
     return getEffectDelta('attack', activeTiles, activeCombos);
@@ -60,11 +58,10 @@ export const Player = () => {
   }, [playerInfo]);
 
   return (
-    <ScCard className='entity-player'>
+    <ScCard id="player" >
       <EntityStats statInfo={{ attack: attack, defense: defense, health: health }} hp={hp} />
-      {showHoverTip && (
-        <ScHoverTip>
-          <span>{'SPIN?'}</span>
+      {!playerFocused && (
+        <ScHoverTip onClick={() => setPlayerFocused(true)}>
         </ScHoverTip>
       )}
       <SlotMachine />

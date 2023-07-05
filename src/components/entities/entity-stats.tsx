@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import StatLabel from '../slotmachine/components/stat-label';
 
 const ScWrapper = styled.div`
-  /* background-color: var(--color-purple); */
   position: absolute;
   left:0;
   bottom: 100%;

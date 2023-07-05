@@ -44,7 +44,7 @@ function Display() {
         <ul>
           <li>{`spin to get money`}</li>
           <li>{`combos make you stronger`}</li>
-          <li>{`click enemy to lock in your move`}</li>
+          <li>{`when ready, click enemy`}</li>
         </ul>
       )}
     </ScWrapper>

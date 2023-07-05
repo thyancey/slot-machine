@@ -3,8 +3,7 @@ import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 import Header from './components/header';
 import Footer from './components/footer';
-import Player from './components/entities/player';
-import Enemy from './components/entities/enemy';
+import Entities from './components/entities';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -13,17 +12,6 @@ const ScWrapper = styled.main`
 
   display: flex;
   flex-direction: column;
-`;
-
-const ScStage = styled.main`
-  flex: 1;
-  padding: 5rem;
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-direction: row;
 `;
 
 const ScBg = styled.div`
@@ -46,10 +34,7 @@ function Layout() {
     <ScWrapper>
       <Header />
       <TileList />
-      <ScStage>
-        <Player />
-        <Enemy />
-      </ScStage>
+      <Entities />
       <Footer />
       <ScBg>
         <p>{bgText.join(' ! ')}</p>

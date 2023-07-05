@@ -23,6 +23,9 @@ const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   activeTiles: Tile[];
 
+  playerFocused: boolean;
+  setPlayerFocused: (value: SetStateAction<boolean>) => void;
+
   reelResults: DeckIdxCollection;
   setReelResults: (values: SetStateAction<DeckIdxCollection>) => void;
 
@@ -80,6 +83,7 @@ interface Props {
 }
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
+  const [playerFocused, setPlayerFocused] = useState(true);
   const [turn, setTurn] = useState(-1);
   const [round, setRound] = useState(-1);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
@@ -250,6 +254,9 @@ const AppProvider = ({ children }: Props) => {
 
           reelCombos,
           setReelCombos,
+          
+          playerFocused,
+          setPlayerFocused,
 
           activeCombos,
 
