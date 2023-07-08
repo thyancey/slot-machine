@@ -18,9 +18,6 @@ const ScScoreContainer = styled.div`
 function Header() {
   return (
     <ScWrapper>
-      <ScScoreContainer>
-        <ScoreBox />
-      </ScScoreContainer>
     </ScWrapper>
   );
 }

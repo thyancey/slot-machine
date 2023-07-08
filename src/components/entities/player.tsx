@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import SlotMachine from '../slotmachine';
-import EntityStats from './entity-stats';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
 import { getEffectDelta } from '../slotmachine/utils';
+import HealthBar from './healthbar';
+import AttackBar from './attackbar';
 
 const ScCard = styled.div`
   border-radius: 1.5rem;
@@ -17,32 +18,8 @@ const ScCard = styled.div`
   cursor: pointer;
 `;
 
-const ScHoverTip = styled.div`
-  position: absolute;
-  inset: 0;
-  background-color: var(--color-pink);
-  color: var(--color-white);
-
-  opacity: 0;
-  transition: opacity 0.3s ease-in;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-
-  span {
-    font-size: 3rem;
-  }
-
-  ${ScCard}:hover & {
-    opacity: 1;
-    transition: opacity 0.2s ease-out;
-  }
-`;
-
 export const Player = () => {
-  const { activeTiles, activeCombos, playerInfo, playerFocused, setPlayerFocused } = useContext(AppContext);
+  const { activeTiles, activeCombos, playerInfo } = useContext(AppContext);
 
   const attack = useMemo(() => {
     return getEffectDelta('attack', activeTiles, activeCombos);
@@ -59,11 +36,8 @@ export const Player = () => {
 
   return (
     <ScCard id="player" >
-      <EntityStats statInfo={{ attack: attack, defense: defense, health: health }} hp={hp} />
-      {!playerFocused && (
-        <ScHoverTip onClick={() => setPlayerFocused(true)}>
-        </ScHoverTip>
-      )}
+      <AttackBar attack={attack} modifiers={[{ type: 'health', value: health }]} />
+      <HealthBar hp={hp} defense={defense} buffs={[]} />
       <SlotMachine />
     </ScCard>
   );

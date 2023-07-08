@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -33,7 +32,7 @@ function Layout() {
   return (
     <ScWrapper>
       <Header />
-      <TileList />
+      {/* <TileList /> */}
       <Entities />
       <Footer />
       <ScBg>
