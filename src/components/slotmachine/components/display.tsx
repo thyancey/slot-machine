@@ -2,25 +2,30 @@ import styled from 'styled-components';
 import { useContext } from 'react';
 import { AppContext } from '../../../store/appcontext';
 
+const ScOuter = styled.div`
+  width: auto;
+  height: 5rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+`;
+
 const ScWrapper = styled.div`
+  position: absolute;
+  inset: 0;
   background-color: var(--color-grey);
   color: var(--color-white);
   border-radius: 0.6rem;
   padding: 1rem;
-  min-height: 8rem;
 
   font-family: var(--font-8bit2);
   transition: background-color ease-out 0.2s, color ease-out 0.2s;
 
-  ul,
-  li,
-  span,
-  p {
+  span {
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: 1.2rem;
-    line-height: 1.85rem;
+    line-height: 1.5rem;
   }
 
   &.winner {
@@ -33,21 +38,19 @@ function Display() {
   const { activeCombos } = useContext(AppContext);
 
   return (
-    <ScWrapper className={activeCombos.length > 0 ? 'winner' : ''}>
-      {activeCombos[0] ? (
-        <ul>
-          <li>{`${activeCombos[0].label}`}</li>
-          {/* <li>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</li> */}
-          <li>{`x${activeCombos[0].bonus?.multiplier} multiplier`}</li>
-        </ul>
-      ) : (
-        <ul>
-          <li>{`spin to get money`}</li>
-          <li>{`combos make you stronger`}</li>
-          <li>{`when ready, click enemy`}</li>
-        </ul>
-      )}
-    </ScWrapper>
+    <ScOuter>
+      <ScWrapper className={activeCombos.length > 0 ? 'winner' : ''}>
+        {activeCombos[0] ? (
+          <ul>
+            <li>{`${activeCombos[0].label}`}</li>
+            {/* <li>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</li> */}
+            <li>{`x${activeCombos[0].bonus?.multiplier} multiplier`}</li>
+          </ul>
+        ) : (
+          <span>{`Do 13 damage, add 6 block for each reel in your hand`}</span>
+        )}
+      </ScWrapper>
+    </ScOuter>
   );
 }
 

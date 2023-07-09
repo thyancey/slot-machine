@@ -13,13 +13,10 @@ import Controls from './components/controls';
 import Display from './components/display';
 
 const ScWrapper = styled.div`
-  padding: 1rem;
+  padding: 0.5rem;
+  padding-bottom: 0.75rem;
 
   filter: var(--filter-shadow2);
-
-  &.no-display {
-    grid-template-rows: auto 4rem;
-  }
 
   border-radius: 1.5rem;
   border: 0.75rem solid var(--color-purple);
@@ -43,7 +40,8 @@ const ScReelContainer = styled.div`
   border-radius: 0.5rem;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  
+  overflow: hidden; 
 
   > div {
     margin: 0rem 0.5rem;
@@ -187,8 +185,7 @@ function SlotMachine() {
   }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
-    <ScWrapper className={activeCombos.length > 0 ? 'lit-up no-display' : 'no-display'}>
-      <Display />
+    <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (
           <Reel
@@ -211,6 +208,7 @@ function SlotMachine() {
           {spinScore > 0 && <BasicLabel isSpecial={true} key='total' label={`$${spinScore}`} />}
         </div>
       </ScReelLabels>
+      <Display />
       <Controls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
     </ScWrapper>
   );

@@ -302,10 +302,10 @@ export type AttackDelta = {
 export const enemies: PlayerInfo[] = [
   {
     label: 'SQUIRREL',
-    hp: 1,
-    hpMax: 1,
+    hp: 5,
+    hpMax: 10,
     attack: 1,
-    defense: 0,
+    defense: 5,
     img: AssetMap.Enemy_Squirrel,
   },
   {

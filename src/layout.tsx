@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
-import Header from './components/header';
 import Footer from './components/footer';
 import Entities from './components/entities';
+import Enemy from './components/entities/enemy';
+import Player from './components/entities/player';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -27,13 +28,27 @@ const ScBg = styled.div`
   opacity: 0.2;
 `;
 
+const ScMain = styled.main`
+  flex: 1;
+  width: 100%;
+
+  padding: 2rem;
+  padding-bottom: 6rem;
+
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
 function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <Header />
-      {/* <TileList /> */}
-      <Entities />
+      <ScMain>
+        <Player />
+        <Enemy />
+      </ScMain>
       <Footer />
       <ScBg>
         <p>{bgText.join(' ! ')}</p>

@@ -7,8 +7,7 @@ import HealthBar from './healthbar';
 
 const ScCard = styled.div`
   border-radius: 1.5rem;
-  padding: 3rem 2rem 1rem 2rem;
-  margin: 1rem;
+  padding: 2rem 2rem 1rem 2rem;
   min-width: 20rem;
 
   background-color: var(--color-grey);
@@ -16,7 +15,7 @@ const ScCard = styled.div`
   border: 0.75rem solid var(--color-pink);
   filter: drop-shadow(0.25rem 0.25rem 1rem var(--color-black));
 
-  >button{
+  > button {
     margin-bottom: 1rem;
     width: 100%;
   }
@@ -41,12 +40,19 @@ const ScGameInfo = styled.ul`
   justify-content: space-between;
 `;
 
+const ScEnemyGrid = styled.div`
+  display: grid;
+  grid-template-columns: 8rem auto;
+  grid-template-rows: auto;
+  grid-gap: 2rem;
+`;
+
 export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults, round } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
-  }, [reelResults, turn] )
+  }, [reelResults, turn]);
 
   const className = useMemo(() => {
     const classes = [];
@@ -59,19 +65,23 @@ export const Enemy = () => {
   }
 
   return (
-    <ScCard id='enemy' className={className} >
+    <ScCard id='enemy' className={className}>
       <AttackBar attack={enemyInfo.attack} modifiers={[]} />
-      <ScEnemy>
-        <h3>{enemyInfo.label}</h3>
-        {/* <ScEnemyImage style={{ 'background': `url(${enemyInfo.img})` }} /> */}
-        <ScEnemyImage src={enemyInfo.img} />
-      </ScEnemy>
-      <Button buttonStyle="special" disabled={!canAttack} onClick={() => finishTurn()}>{'ATTACK'}</Button>
+      <ScEnemyGrid>
+        <ScEnemy>
+          {/* <ScEnemyImage style={{ 'background': `url(${enemyInfo.img})` }} /> */}
+          <ScEnemyImage src={enemyInfo.img} />
+        </ScEnemy>
+        <Button buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
+          {'ATTACK'}
+        </Button>
+      </ScEnemyGrid>
       <ScGameInfo>
-        <li>{`enemy #${round + 1}`}</li>
+        <li>{''}</li>
+        <li>{enemyInfo.label}</li>
         <li>{`turn #${turn + 1}`}</li>
       </ScGameInfo>
-      <HealthBar hp={enemyInfo.hp} defense={enemyInfo.defense} buffs={[]} />
+      <HealthBar hp={enemyInfo.hp} hpMax={enemyInfo.hpMax} defense={enemyInfo.defense} buffs={[]} />
     </ScCard>
   );
 };

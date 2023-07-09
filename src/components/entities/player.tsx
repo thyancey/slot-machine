@@ -7,15 +7,7 @@ import HealthBar from './healthbar';
 import AttackBar from './attackbar';
 
 const ScCard = styled.div`
-  border-radius: 1.5rem;
-  padding: 3rem 2rem 2rem 2rem;
-  margin: 1rem;
-
-  min-width: 30rem;
-  background-color: var(--color-grey);
-  border: 0.75rem solid var(--color-pink);
-  filter: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
-  cursor: pointer;
+  position: relative;
 `;
 
 export const Player = () => {
@@ -30,14 +22,11 @@ export const Player = () => {
   const health = useMemo(() => {
     return getEffectDelta('health', activeTiles, activeCombos);
   }, [activeTiles, activeCombos]);
-  const hp = useMemo(() => {
-    return playerInfo.hp;
-  }, [playerInfo]);
 
   return (
     <ScCard id="player" >
-      <AttackBar attack={attack} modifiers={[{ type: 'health', value: health }]} />
-      <HealthBar hp={hp} defense={defense} buffs={[]} />
+      {attack !== 0 && <AttackBar attack={attack} modifiers={[{ type: 'health', value: health }]} />}
+      <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={defense} buffs={[]} />
       <SlotMachine />
     </ScCard>
   );
