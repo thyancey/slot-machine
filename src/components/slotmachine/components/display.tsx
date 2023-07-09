@@ -1,12 +1,10 @@
 import styled from 'styled-components';
-import { useContext } from 'react';
-import { AppContext } from '../../../store/appcontext';
+import { useMemo } from 'react';
 
 const ScOuter = styled.div`
   width: auto;
-  height: 5rem;
+  height: 7rem;
   position: relative;
-  margin-bottom: 0.5rem;
 `;
 
 const ScWrapper = styled.div`
@@ -20,7 +18,7 @@ const ScWrapper = styled.div`
   font-family: var(--font-8bit2);
   transition: background-color ease-out 0.2s, color ease-out 0.2s;
 
-  span {
+  p {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -34,21 +32,21 @@ const ScWrapper = styled.div`
   }
 `;
 
-function Display() {
-  const { activeCombos } = useContext(AppContext);
+interface Props {
+  messages: string[];
+  displayType?: 'combo';
+}
+function Display({ messages, displayType }: Props) {
+  const className = useMemo(() => {
+    return displayType === 'combo' ? 'combo' : '';
+  }, [displayType]);
 
   return (
     <ScOuter>
-      <ScWrapper className={activeCombos.length > 0 ? 'winner' : ''}>
-        {activeCombos[0] ? (
-          <ul>
-            <li>{`${activeCombos[0].label}`}</li>
-            {/* <li>{`"${activeCombos[0].bonus?.bonusType}" bonus!`}</li> */}
-            <li>{`x${activeCombos[0].bonus?.multiplier} multiplier`}</li>
-          </ul>
-        ) : (
-          <span>{`Do 13 damage, add 6 block for each reel in your hand`}</span>
-        )}
+      <ScWrapper className={className}>
+        {messages.map((m, idx) => (
+          <p key={idx}>{m}</p>
+        ))}
       </ScWrapper>
     </ScOuter>
   );

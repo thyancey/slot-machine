@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
-import { BasicLabel, EmptyResultLabel } from './components/result-label';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
 import { getTileFromDeckIdx } from '../../store/utils';
@@ -10,24 +9,26 @@ import { getTileFromDeckIdx } from '../../store/utils';
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import Controls from './components/controls';
-import Display from './components/display';
+import PlayerDisplay from './components/player-display';
 
 const ScWrapper = styled.div`
-  padding: 0.5rem;
-  padding-bottom: 0.75rem;
+  padding: 2rem 1rem 2.25rem 1rem;
 
   filter: var(--filter-shadow2);
 
   border-radius: 1.5rem;
-  border: 0.75rem solid var(--color-purple);
+  /* border: 0.75rem solid var(--color-purple); */
 
-  background-color: var(--color-white);
+  background-color: var(--color-purple);
   text-align: center;
 
-  border-radius: 1.5rem;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto min-content min-content;
+  grid-gap: 1rem;
 
   &.lit-up {
-    border: 0.75rem solid var(--color-pink);
+    /* border: 0.75rem solid var(--color-pink); */
     background-color: var(--color-yellow);
   }
 `;
@@ -200,15 +201,15 @@ function SlotMachine() {
           />
         ))}
       </ScReelContainer>
-      <ScReelLabels>
+      {/* <ScReelLabels>
         <div>
           {resultSet.map((tile, reelIdx) =>
             tile ? <BasicLabel key={reelIdx} label={`$${tile.score || 0}`} /> : <EmptyResultLabel key={reelIdx} />
           )}
           {spinScore > 0 && <BasicLabel isSpecial={true} key='total' label={`$${spinScore}`} />}
         </div>
-      </ScReelLabels>
-      <Display />
+      </ScReelLabels> */}
+      <PlayerDisplay />
       <Controls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
     </ScWrapper>
   );

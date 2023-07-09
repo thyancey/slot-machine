@@ -43,7 +43,7 @@ const ScHealthBar = styled.div`
 
 const ScHealthBarBg = styled.div`
   position: absolute;
-  background-color: var(--color-red);
+  background-color: var(--color-pink);
   border: 0.25rem solid var(--color-grey);
 
   .defended & {
