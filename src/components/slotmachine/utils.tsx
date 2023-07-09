@@ -175,37 +175,28 @@ export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], acti
     return val;
   }, 0);
 
-export const getPlayerAttackDelta = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo,
-  activeCombos: ReelComboResult[],
-  activeTiles: Tile[]
+export const predictAttack = (
+  attacker: PlayerInfo,
+  defender: PlayerInfo
 ) => {
-  console.log('getPlayerAttackDelta', playerInfo, enemyInfo, activeCombos, activeTiles);
+  console.log('predictAttack', attacker, defender);
 
-  const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
-  console.log('player ATTACK POWER', attackPower);
-  const nextDefense = enemyInfo.defense - attackPower;
-  
-  const damage = nextDefense < 0 ? nextDefense : 0;
+  // const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
+  // console.log('player ATTACK POWER', attackPower);
+  const shieldedDamage = defender.defense - attacker.attack;
+  const hpDelta = shieldedDamage < 0 ? shieldedDamage : 0;
 
-  const enemyResult = {
-    // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: damage,
-    attack: enemyInfo.attack, // todo - enemy stun?
-    defense: 0 - attackPower, // todo - break enemy block?
-  };
+  const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
+  console.log('hpDelta:', hpDelta);
+  console.log('defenseDelta:', defenseDelta);
+
+
 
   return {
-    player: {
-      // check for heal or hurt modifiers
-      hp: getEffectDelta('health', activeTiles, activeCombos),
-      attack: attackPower,
-      // apply block for enemy attack
-      defense: getEffectDelta('defense', activeTiles, activeCombos),
-    },
-    enemy: enemyResult,
-  } as AttackDelta;
+    // do other wacky checking here in the future about flame/poison weakness, etc
+    hp: clamp(defender.hp + hpDelta, 0, defender.hpMax),
+    defense: clamp(defender.defense - attacker.attack, 0, 100)
+  };
 };
 
 export const getEnemyAttackDelta = (
@@ -239,89 +230,47 @@ export const getEnemyAttackDelta = (
 
 export const computeRound = (
   playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo,
-  activeTiles: Tile[],
-  activeCombos: ReelComboResult[]
+  enemyInfo: PlayerInfo
 ) => {
   const curPlayer = { ...playerInfo };
   const curEnemy = { ...enemyInfo };
 
-  // 1. player attempt to attack enemy
-  const playerAttack = getPlayerAttackDelta(
-    playerInfo as PlayerInfo,
-    enemyInfo as PlayerInfo,
-    activeCombos,
-    activeTiles
-  );
-  console.log('playerAttack response:', playerAttack);
-  
-  // knock off any block
-  curEnemy.defense += playerAttack.enemy.defense;
-  if(curEnemy.defense < 0) curEnemy.defense = 0;
-  curPlayer.defense += playerAttack.player.defense;
-  if(curPlayer.defense < 0) curPlayer.defense = 0;
-
-  // player check for thorns, burning, poison
-  curPlayer.hp += playerAttack.player.hp;
-  curPlayer.hp = clamp(curPlayer.hp, 0, curPlayer.hpMax);
-  if (curPlayer.hp <= 0) {
-    // 1a. player dead
+  const compute = (reason: string) => {
     return {
-      player: { hp: curPlayer.hp, defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
-    }
-  }
+      result: reason,
+      player: { attack: 0, hp: curPlayer.hp, defense: curPlayer.defense },
+      enemy: { attack: 0, hp: curEnemy.hp, defense: curEnemy.defense },
+    };
+  } 
 
-  // 2. apply attack to enemy
-  // buff, heal or hurt enemy
-  curEnemy.hp += playerAttack.enemy.hp;
-  curEnemy.hp = clamp(curEnemy.hp, 0, curEnemy.hpMax);
+  // 1. player attempt to attack enemy
+  const predictedPlayerAttack = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
+  console.log('predictedPlayerAttack:', curEnemy, predictedPlayerAttack);
+
+  // apply attack to enemy
+  curEnemy.defense = predictedPlayerAttack.defense;
+  curEnemy.hp = predictedPlayerAttack.hp;
   if (curEnemy.hp <= 0) {
     // 2b. enemy dead
-    return {
-      player: { hp: curPlayer.hp, defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
-    }
+    return compute('enemy died');
   }
 
-
+  // todo, player check for thorns, burning, poison?
 
   // 3. enemy attempt to attack player
-  const enemyAttack = getEnemyAttackDelta(curPlayer as PlayerInfo, curEnemy as PlayerInfo, activeCombos, activeTiles);
-  // enemy check for thorns, burning, poison
-  console.log('enemyAttack response:', enemyAttack);
-  
-  // knock off any block
-  curEnemy.defense += enemyAttack.enemy.defense;
-  if(curEnemy.defense < 0) curEnemy.defense = 0;
-  curPlayer.defense += enemyAttack.player.defense;
-  if(curPlayer.defense < 0) curPlayer.defense = 0;
+  const predictedEnemyAttack = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
 
-  curEnemy.hp += enemyAttack.enemy.hp;
-  // buff, heal or hurt enemy
-  curEnemy.hp = clamp(curEnemy.hp, 0, curEnemy.hpMax);
-  if (curEnemy.hp <= 0) {
-    // 3a. enemy dead
-    return {
-      player: { hp: curPlayer.hp, defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
-    }
-  }
+  console.log('predictedEnemyAttack:', predictedEnemyAttack);
 
-  // 4. apply healing/hurt to player
-  curPlayer.hp += enemyAttack.player.hp;
-  // buff, heal or hurt enemy
-  curPlayer.hp = clamp(curPlayer.hp, 0, curPlayer.hpMax);
+  // apply attack to player
+  curPlayer.defense = predictedEnemyAttack.defense;
+  curPlayer.hp = predictedEnemyAttack.hp;
   if (curPlayer.hp <= 0) {
-    // 4b. enemy dead
-    return {
-      player: { hp: curPlayer.hp, defense: curPlayer.defense },
-      enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
-    }
+    // 3a. player dead
+    return compute('player died');
   }
 
-  return {
-    player: { hp: curPlayer.hp, defense: curPlayer.defense },
-    enemy: { hp: curEnemy.hp, defense: curEnemy.defense }
-  }
+  // enemy check for thorns, burning, poison?
+
+  return compute('');
 };

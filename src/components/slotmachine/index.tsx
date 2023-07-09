@@ -117,6 +117,7 @@ function SlotMachine() {
     incrementScore,
     spinTokens,
     setSpinTokens,
+    finishSpinTurn,
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -179,6 +180,7 @@ function SlotMachine() {
         // all reels are done spinning, check for points
         sound_reelComplete();
         setSpinLock(false);
+        finishSpinTurn();
       } else if (
         // one reel is done spinning, this doesnt always hit for some reason
 
@@ -231,7 +233,7 @@ function SlotMachine() {
       </ScScoreBox>
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (
-          <ScReelSegment>
+          <ScReelSegment key={reelIdx}>
             <Reel
               key={`reel-${reelIdx}`}
               reelIdx={reelIdx}
@@ -264,3 +266,5 @@ function SlotMachine() {
 }
 
 export default SlotMachine;
+
+

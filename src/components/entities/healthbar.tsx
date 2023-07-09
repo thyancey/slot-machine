@@ -39,11 +39,11 @@ const ScHealthBar = styled.div`
   width: 100%;
 
   p {
-    position:absolute;
-    inset:0;
+    position: absolute;
+    inset: 0;
     z-index: 1;
     font-size: 1.5rem;
-    margin-top: -.4rem;
+    margin-top: -0.4rem;
   }
 `;
 
@@ -72,7 +72,7 @@ const ScDefenseBox = styled.div`
   width: 3rem;
   height: 3.5rem;
   border-radius: 0 0 2rem 2rem;
-  background-color: var(--color-blue);
+  background-color: var(--color-pink);
   border: 0.25rem solid var(--color-grey);
   /* sit over bar */
   z-index: 1;
@@ -81,7 +81,23 @@ const ScDefenseBox = styled.div`
   line-height: 2.75rem;
   font-size: 1.5rem;
   text-align: center;
+
+  .defended & {
+    background-color: var(--color-blue);
+  }
 `;
+
+// const ScNotification = styled.div`
+//   border: 0.5rem solid var(--color-cyan);
+//   background-color: var(--color-cyan);
+//   color: var(--color-black);
+//   border-radius: 2rem;
+//   position: absolute;
+//   padding: 0.5rem;
+//   z-index: 1;
+
+//   transition: top 0.5s, opacity 0.5s;
+// `;
 
 export interface StatInfo {
   [key: string]: number;
@@ -94,9 +110,28 @@ interface PropsEntityStats {
   buffs: EffectGroup[];
 }
 const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
+  // const [prevDefense, setPrevDefense] = useState<number>(0);
+  // const [notifications, setNotifications] = useState<number[]>([]);
+  // const notificationRef = useRef(0);
+
   const healthPerc = useMemo(() => {
     return Math.floor((hp / hpMax) * 100);
   }, [hp, hpMax]);
+
+  // useEffect(() => {
+  //   if (defense !== prevDefense) {
+  //     console.log(`defense ${prevDefense} > ${defense}`);
+  //     setPrevDefense(defense);
+
+  //     if (defense !== 0) {
+  //       console.log(`new: ${defense - prevDefense}`);
+  //       setNotifications([...notifications].concat([defense - prevDefense]));
+  //     }
+  //   }
+  // }, [defense, prevDefense, setNotifications, notifications]);
+
+
+  // console.log(`current ${notificationRef.current} / ${defense}`, notifications);
 
   return (
     <ScWrapper className={defense !== 0 ? 'defended' : ''}>
@@ -104,11 +139,12 @@ const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
         {/* {(defense && <StatLabel type='defense' size={'lg'} value={defense}></StatLabel>) || null} */}
         {/* <StatLabel type={'hp'} size={'lg'} value={`${hp} / ${hpMax}`}></StatLabel> */}
       </ScStatLabels>
-      {defense !== 0 && (
-        <ScDefenseBox>
-          <p>{defense}</p>
-        </ScDefenseBox>
-      )}
+      <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
+      {/* {notifications.map((n, nIdx) => (
+        <ScNotification key={nIdx} className={notificationRef.current !== defense ? 'outro' : 'intro'}>
+          <p>{n}</p>
+        </ScNotification>
+      ))} */}
       <ScHealthBar>
         <p>{`${hp} / ${hpMax}`}</p>
         <ScHealthBarBg style={{ width: `${healthPerc}%` }} />

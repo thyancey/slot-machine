@@ -35,7 +35,7 @@ const AttackBar = ({ attack, modifiers }: PropsEntityStats) => {
   return (
     <ScWrapper>
       <ScStatLabels>
-        {attack && <StatLabel key='attack' type='attack' size={'lg'} value={attack}></StatLabel>}
+        {attack !== 0 && <StatLabel key='attack' type='attack' size={'lg'} value={attack}></StatLabel>}
         {modifiers
           .map((eg: EffectGroup) => {
             return eg.value !== 0 ? (

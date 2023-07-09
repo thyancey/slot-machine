@@ -17,7 +17,7 @@ import {
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { computeRound, getActiveCombos, pickRandomFromArray } from '../components/slotmachine/utils';
+import { computeRound, getActiveCombos, getEffectDelta, pickRandomFromArray } from '../components/slotmachine/utils';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -55,6 +55,10 @@ interface AppContextType {
   turn: number;
   setTurn: (value: SetStateAction<number>) => void;
   finishTurn: () => void;
+  
+  spinTurn: number;
+  setSpinTurn: (value: SetStateAction<number>) => void;
+  finishSpinTurn: () => void;
 
   round: number;
   setRound: (value: SetStateAction<number>) => void;
@@ -81,6 +85,7 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const [spinTurn, setSpinTurn] = useState(-1);
   const [round, setRound] = useState(-1);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
@@ -188,7 +193,7 @@ const AppProvider = ({ children }: Props) => {
     } else {
       setRound(0);
     }
-  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults, reelStates]);
+  }, [round, reelStates, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults ]);
 
   // next turn, fight each other then reset or whatever
   useEffect(() => {
@@ -201,6 +206,22 @@ const AppProvider = ({ children }: Props) => {
     setRound((prev) => prev + 1);
   }, [setRound]);
 
+
+  const finishSpinTurn = useCallback(() => {
+    const attack = getEffectDelta('attack', activeTiles, activeCombos);
+    const defense = getEffectDelta('defense', activeTiles, activeCombos);
+    console.log('spin changed!')
+    setPlayerInfo((prev) => {
+      console.log(`a: ${prev.attack} + ${attack}`);
+      console.log(`d: ${prev.defense} + ${defense}`);
+      return {
+        ...prev,
+        attack: prev.attack + attack,
+        defense: prev.defense + defense,
+      }
+    });
+  }, [ setPlayerInfo, activeTiles, activeCombos ])
+
   const finishTurn = useCallback(() => {
     if (!enemyInfo) {
       setTurn((prev) => prev + 1);
@@ -210,7 +231,7 @@ const AppProvider = ({ children }: Props) => {
     console.log('----> FINISH TURN', playerInfo, enemyInfo, activeTiles, activeCombos);
     if (!enemyInfo) setTurn((prev) => prev + 1);
 
-    const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo, activeTiles, activeCombos);
+    const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
     console.log('roundResult', roundResult);
 
     if (roundResult.player.hp === 0) {
@@ -218,6 +239,7 @@ const AppProvider = ({ children }: Props) => {
     } else if (roundResult.enemy.hp === 0) {
       setPlayerInfo((prev) => ({
         ...prev,
+        attack: roundResult.player.attack,
         hp: roundResult.player.hp,
         defense: roundResult.player.defense,
       }));
@@ -225,15 +247,20 @@ const AppProvider = ({ children }: Props) => {
 
       finishRound();
     } else {
-      setPlayerInfo((prev) => ({
-        ...prev,
-        hp: roundResult.player.hp,
-        defense: roundResult.player.defense,
-      }));
+      setPlayerInfo((prev) => {
+        return {
+          ...prev,
+          attack: roundResult.player.attack,
+          hp: roundResult.player.hp,
+          defense: roundResult.player.defense,
+        }
+      });
+
       setEnemyInfo((prev) => {
         if (!prev) return null;
         return {
           ...prev,
+          attack: roundResult.enemy.attack,
           hp: roundResult.enemy.hp,
           defense: roundResult.enemy.defense,
         };
@@ -247,6 +274,7 @@ const AppProvider = ({ children }: Props) => {
       value={
         {
           activeTiles,
+          finishSpinTurn,
 
           reelCombos,
           setReelCombos,
