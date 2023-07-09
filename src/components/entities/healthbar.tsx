@@ -26,7 +26,7 @@ const ScStatLabels = styled.ul`
 const ScHealthBar = styled.div`
   position: absolute;
   background-color: var(--color-grey);
-  border: 0.5rem solid var(--color-black);
+  border: 0.25rem solid var(--color-grey);
 
   top: 1.85rem;
   border-radius: 1rem;
@@ -43,7 +43,7 @@ const ScHealthBar = styled.div`
     inset:0;
     z-index: 1;
     font-size: 1.5rem;
-    margin-top: -0.25rem;
+    margin-top: 0rem;
   }
 `;
 
@@ -73,12 +73,12 @@ const ScDefenseBox = styled.div`
   height: 4.5rem;
   border-radius: 0 0 2rem 2rem;
   background-color: var(--color-blue);
-  border: 0.5rem solid var(--color-black);
+  border: 0.25rem solid var(--color-grey);
   /* sit over bar */
   z-index: 1;
 
   color: var(--color-black);
-  line-height: 3rem;
+  line-height: 3.5rem;
   font-size: 2rem;
   text-align: center;
 `;

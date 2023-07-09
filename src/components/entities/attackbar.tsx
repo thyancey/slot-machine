@@ -18,7 +18,7 @@ const ScStatLabels = styled.ul`
   > li {
     display: inline-block;
     vertical-align: bottom;
-    width: 3rem;
+    width: 5rem;
   }
 `;
 

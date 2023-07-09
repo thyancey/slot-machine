@@ -5,6 +5,8 @@ const ScOuter = styled.div`
   width: auto;
   height: 7rem;
   position: relative;
+  
+  filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black));
 `;
 
 const ScWrapper = styled.div`
@@ -12,7 +14,6 @@ const ScWrapper = styled.div`
   inset: 0;
   background-color: var(--color-black);
   color: var(--color-white);
-  border-radius: 0.6rem;
   padding: 1rem;
 
   font-family: var(--font-8bit2);
@@ -22,13 +23,12 @@ const ScWrapper = styled.div`
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     line-height: 1.5rem;
   }
-
   &.winner {
-    background-color: var(--color-pink);
-    color: var(--color-white);
+    background-color: var(--color-blue);
+    color: var(--color-black);
   }
 `;
 
@@ -38,7 +38,7 @@ interface Props {
 }
 function Display({ messages, displayType }: Props) {
   const className = useMemo(() => {
-    return displayType === 'combo' ? 'combo' : '';
+    return displayType === 'combo' ? 'winner' : '';
   }, [displayType]);
 
   return (

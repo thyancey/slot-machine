@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react';
 import { AppContext } from '../../../store/appcontext';
 import Display from './display';
 import styled from 'styled-components';
+import { getEffectDelta } from '../utils';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
@@ -11,13 +12,23 @@ const ScDisplay = styled.div`
 `;
 
 function PlayerDisplay() {
-  const { activeCombos } = useContext(AppContext);
+  const { activeCombos, activeTiles } = useContext(AppContext);
+
+  const attack = useMemo(() => {
+    return getEffectDelta('attack', activeTiles, activeCombos);
+  }, [activeTiles, activeCombos]);
+
   const messages = useMemo(() => {
-    if (activeCombos.length > 0) {
-      return [`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`];
+    const mssgs = [];
+    if (attack !== 0) {
+      mssgs.push(`attack with ${attack} damage`);
     }
-    return ['spin the wheel please'];
-  }, [activeCombos]);
+    if (activeCombos.length > 0) {
+      mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
+    }
+
+    return mssgs.length > 0 ? mssgs : ['SPIN TO WIN'];
+  }, [activeCombos, attack]);
 
   return (
     <ScDisplay>

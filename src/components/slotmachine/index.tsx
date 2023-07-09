@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getRandomIdx } from './utils';
-import { getTileFromDeckIdx } from '../../store/utils';
+// import { getTileFromDeckIdx } from '../../store/utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
@@ -15,12 +15,13 @@ import ScoreBox from '../scorebox';
 const ScWrapper = styled.div`
   padding: 1rem 1rem 2.25rem 1rem;
 
-  filter: var(--filter-shadow2);
+  /* filter: var(--filter-shadow2); */
+  filter: drop-shadow(0.5rem 0.7rem 0 var(--color-purple)) drop-shadow(0.5rem 0.7rem 0 var(--color-purple)) drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
 
   border-radius: 1.5rem;
-  border: 0.75rem solid var(--color-grey-light);
+  /* border: 0.75rem solid var(--color-grey-light); */
 
-  background-color: var(--color-purple);
+  background-color: var(--color-pink);
   text-align: center;
 
   display: grid;
@@ -30,7 +31,8 @@ const ScWrapper = styled.div`
 
   &.lit-up {
     /* border: 0.75rem solid var(--color-pink); */
-    background-color: var(--color-yellow);
+    background-color: var(--color-cyan);
+    filter: drop-shadow(0.5rem 0.7rem 0 var(--color-blue)) drop-shadow(0.5rem 0.7rem 0 var(--color-blue)) drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
   }
 `;
 
@@ -52,24 +54,24 @@ const ScReelContainer = styled.div`
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--color-black);
+  background-color: var(--color-purple);
   border-radius: 0.5rem;
   border-left: 1.1rem solid var(--color-grey-light);
   border-top: 1.1rem solid var(--color-grey);
 `;
 
-const ScReelLabels = styled.div`
-  height: 3.25rem;
+// const ScReelLabels = styled.div`
+//   height: 3.25rem;
 
-  > div {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-  }
-`;
+//   > div {
+//     position: absolute;
+//     display: flex;
+//     justify-content: center;
+//   }
+// `;
 
 const ScScoreBox = styled.div`
-  background-color: var(--color-black);
+  background-color: var(--color-purple);
   border-radius: 0.5rem;
   border-left: 1.1rem solid var(--color-grey-light);
   border-top: 1.1rem solid var(--color-grey);
@@ -187,19 +189,19 @@ function SlotMachine() {
     incrementScore(spinScore);
   }, [spinScore, incrementScore]);
 
-  const resultSet = useMemo(() => {
-    if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
-      // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
-      return [];
-    }
-    return reelResults.map((slotIdx, reelIdx) => {
-      // the undefined check avoids a bug when deleting a reel in the editor
-      // while reelResults are populated
-      if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
-      const deckIdx = reelStates[reelIdx][slotIdx];
-      return getTileFromDeckIdx(deckIdx, tileDeck);
-    });
-  }, [reelResults, reelStates, tileDeck, spinCount]);
+  // const resultSet = useMemo(() => {
+  //   if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
+  //     // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
+  //     return [];
+  //   }
+  //   return reelResults.map((slotIdx, reelIdx) => {
+  //     // the undefined check avoids a bug when deleting a reel in the editor
+  //     // while reelResults are populated
+  //     if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
+  //     const deckIdx = reelStates[reelIdx][slotIdx];
+  //     return getTileFromDeckIdx(deckIdx, tileDeck);
+  //   });
+  // }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
     <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>

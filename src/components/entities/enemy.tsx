@@ -4,25 +4,29 @@ import { AppContext } from '../../store/appcontext';
 import Button from '../button';
 import AttackBar from './attackbar';
 import HealthBar from './healthbar';
+import Display from '../slotmachine/components/display';
 
 const ScCard = styled.div`
   border-radius: 1.5rem;
   padding: 2rem 2rem 1rem 2rem;
-  min-width: 20rem;
 
-  background-color: var(--color-grey);
-  color: var(--color-pink);
-  border: 0.75rem solid var(--color-pink);
-  filter: drop-shadow(0.25rem 0.25rem 1rem var(--color-black));
+  background-color: var(--color-grey-light);
+  color: var(--color-white);
+  /* filter: drop-shadow(0.25rem 0.25rem 1rem var(--color-black)); */
+  
+  filter: drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
 
-  > button {
-    margin-bottom: 1rem;
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  min-width: 30rem;
 `;
 
 const ScEnemy = styled.div`
-  position: relative;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% - 3rem);
 
   font-size: 2rem;
   text-align: center;
@@ -33,19 +37,28 @@ const ScEnemyImage = styled.img`
   height: 8rem;
 `;
 
-const ScGameInfo = styled.ul`
-  display: flex;
-  font-size: 1rem;
-  align-items: center;
-  justify-content: space-between;
+const ScGameInfo = styled.h1`
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
 `;
 
-const ScEnemyGrid = styled.div`
-  display: grid;
-  grid-template-columns: 8rem auto;
-  grid-template-rows: auto;
-  grid-gap: 2rem;
+const ScDisplay = styled.div`
+  background-color: var(--color-black);
+  border-radius: 0.5rem;
+  border-left: 1.1rem solid var(--color-grey);
+  border-top: 1.1rem solid var(--color-grey);
 `;
+
+const ScButton = styled.div`
+  position:absolute;
+  left:calc(100% - 0.5rem);
+  white-space: nowrap;
+  top: 8rem;
+
+  transform-origin: top;
+  transform: rotate(90deg);
+`
 
 export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
@@ -67,20 +80,18 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       <AttackBar attack={enemyInfo.attack} modifiers={[]} />
-      <ScEnemyGrid>
-        <ScEnemy>
-          {/* <ScEnemyImage style={{ 'background': `url(${enemyInfo.img})` }} /> */}
-          <ScEnemyImage src={enemyInfo.img} />
-        </ScEnemy>
+      <ScEnemy>
+        <ScEnemyImage src={enemyInfo.img} />
+      </ScEnemy>
+      <ScDisplay>
+        <Display messages={[`attacks with ${enemyInfo.attack} damage`]} />
+      </ScDisplay>
+      <ScGameInfo>{enemyInfo.label}</ScGameInfo>
+      <ScButton>
         <Button buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
-          {'ATTACK'}
+          {'END TURN'}
         </Button>
-      </ScEnemyGrid>
-      <ScGameInfo>
-        <li>{''}</li>
-        <li>{enemyInfo.label}</li>
-        <li>{`turn #${turn + 1}`}</li>
-      </ScGameInfo>
+      </ScButton>
       <HealthBar hp={enemyInfo.hp} hpMax={enemyInfo.hpMax} defense={enemyInfo.defense} buffs={[]} />
     </ScCard>
   );

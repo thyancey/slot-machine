@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 
 const ScScorebox = styled.div`
   border: var(--border-width-small) solid var(--color-black);
-  border-radius: 0.5rem;
   padding: 0.25rem 0.25rem 0.5rem 0.25rem;
   background-color: var(--color-black);
   text-align: right;
@@ -13,6 +12,8 @@ const ScScorebox = styled.div`
   transition: color .25s ease-in-out, font-size .25s ease-in-out;
   font-size: 3rem;
 
+  filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black));
+  
   &.highlighted{
     color: var(--color-pink);
     font-size: 4rem;
