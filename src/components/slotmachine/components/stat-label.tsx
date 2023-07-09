@@ -44,11 +44,11 @@ const ScCenterer = styled.div`
   text-align: center;
 
   .size-lg >& {
-    width: 6rem;
-    height: 6rem;
-    line-height: 6rem;
+    width: 4rem;
+    height: 4rem;
+    line-height: 4rem;
 
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   
   >img{

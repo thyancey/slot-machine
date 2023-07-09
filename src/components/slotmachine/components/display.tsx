@@ -15,6 +15,7 @@ const ScWrapper = styled.div`
   background-color: var(--color-black);
   color: var(--color-white);
   padding: 1rem;
+  border-radius: 0.5rem;
 
   font-family: var(--font-8bit2);
   transition: background-color ease-out 0.2s, color ease-out 0.2s;
@@ -27,8 +28,8 @@ const ScWrapper = styled.div`
     line-height: 1.5rem;
   }
   &.winner {
-    background-color: var(--color-blue);
-    color: var(--color-black);
+    background-color: var(--color-grey-light);
+    color: var(--color-white);
   }
 `;
 

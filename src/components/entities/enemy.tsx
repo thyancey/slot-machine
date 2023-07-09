@@ -8,13 +8,13 @@ import Display from '../slotmachine/components/display';
 
 const ScCard = styled.div`
   border-radius: 1.5rem;
-  padding: 2rem 2rem 1rem 2rem;
+  padding: 1rem 2rem 2rem 2rem;
 
   background-color: var(--color-grey-light);
   color: var(--color-white);
-  /* filter: drop-shadow(0.25rem 0.25rem 1rem var(--color-black)); */
-  
-  filter: drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
+  position: relative;
+  filter: drop-shadow(0.25rem 0.25rem .5rem var(--color-black));
+  /* filter: drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.5rem 0.7rem 0 var(--color-grey)) drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black)); */
 
   display: flex;
   flex-direction: column;
@@ -26,7 +26,7 @@ const ScCard = styled.div`
 const ScEnemy = styled.div`
   position: absolute;
   right: 0;
-  bottom: calc(100% - 3rem);
+  bottom: calc(100% - 5rem);
 
   font-size: 2rem;
   text-align: center;
@@ -40,7 +40,6 @@ const ScEnemyImage = styled.img`
 const ScGameInfo = styled.h1`
   font-size: 2rem;
   text-align: center;
-  margin-bottom: 1rem;
 `;
 
 const ScDisplay = styled.div`
@@ -51,14 +50,14 @@ const ScDisplay = styled.div`
 `;
 
 const ScButton = styled.div`
-  position:absolute;
-  left:calc(100% - 0.5rem);
+  position: absolute;
+  left: calc(100% - 0.5rem);
   white-space: nowrap;
   top: 8rem;
 
   transform-origin: top;
   transform: rotate(90deg);
-`
+`;
 
 export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
@@ -80,13 +79,13 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       <AttackBar attack={enemyInfo.attack} modifiers={[]} />
+      <ScGameInfo>{enemyInfo.label}</ScGameInfo>
       <ScEnemy>
         <ScEnemyImage src={enemyInfo.img} />
       </ScEnemy>
       <ScDisplay>
         <Display messages={[`attacks with ${enemyInfo.attack} damage`]} />
       </ScDisplay>
-      <ScGameInfo>{enemyInfo.label}</ScGameInfo>
       <ScButton>
         <Button buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
           {'END TURN'}

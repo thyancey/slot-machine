@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
-import Footer from './components/footer';
 import Enemy from './components/entities/enemy';
 import Player from './components/entities/player';
 
@@ -8,9 +7,21 @@ const ScWrapper = styled.main`
   position: absolute;
   inset: 0;
   overflow: hidden;
+`;
+
+const ScMain = styled.div`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+
+  padding: 2rem;
+  padding-bottom: 4rem;
 
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 3rem;
 `;
 
 const ScBg = styled.div`
@@ -27,19 +38,6 @@ const ScBg = styled.div`
   opacity: 0.2;
 `;
 
-const ScMain = styled.main`
-  flex: 1;
-  width: 100%;
-
-  padding: 2rem;
-  padding-bottom: 4rem;
-
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-evenly;
-  align-items: center;
-`;
-
 function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
@@ -48,7 +46,6 @@ function Layout() {
         <Player />
         <Enemy />
       </ScMain>
-      <Footer />
       <ScBg>
         <p>{bgText.join(' ! ')}</p>
       </ScBg>

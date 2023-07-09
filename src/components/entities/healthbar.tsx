@@ -30,7 +30,7 @@ const ScHealthBar = styled.div`
 
   top: 1.85rem;
   border-radius: 1rem;
-  height: 3rem;
+  height: 2rem;
   position: relative;
 
   color: var(--color-white);
@@ -43,7 +43,7 @@ const ScHealthBar = styled.div`
     inset:0;
     z-index: 1;
     font-size: 1.5rem;
-    margin-top: 0rem;
+    margin-top: -.4rem;
   }
 `;
 
@@ -69,8 +69,8 @@ const ScDefenseBox = styled.div`
   position: absolute;
   left: 0rem;
   bottom: -2.5rem;
-  width: 4rem;
-  height: 4.5rem;
+  width: 3rem;
+  height: 3.5rem;
   border-radius: 0 0 2rem 2rem;
   background-color: var(--color-blue);
   border: 0.25rem solid var(--color-grey);
@@ -78,8 +78,8 @@ const ScDefenseBox = styled.div`
   z-index: 1;
 
   color: var(--color-black);
-  line-height: 3.5rem;
-  font-size: 2rem;
+  line-height: 2.75rem;
+  font-size: 1.5rem;
   text-align: center;
 `;
 
