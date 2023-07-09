@@ -87,7 +87,7 @@ interface PropsEntityStats {
   defense: number;
   buffs: EffectGroup[];
 }
-const HealthBar = ({ hp, hpMax, defense, buffs }: PropsEntityStats) => {
+const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
   const healthPerc = useMemo(() => {
     return Math.floor((hp / hpMax) * 100);
   }, [hp, hpMax]);

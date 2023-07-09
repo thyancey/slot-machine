@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
 import Footer from './components/footer';
-import Entities from './components/entities';
 import Enemy from './components/entities/enemy';
 import Player from './components/entities/player';
 

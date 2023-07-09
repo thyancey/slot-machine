@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import StatLabel from '../slotmachine/components/stat-label';
 import { EffectGroup } from '../../store/data';
-import { useMemo } from 'react';
 
 const ScWrapper = styled.div`
   position: absolute;

@@ -48,7 +48,7 @@ const ScEnemyGrid = styled.div`
 `;
 
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults, round } = useContext(AppContext);
+  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
