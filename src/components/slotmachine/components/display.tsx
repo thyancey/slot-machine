@@ -10,7 +10,7 @@ const ScOuter = styled.div`
 const ScWrapper = styled.div`
   position: absolute;
   inset: 0;
-  background-color: var(--color-grey);
+  background-color: var(--color-black);
   color: var(--color-white);
   border-radius: 0.6rem;
   padding: 1rem;

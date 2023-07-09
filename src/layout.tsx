@@ -32,7 +32,7 @@ const ScMain = styled.main`
   width: 100%;
 
   padding: 2rem;
-  padding-bottom: 6rem;
+  padding-bottom: 4rem;
 
   display: flex;
   flex-direction: column-reverse;

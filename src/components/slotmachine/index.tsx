@@ -10,14 +10,15 @@ import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import Controls from './components/controls';
 import PlayerDisplay from './components/player-display';
+import ScoreBox from '../scorebox';
 
 const ScWrapper = styled.div`
-  padding: 2rem 1rem 2.25rem 1rem;
+  padding: 1rem 1rem 2.25rem 1rem;
 
   filter: var(--filter-shadow2);
 
   border-radius: 1.5rem;
-  /* border: 0.75rem solid var(--color-purple); */
+  border: 0.75rem solid var(--color-grey-light);
 
   background-color: var(--color-purple);
   text-align: center;
@@ -37,16 +38,24 @@ const ScReelContainer = styled.div`
   background-color: var(--color-grey);
   height: 100%;
   display: flex;
-  padding: 0.5rem;
+  padding: 0.5rem 0rem 0.75rem 0rem;
+
   border-radius: 0.5rem;
   align-items: center;
   justify-content: center;
-  
-  overflow: hidden; 
+
+  overflow: hidden;
 
   > div {
     margin: 0rem 0.5rem;
   }
+`;
+
+const ScReelSegment = styled.div`
+  background-color: var(--color-black);
+  border-radius: 0.5rem;
+  border-left: 1.1rem solid var(--color-grey-light);
+  border-top: 1.1rem solid var(--color-grey);
 `;
 
 const ScReelLabels = styled.div`
@@ -57,6 +66,13 @@ const ScReelLabels = styled.div`
     display: flex;
     justify-content: center;
   }
+`;
+
+const ScScoreBox = styled.div`
+  background-color: var(--color-black);
+  border-radius: 0.5rem;
+  border-left: 1.1rem solid var(--color-grey-light);
+  border-top: 1.1rem solid var(--color-grey);
 `;
 
 function SlotMachine() {
@@ -187,18 +203,23 @@ function SlotMachine() {
 
   return (
     <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
+      <ScScoreBox>
+        <ScoreBox />
+      </ScScoreBox>
       <ScReelContainer>
         {reelStates.map((reelState, reelIdx) => (
-          <Reel
-            key={`reel-${reelIdx}`}
-            reelIdx={reelIdx}
-            reelState={reelState}
-            tileDeck={tileDeck}
-            spinCount={spinCount}
-            spinLock={spinLock}
-            targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
-            onSpinComplete={onSpinComplete}
-          />
+          <ScReelSegment>
+            <Reel
+              key={`reel-${reelIdx}`}
+              reelIdx={reelIdx}
+              reelState={reelState}
+              tileDeck={tileDeck}
+              spinCount={spinCount}
+              spinLock={spinLock}
+              targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
+              onSpinComplete={onSpinComplete}
+            />
+          </ScReelSegment>
         ))}
       </ScReelContainer>
       {/* <ScReelLabels>
