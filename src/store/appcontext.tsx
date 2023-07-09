@@ -85,7 +85,6 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
-  const [spinTurn, setSpinTurn] = useState(-1);
   const [round, setRound] = useState(-1);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
@@ -210,10 +209,8 @@ const AppProvider = ({ children }: Props) => {
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
     const defense = getEffectDelta('defense', activeTiles, activeCombos);
-    console.log('spin changed!')
+
     setPlayerInfo((prev) => {
-      console.log(`a: ${prev.attack} + ${attack}`);
-      console.log(`d: ${prev.defense} + ${defense}`);
       return {
         ...prev,
         attack: prev.attack + attack,

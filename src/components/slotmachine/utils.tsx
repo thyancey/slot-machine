@@ -7,7 +7,6 @@ import {
   DeckIdxCollection,
   PlayerInfo,
   EffectType,
-  AttackDelta,
 } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
@@ -238,8 +237,9 @@ export const computeRound = (
   const compute = (reason: string) => {
     return {
       result: reason,
-      player: { attack: 0, hp: curPlayer.hp, defense: curPlayer.defense },
-      enemy: { attack: 0, hp: curEnemy.hp, defense: curEnemy.defense },
+      // player: { attack: 0, hp: curPlayer.hp, defense: curPlayer.defense },
+      player: { attack: 0, hp: curPlayer.hp, defense: 0 }, // player has attack and defense reset each turn regardless
+      enemy: { attack: curEnemy.attack, hp: curEnemy.hp, defense: curEnemy.defense }, // TODO: when enemies pick moves, replace attack w/0
     };
   } 
 

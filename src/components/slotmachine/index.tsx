@@ -191,7 +191,7 @@ function SlotMachine() {
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, spinCount, sound_reelComplete]);
+  }, [reelResults, reelStates, spinCount, sound_reelComplete, finishSpinTurn]);
 
   useEffect(() => {
     if (activeCombos.length > 0) {
