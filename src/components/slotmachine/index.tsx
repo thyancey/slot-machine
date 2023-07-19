@@ -11,31 +11,16 @@ import Sound from '../../assets/sounds';
 import PlayerDisplay from './components/player-display';
 import ScoreBox from '../scorebox';
 import SideControls from './components/controls-side';
+import HealthBar from '../entities/healthbar';
 
 const ScWrapper = styled.div`
-  padding: 1rem 1rem 2.25rem 1rem;
-
-  /* filter: var(--filter-shadow2); */
-  filter: drop-shadow(0.5rem 0.7rem 0 var(--color-purple)) drop-shadow(0.5rem 0.7rem 0 var(--color-purple))
-    drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
-
-  border-radius: 1.5rem;
-  /* border: 0.75rem solid var(--color-grey-light); */
-
-  background-color: var(--color-pink);
   text-align: center;
 
   display: grid;
   grid-template-columns: auto min-content;
-  grid-template-rows: auto min-content min-content;
+  grid-template-rows: auto min-content min-content 3rem;
   grid-gap: 1rem;
 
-  &.lit-up {
-    /* border: 0.75rem solid var(--color-pink); */
-    background-color: var(--color-cyan);
-    filter: drop-shadow(0.5rem 0.7rem 0 var(--color-blue)) drop-shadow(0.5rem 0.7rem 0 var(--color-blue))
-      drop-shadow(0.25rem 0.25rem 0.5rem var(--color-black));
-  }
 `;
 
 const ScReelContainer = styled.div`
@@ -59,7 +44,7 @@ const ScReelContainer = styled.div`
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--color-purple);
+  background-color: var(--color-grey);
   border-radius: 0.5rem;
   border-left: 1.1rem solid var(--color-grey-light);
   border-top: 1.1rem solid var(--color-grey);
@@ -95,8 +80,15 @@ const ScSideControls = styled.div`
   height: 100%;
   /* background-color: var(--color-yellow); */
   grid-column: 2;
-  grid-row: 1 / 4;
+  grid-row: 1 / 5;
 `;
+
+
+const ScHealthBar = styled.div` 
+  grid-row: 4;
+  grid-column: 1;
+  position: relative;
+`
 
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
@@ -118,6 +110,7 @@ function SlotMachine() {
     spinTokens,
     setSpinTokens,
     finishSpinTurn,
+    playerInfo
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -227,7 +220,7 @@ function SlotMachine() {
   // }, [reelResults, reelStates, tileDeck, spinCount]);
 
   return (
-    <ScWrapper className={activeCombos.length > 0 ? 'lit-up' : ''}>
+    <ScWrapper>
       <ScScoreBox>
         <ScoreBox />
       </ScScoreBox>
@@ -261,6 +254,10 @@ function SlotMachine() {
       <ScSideControls>
         <SideControls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
       </ScSideControls>
+      
+      <ScHealthBar>
+        <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />
+      </ScHealthBar>
     </ScWrapper>
   );
 }

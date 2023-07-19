@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
-import Enemy from './components/entities/enemy';
 import Player from './components/entities/player';
 
 const ScWrapper = styled.main`
@@ -21,7 +20,6 @@ const ScMain = styled.div`
   flex-direction: column-reverse;
   justify-content: space-evenly;
   align-items: center;
-  gap: 3rem;
 `;
 
 const ScBg = styled.div`
@@ -44,7 +42,6 @@ function Layout() {
     <ScWrapper>
       <ScMain>
         <Player />
-        <Enemy />
       </ScMain>
       <ScBg>
         <p>{bgText.join(' ! ')}</p>

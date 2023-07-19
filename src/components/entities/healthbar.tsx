@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 
 const ScWrapper = styled.div`
   position: absolute;
-  /* left: 2rem; */
-  left: 50%;
-  transform: translateX(-50%);
-  /* right: 2rem; */
-  bottom: 0;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+  width: 100%;
+
+  top: -1.5rem;
   padding: 0 0rem;
   z-index: 1;
   min-width: 25rem;

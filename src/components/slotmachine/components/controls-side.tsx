@@ -25,6 +25,7 @@ const ScInner = styled.div`
   filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black));
   padding: 0.5rem;
   border-radius: 0 0 0.6rem 0;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
