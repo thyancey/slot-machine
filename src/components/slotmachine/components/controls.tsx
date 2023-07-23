@@ -6,11 +6,8 @@ import Button from '../../button';
 const ScWrapper = styled.div`
   background-color: var(--color-black);
   color: var(--color-white);
-  border-radius: 0.6rem;
   width: 100%;
   height: 100%;
-  border-left: 1.1rem solid var(--color-grey-light);
-  border-top: 1.1rem solid var(--color-grey);
 `;
 
 const ScInner = styled.div`

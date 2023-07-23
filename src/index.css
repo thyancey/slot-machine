@@ -13,19 +13,47 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --color-black: #070707;
-  --color-grey: #32292f;
-  --color-grey-light: #574751;
-  --color-grey-lighter: #9c8392;
-  --color-white: #FFF9D6;
-  --color-blue: #00bbf9;
-  --color-cyan: #00f5d4;
-  --color-yellow: #fee440;
-  --color-green: #0bbf00;
-  --color-red: #f15b00;
   --color-orange: #fe8240;
-  --color-pink: #f15bb5;
-  --color-purple: #9b5de5;
+
+  --color-blue: #71acfe;
+  --color-red-light: #ff9fa0;
+  --color-red: #ff7577;
+  --color-red-dark: #a84d4f;
+  --color-green-dark: #4aa850;
+  --color-green: #6dfe79;
+  --color-green-light: #c7ffdd;
+  --color-yellow: #ffff77;
+  --color-purple: #9975ff;
+  --color-pink: #eb99ff;
+  --color-cyan: #99ffff;
+
+  --color-slate-dark: #08141e;
+  --color-slate: #0f2a3f;
+  --color-slate-light: #20394f;
+  --color-slate-lighter: #2b4c69;
+  --color-brown-lighter: #f6d6bd;
+  --color-brown-light: #c3a38a;
+  --color-brown: #997577;
+  --color-brown-dark: #816271;
+  --color-brown-darker: #4e495f;
+
+  
+  --color-white: var(--color-brown-lighter);
+  --color-black: var(--color-slate-dark);
+  --color-grey: var(--color-slate);
+  --color-grey-light: var(--color-slate-light);
+  --color-grey-lighter: var(--color-slate-lighter);
+
+  --color-enemy: var(--color-red);
+  --color-enemy-borderside: var(--color-red-light);
+  --color-enemy-bordertop: var(--color-red-dark);
+
+  --color-player: var(--color-brown);
+  --color-player-borderside: var(--color-brown-dark);
+  --color-player-bordertop: var(--color-brown-darker);
+
+  --color-health: var(--color-red-dark);
+  --color-defense: var(--color-blue);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -40,9 +68,11 @@
   --val-reel-width: 8rem;
   --val-reel-height: 12rem; /* SHOULD MATCH REEL_HEIGHT */
 
+  --val-depth: 1.0rem;
+
   font-family: var(--font-base);
 
-  background-color: var(--color-grey);
+  background-color: var(--color-black);
   color: var(--color-white);
   
   

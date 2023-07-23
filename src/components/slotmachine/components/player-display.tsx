@@ -6,9 +6,11 @@ import { getEffectDelta } from '../utils';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
-  border-radius: 0.5rem;
-  border-left: 1.1rem solid var(--color-grey-light);
-  border-top: 1.1rem solid var(--color-grey);
+  
+  /* border-top: var(--val-depth) solid var(--color-player-bordertop); */
+  border-left: var(--val-depth) solid var(--color-player-borderside);
+  border-right: var(--val-depth) solid var(--color-player-borderside);
+  border-bottom: var(--val-depth) solid var(--color-player-bordertop);
 `;
 
 interface Props {

@@ -7,7 +7,7 @@ import Enemy from './enemy';
 const ScCard = styled.div`
   position: relative;
 
-  box-shadow: 0 0 1rem .5rem var(--color-black);
+  box-shadow: 0 0 1rem .5rem var(--color-slate-light);
   border-radius: 1rem;
 
   display: flex;
@@ -15,7 +15,7 @@ const ScCard = styled.div`
   gap: 0rem;
 
   &.lit-up {
-    box-shadow: 0 0 0.25rem 0.25rem var(--color-grey);
+    box-shadow: 0 0 0.25rem 0.25rem var(--color-brown-dark);
   }
 `;
 
@@ -26,7 +26,7 @@ const ScShadowDiv = styled.div`
   border-radius: 1rem;
 `;
 const ScEnemy = styled.div`
-  background-color: var(--color-pink);
+  background-color: var(--color-enemy);
   border-radius: 1rem 1rem 0 0;
   padding: 1rem;
 
@@ -43,9 +43,9 @@ const ScPlayer = styled.div`
   position: relative;
   padding: 2rem;
   padding-top: 2rem;
-  border-top: 0.5rem dashed var(--color-pink);
+  border-top: 0.25rem dashed var(--color-enemy);
 
-  background-color: var(--color-blue);
+  background-color: var(--color-player);
   border-radius: 0 0 1rem 1rem;
 
   .lit-up & {

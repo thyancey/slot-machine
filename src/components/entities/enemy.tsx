@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import Button from '../button';
 import HealthBar from './healthbar';
 import Display from '../slotmachine/components/display';
+import DisplayButton from '../display-button';
 
 const ScCard = styled.div`
   padding: 1rem 1rem 1rem 1rem;
@@ -16,6 +16,8 @@ const ScCard = styled.div`
   grid-template-columns: auto min-content;
   grid-template-rows: auto min-content 3rem;
   grid-gap: 1rem;
+
+  color: var(--color-black);
 `;
 
 const ScEnemy = styled.div`
@@ -27,7 +29,8 @@ const ScEnemy = styled.div`
   /* right: 0; */
   /* bottom: calc(100% - 5rem); */
 
-  font-size: 2rem;
+  font-size: 3rem;
+  line-height: 4rem;
   text-align: center;
 `;
 
@@ -55,9 +58,11 @@ const ScDisplay = styled.div`
   grid-column: 1;
 
   background-color: var(--color-black);
-  border-radius: 0.5rem;
-  border-left: 1.1rem solid var(--color-grey);
-  border-top: 1.1rem solid var(--color-grey);
+
+  border-top: var(--val-depth) solid var(--color-enemy-bordertop);
+  border-left: var(--val-depth) solid var(--color-enemy-borderside);
+  border-right: var(--val-depth) solid var(--color-enemy-borderside);
+  /* border-bottom: var(--val-depth) solid var(--color-enemy-bordertop); */
 `;
 
 const ScSideControls = styled.div`
@@ -66,23 +71,24 @@ const ScSideControls = styled.div`
   grid-column: 2;
   grid-row: 1 / 4;
 
-  border-left: 1.1rem solid var(--color-grey-light);
-  border-top: 1.1rem solid var(--color-grey);
+  border-top: var(--val-depth) solid var(--color-enemy-bordertop);
+  /* border-left: var(--val-depth) solid var(--color-enemy-borderside); */
+  border-right: var(--val-depth) solid var(--color-enemy-borderside);
+  /* border-bottom: var(--val-depth) solid var(--color-enemy-bordertop); */
+  
   background-color: var(--color-black);
-  border-radius: 0.6rem;
+
+  position: relative;
 `;
 
 const ScButton = styled.div`
   position: absolute;
-  white-space: nowrap;
-  top: 9.25rem;
-  right: -4.75rem;
+  inset: 0.25rem;
 
-  transform-origin: top;
-  transform: rotate(90deg);
+
   > button {
     font-size: 2.25rem;
-    padding: 0.75rem;
+    height: 100%;
   }
 `;
 
@@ -115,9 +121,9 @@ export const Enemy = () => {
       </ScEnemy>
       <ScSideControls>
         <ScButton>
-          <Button buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
-            {'ATTACK!'}
-          </Button>
+          <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
+            {'A T K'}
+          </DisplayButton>
         </ScButton>
       </ScSideControls>
       <ScHealthBar>

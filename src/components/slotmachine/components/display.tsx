@@ -7,8 +7,9 @@ const ScOuter = styled.div`
   position: relative;
 
   cursor: pointer;
+  /* border-radius: 2rem; */
   
-  filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black));
+  /* filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black)); */
 `;
 
 const ScWrapper = styled.div`
@@ -17,7 +18,6 @@ const ScWrapper = styled.div`
   background-color: var(--color-black);
   color: var(--color-white);
   padding: 1rem;
-  border-radius: 0.5rem;
 
   font-family: var(--font-8bit2);
   transition: background-color ease-out 0.2s, color ease-out 0.2s;

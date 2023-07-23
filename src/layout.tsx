@@ -32,8 +32,8 @@ const ScBg = styled.div`
   letter-spacing: -3rem;
   transform: rotate(-20deg);
   top: -50%;
-  color: var(--color-pink);
-  opacity: 0.2;
+  color: var(--color-slate);
+  opacity: 1;
 `;
 
 function Layout() {

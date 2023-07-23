@@ -20,34 +20,44 @@ const ScWrapper = styled.div`
   grid-template-columns: auto min-content;
   grid-template-rows: auto min-content min-content 3rem;
   grid-gap: 1rem;
-
 `;
 
 const ScReelContainer = styled.div`
   grid-row: 2;
   grid-column: 1;
 
-  background-color: var(--color-grey);
+  background-color: var(--color-brown-ligher);
   height: 100%;
   display: flex;
   padding: 0.5rem 0rem 0.75rem 0rem;
 
-  border-radius: 0.5rem;
   align-items: center;
   justify-content: center;
 
   overflow: hidden;
-
-  > div {
-    margin: 0rem 0.5rem;
-  }
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--color-grey);
-  border-radius: 0.5rem;
-  border-left: 1.1rem solid var(--color-grey-light);
-  border-top: 1.1rem solid var(--color-grey);
+  background-color: var(--color-brown);
+  margin: 0rem 0.5rem;
+
+  border-top: var(--val-depth) solid var(--color-player-bordertop);
+  border-left: var(--val-depth) solid var(--color-player-borderside);
+  border-right: var(--val-depth) solid var(--color-player-borderside);
+  border-bottom: var(--val-depth) solid var(--color-player-bordertop);
+
+  &:first-child {
+    border-top: var(--val-depth) solid var(--color-player-bordertop);
+    border-left: var(--val-depth) solid var(--color-player-borderside);
+    border-right: 0;
+    margin-left: 0;
+  }
+  &:last-child {
+    border-top: var(--val-depth) solid var(--color-player-bordertop);
+    border-left: 0;
+    border-right: var(--val-depth) solid var(--color-player-borderside);
+    margin-right: 0;
+  }
 `;
 
 // const ScReelLabels = styled.div`
@@ -65,9 +75,11 @@ const ScScoreBox = styled.div`
   grid-column: 1;
 
   background-color: var(--color-purple);
-  border-radius: 0.5rem;
-  border-left: 1.1rem solid var(--color-grey-light);
-  border-top: 1.1rem solid var(--color-grey);
+  
+  border-top: var(--val-depth) solid var(--color-player-bordertop);
+  border-left: var(--val-depth) solid var(--color-player-borderside);
+  border-right: var(--val-depth) solid var(--color-player-borderside);
+  /* border-bottom: var(--val-depth) solid var(--color-player-bordertop); */
 `;
 
 const ScDisplay = styled.div`
@@ -83,12 +95,11 @@ const ScSideControls = styled.div`
   grid-row: 1 / 5;
 `;
 
-
-const ScHealthBar = styled.div` 
+const ScHealthBar = styled.div`
   grid-row: 4;
   grid-column: 1;
   position: relative;
-`
+`;
 
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
@@ -110,7 +121,7 @@ function SlotMachine() {
     spinTokens,
     setSpinTokens,
     finishSpinTurn,
-    playerInfo
+    playerInfo,
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -241,12 +252,12 @@ function SlotMachine() {
         ))}
       </ScReelContainer>
       <ScDisplay>
-        <PlayerDisplay onClick={() => triggerSpin(reelStates)}/>
+        <PlayerDisplay onClick={() => triggerSpin(reelStates)} />
       </ScDisplay>
       <ScSideControls>
         <SideControls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
       </ScSideControls>
-      
+
       <ScHealthBar>
         <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />
       </ScHealthBar>
@@ -255,5 +266,3 @@ function SlotMachine() {
 }
 
 export default SlotMachine;
-
-
