@@ -240,16 +240,8 @@ function SlotMachine() {
           </ScReelSegment>
         ))}
       </ScReelContainer>
-      {/* <ScReelLabels>
-        <div>
-          {resultSet.map((tile, reelIdx) =>
-            tile ? <BasicLabel key={reelIdx} label={`$${tile.score || 0}`} /> : <EmptyResultLabel key={reelIdx} />
-          )}
-          {spinScore > 0 && <BasicLabel isSpecial={true} key='total' label={`$${spinScore}`} />}
-        </div>
-      </ScReelLabels> */}
       <ScDisplay>
-        <PlayerDisplay />
+        <PlayerDisplay onClick={() => triggerSpin(reelStates)}/>
       </ScDisplay>
       <ScSideControls>
         <SideControls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />

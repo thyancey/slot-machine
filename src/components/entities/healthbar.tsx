@@ -12,7 +12,7 @@ const ScWrapper = styled.div`
   padding: 0 0rem;
   z-index: 1;
   min-width: 25rem;
-  filter: var(--filter-shadow2);
+
 `;
 
 const ScStatLabels = styled.ul`
@@ -29,7 +29,7 @@ const ScHealthBar = styled.div`
   border: 0.25rem solid var(--color-grey);
 
   top: 1.85rem;
-  border-radius: 1rem;
+  border-radius: .5rem;
   height: 2rem;
   position: relative;
 
@@ -62,7 +62,7 @@ const ScHealthBarBg = styled.div`
   top: 0;
   left: 0;
   bottom: 0;
-  border-radius: 0.65rem;
+  border-radius: .25rem;
 `;
 
 const ScDefenseBox = styled.div`
@@ -73,7 +73,9 @@ const ScDefenseBox = styled.div`
   height: 3.5rem;
   border-radius: 0 0 2rem 2rem;
   background-color: var(--color-pink);
-  border: 0.25rem solid var(--color-grey);
+  /* border: 0.25rem solid var(--color-grey); */
+  
+  filter: drop-shadow(0.2rem 0.2rem 0.25rem var(--color-grey));
   /* sit over bar */
   z-index: 1;
 

@@ -11,7 +11,10 @@ const ScDisplay = styled.div`
   border-top: 1.1rem solid var(--color-grey);
 `;
 
-function PlayerDisplay() {
+interface Props {
+  onClick?: () => void;
+}
+function PlayerDisplay({onClick}: Props) {
   const { activeCombos, activeTiles } = useContext(AppContext);
 
   const attack = useMemo(() => {
@@ -31,7 +34,7 @@ function PlayerDisplay() {
   }, [activeCombos, attack]);
 
   return (
-    <ScDisplay>
+    <ScDisplay onClick={onClick}>
       <Display messages={messages} displayType={activeCombos.length > 0 ? 'combo' : undefined} />
     </ScDisplay>
   );

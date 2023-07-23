@@ -5,6 +5,8 @@ const ScOuter = styled.div`
   width: auto;
   height: 7rem;
   position: relative;
+
+  cursor: pointer;
   
   filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black));
 `;
