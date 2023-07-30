@@ -3,9 +3,11 @@ import styled from 'styled-components';
 export const StyledButton = styled.button`
   font-family: var(--font-base);
   /* border-radius: 0.25rem; */
-  font-size: 1.5rem;
-  line-height: 2rem;
+
   padding: 0.5rem;
+  
+  font-size: 3rem;
+  line-height: 4rem;
 
   background-color: transparent;
   border: .3rem dashed var(--co-button-primary);

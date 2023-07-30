@@ -103,16 +103,16 @@
 
 
 
-  --co-enemy: var(--color-purple);
-  --co-enemy-borderside: var(--color-purple-light);
-  --co-enemy-bordertop: var(--color-purple-dark);
-  --co-enemy-highlight: var(--color-purple-light);
+  --co-enemy: var(--color-grey);
+  --co-enemy-borderside: var(--color-grey-light);
+  --co-enemy-bordertop: var(--color-grey-dark);
+  --co-enemy-highlight: var(--color-grey-light);
 
-  --co-player: var(--color-blue);
-  --co-player-bordertop: var(--color-blue-dark);
-  --co-player-borderside: var(--color-blue-light);
-  --co-player-borders: var(--color-blue-light);
-  --co-player-highlight: var(--color-blue-light);
+  --co-player: var(--color-yellow);
+  --co-player-bordertop: var(--color-yellow-dark);
+  --co-player-borderside: var(--color-yellow-light);
+  --co-player-borders: var(--color-yellow-light);
+  --co-player-highlight: var(--color-yellow-light);
 
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);

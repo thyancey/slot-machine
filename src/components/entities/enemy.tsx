@@ -73,7 +73,6 @@ const ScButton = styled.div`
 
 
   > button {
-    font-size: 2.25rem;
     height: 100%;
   }
 `;
