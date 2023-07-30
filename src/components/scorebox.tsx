@@ -14,7 +14,7 @@ const ScScorebox = styled.div`
   font-size: 3rem;
 
   &.highlighted{
-    color: var(--color-pink);
+    color: var(--color-white-light);
     font-size: 4rem;
     transition: color .15s ease-out, font-size .15s ease-out;
   }

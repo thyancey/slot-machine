@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
 import Player from './components/entities/player';
+import Palette from './components/palette';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -24,6 +25,8 @@ const ScMain = styled.div`
 
 const ScBg = styled.div`
   position: absolute;
+  background-color: var(--color-black);
+  color: var(--color-black-light);
   inset: calc(-1 * var(--val-reel-height));
   font-size: var(--val-reel-height);
   font-family: var(--font-8bit2);
@@ -39,6 +42,7 @@ function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
+      <Palette />
       <ScMain>
         <Player />
       </ScMain>

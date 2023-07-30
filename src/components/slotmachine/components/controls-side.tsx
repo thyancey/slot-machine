@@ -1,8 +1,6 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
-import Button from '../../button';
-import DepthButton from '../../depth-button';
 import DisplayButton from '../../display-button';
 
 const ScWrapper = styled.div`

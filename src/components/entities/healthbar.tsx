@@ -92,8 +92,8 @@ const ScDefenseBox = styled.div`
 `;
 
 // const ScNotification = styled.div`
-//   border: 0.5rem solid var(--color-cyan);
-//   background-color: var(--color-cyan);
+//   border: 0.5rem solid var(--color-green);
+//   background-color: var(--color-green);
 //   color: var(--color-black);
 //   border-radius: 2rem;
 //   position: absolute;

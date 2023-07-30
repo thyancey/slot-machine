@@ -123,7 +123,7 @@ const ScRemoveLabel = styled.div`
   }
   > div {
     position: absolute;
-    background-color: var(--color-pink);
+    background-color: var(--color-red);
     width: 100%;
     height: 100%;
     opacity: 0.9;

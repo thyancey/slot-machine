@@ -30,7 +30,7 @@ const ScWrapper = styled.div`
     line-height: 1.5rem;
   }
   &.winner {
-    background-color: var(--color-grey);
+    background-color: var(--color-black-light);
     color: var(--color-white);
   }
 `;
