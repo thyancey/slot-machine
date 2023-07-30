@@ -6,13 +6,12 @@ const ScWrapper = styled.div`
   position: absolute;
   /* left: 50%; */
   /* transform: translateX(-50%); */
-  width: 100%;
+  width: calc(100% - 2rem);
 
   top: -1.5rem;
   padding: 0 0rem;
   z-index: 1;
-  min-width: 25rem;
-
+  /* min-width: 25rem; */
 `;
 
 const ScStatLabels = styled.ul`
@@ -25,8 +24,7 @@ const ScStatLabels = styled.ul`
 
 const ScHealthBar = styled.div`
   position: absolute;
-  background-color: var(--co-health);
-  border: 0.25rem solid var(--co-health);
+  border: 0.25rem solid var(--color-white);
 
   top: 1.85rem;
   border-radius: .5rem;
@@ -50,7 +48,6 @@ const ScHealthBar = styled.div`
 const ScHealthBarBg = styled.div`
   position: absolute;
   background-color: var(--co-health);
-  /* border: 0.25rem solid var(--color-grey); */
 
   .defended & {
     background-color: var(--co-defense);
@@ -67,22 +64,21 @@ const ScHealthBarBg = styled.div`
 
 const ScDefenseBox = styled.div`
   position: absolute;
-  left: 0rem;
-  bottom: -2.5rem;
-  width: 3rem;
-  height: 3.5rem;
+  left: -0.25rem;
+  bottom: -2.25rem;
+  width: 2.5rem;
+  height: 3rem;
   border-radius: 0 0 2rem 2rem;
-  border: .25rem solid var(--co-health);
   background-color: var(--co-defense);
   opacity: 0;
-  /* border: 0.25rem solid var(--color-grey); */
+  border: 0.25rem solid var(--color-white);
+  color: var(--color-white);
   
   /* filter: drop-shadow(0.2rem 0.2rem 0.25rem var(--color-grey)); */
   /* sit over bar */
   z-index: 1;
 
-  color: var(--color-black);
-  line-height: 2.75rem;
+  line-height: 2.25rem;
   font-size: 1.5rem;
   text-align: center;
 

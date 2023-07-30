@@ -11,19 +11,18 @@ import Sound from '../../assets/sounds';
 import PlayerDisplay from './components/player-display';
 import ScoreBox from '../scorebox';
 import SideControls from './components/controls-side';
-import HealthBar from '../entities/healthbar';
 
 const ScWrapper = styled.div`
   text-align: center;
 
   display: grid;
-  grid-template-columns: auto min-content;
-  grid-template-rows: auto min-content min-content 3rem;
+  grid-template-columns: auto;
+  grid-template-rows: min-content min-content auto ;
   grid-gap: 1rem;
 `;
 
 const ScReelContainer = styled.div`
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
 
   height: 100%;
@@ -70,33 +69,28 @@ const ScReelSegment = styled.div`
 // `;
 
 const ScScoreBox = styled.div`
-  grid-row: 1;
+  grid-row: 3;
   grid-column: 1;
 
   background-color: var(--color-black);
   
-  border-top: var(--val-depth) solid var(--co-player-bordertop);
+  /* border-top: var(--val-depth) solid var(--co-player-bordertop); */
   border-left: var(--val-depth) solid var(--co-player-borderside);
   border-right: var(--val-depth) solid var(--co-player-borderside);
-  /* border-bottom: var(--val-depth) solid var(--co-player-bordertop); */
+  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
 `;
 
 const ScDisplay = styled.div`
-  grid-row: 3;
+  grid-row: 2;
   grid-column: 1;
 `;
 
 const ScSideControls = styled.div`
+  position:absolute;
+  left:100%;
+  top:0;
   width: 7rem;
   height: 100%;
-  grid-column: 2;
-  grid-row: 1 / 5;
-`;
-
-const ScHealthBar = styled.div`
-  grid-row: 4;
-  grid-column: 1;
-  position: relative;
 `;
 
 function SlotMachine() {
@@ -250,15 +244,11 @@ function SlotMachine() {
         ))}
       </ScReelContainer>
       <ScDisplay>
-        <PlayerDisplay onClick={() => triggerSpin(reelStates)} />
+        <PlayerDisplay onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo}/>
       </ScDisplay>
       <ScSideControls>
         <SideControls spinLock={spinLock} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
       </ScSideControls>
-
-      <ScHealthBar>
-        <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />
-      </ScHealthBar>
     </ScWrapper>
   );
 }

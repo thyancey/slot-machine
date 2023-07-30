@@ -14,10 +14,6 @@ const ScWrapper = styled.div`
     line-height: 4rem;
   }
 
-  border-top: var(--val-depth) solid var(--co-player-bordertop);
-  /* border-left: var(--val-depth) solid var(--co-player-borderside); */
-  border-right: var(--val-depth) solid var(--co-player-borderside);
-  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
 `;
 
 const ScInner = styled.div`

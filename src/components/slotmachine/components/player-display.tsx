@@ -1,8 +1,9 @@
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../../../store/appcontext';
-import Display from './display';
+import Display from './new-display';
 import styled from 'styled-components';
 import { getEffectDelta } from '../utils';
+import { PlayerInfo } from '../../../store/data';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
@@ -15,8 +16,9 @@ const ScDisplay = styled.div`
 
 interface Props {
   onClick?: () => void;
+  playerInfo: PlayerInfo;
 }
-function PlayerDisplay({onClick}: Props) {
+function PlayerDisplay({onClick, playerInfo}: Props) {
   const { activeCombos, activeTiles } = useContext(AppContext);
 
   const attack = useMemo(() => {
@@ -37,7 +39,7 @@ function PlayerDisplay({onClick}: Props) {
 
   return (
     <ScDisplay onClick={onClick}>
-      <Display messages={messages} displayType={activeCombos.length > 0 ? 'combo' : undefined} />
+      <Display playerInfo={playerInfo} messages={messages} displayType={activeCombos.length > 0 ? 'combo' : undefined} />
     </ScDisplay>
   );
 }

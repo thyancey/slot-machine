@@ -1,21 +1,18 @@
 import styled from 'styled-components';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import HealthBar from './healthbar';
-import Display from '../slotmachine/components/display';
+import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
 
 const ScCard = styled.div`
-  padding: 1rem 1rem 1rem 1rem;
-
   position: relative;
 
   min-width: 30rem;
 
   display: grid;
-  grid-template-columns: auto min-content;
-  grid-template-rows: auto min-content 3rem;
-  grid-gap: 1rem;
+  grid-template-columns: auto;
+  grid-template-rows: min-content auto ;
+  grid-gap: 0.5rem;
 
   color: var(--color-black);
 `;
@@ -42,15 +39,9 @@ const ScEnemyImage = styled.img`
   height: 8rem;
 `;
 
-const ScHealthBar = styled.div`
-  grid-row: 3;
-  grid-column: 1;
-  position: relative;
-`;
-
 const ScGameInfo = styled.h1`
   font-size: 2rem;
-  text-align: center;
+  text-align: right;
 `;
 
 const ScDisplay = styled.div`
@@ -66,19 +57,14 @@ const ScDisplay = styled.div`
 `;
 
 const ScSideControls = styled.div`
+  position: absolute;
+  left: 100%;
+  margin-left: 1rem;
+  top: 0;
   width: 7rem;
   height: 100%;
-  grid-column: 2;
-  grid-row: 1 / 4;
-
-  border-top: var(--val-depth) solid var(--co-enemy-bordertop);
-  /* border-left: var(--val-depth) solid var(--co-enemy-borderside); */
-  border-right: var(--val-depth) solid var(--co-enemy-borderside);
-  /* border-bottom: var(--val-depth) solid var(--co-enemy-bordertop); */
   
   background-color: var(--color-black);
-
-  position: relative;
 `;
 
 const ScButton = styled.div`
@@ -112,13 +98,13 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       {/* <AttackBar attack={enemyInfo.attack} modifiers={[]} /> */}
-      <ScDisplay>
-        <Display messages={[`attacks with ${enemyInfo.attack} damage`]} />
-      </ScDisplay>
       <ScEnemy>
-        <ScGameInfo>{enemyInfo.label}</ScGameInfo>
-        <ScEnemyImage src={enemyInfo.img} />
+        <ScGameInfo>{`enemy: ${enemyInfo.label}`}</ScGameInfo>
+        {/* <ScEnemyImage src={enemyInfo.img} /> */}
       </ScEnemy>
+      <ScDisplay>
+        <Display playerInfo={enemyInfo} messages={[`attacks with ${enemyInfo.attack} damage`]} />
+      </ScDisplay>
       <ScSideControls>
         <ScButton>
           <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
@@ -126,9 +112,6 @@ export const Enemy = () => {
           </DisplayButton>
         </ScButton>
       </ScSideControls>
-      <ScHealthBar>
-        <HealthBar hp={enemyInfo.hp} hpMax={enemyInfo.hpMax} defense={enemyInfo.defense} buffs={[]} />
-      </ScHealthBar>
     </ScCard>
   );
 };

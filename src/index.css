@@ -114,7 +114,7 @@
   --co-player-borders: var(--color-blue-light);
   --co-player-highlight: var(--color-blue-light);
 
-  --co-health: var(--color-grey-dark);
+  --co-health: var(--color-red);
   --co-defense: var(--color-blue);
 
   --co-reel-divider: var(--color-blue);
@@ -137,8 +137,8 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 8rem;
-  --val-reel-height: 12rem; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-width: 10rem;
+  --val-reel-height: 15rem; /* SHOULD MATCH REEL_HEIGHT */
 
   --val-depth: 1.0rem;
 
