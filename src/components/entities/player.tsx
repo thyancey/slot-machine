@@ -50,7 +50,7 @@ const ScPlayer = styled.div`
 
   .lit-up & {
     ${ScShadowDiv} {
-      box-shadow: 0 0 3rem 1rem var(--co-player);
+      box-shadow: 0 0 3rem 1rem var(--co-player-highlight);
     }
   }
 `;

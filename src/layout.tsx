@@ -27,6 +27,7 @@ const ScBg = styled.div`
   position: absolute;
   background-color: var(--color-black);
   color: var(--color-black-light);
+
   inset: calc(-1 * var(--val-reel-height));
   font-size: var(--val-reel-height);
   font-family: var(--font-8bit2);
@@ -42,7 +43,7 @@ function Layout() {
   const bgText = Array(100).fill('S L O T S');
   return (
     <ScWrapper>
-      <Palette />
+      {/* <Palette /> */}
       <ScMain>
         <Player />
       </ScMain>
