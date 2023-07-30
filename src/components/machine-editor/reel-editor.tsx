@@ -33,7 +33,7 @@ const ScTiles = styled.ul``;
 const ScInsertTileButton = styled.button`
   font-size: 1rem;
   background-color: var(--color-grey);
-  border: 0.125rem dashed var(--color-pink);
+  border: 0.125rem dashed var(--color-white);
   
 
   margin-bottom: 0.25rem;
@@ -70,7 +70,7 @@ const ScInsertTileButton = styled.button`
 
   &.active:hover {
     max-height: 5rem;
-    background-color: var(--color-pink);
+    background-color: var(--color-white);
     span{
       opacity:0;
     }
@@ -108,7 +108,6 @@ const ScRemoveLabel = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  /* border: 0.125rem dashed var(--color-pink); */
 
   cursor: pointer;
   opacity: 0;

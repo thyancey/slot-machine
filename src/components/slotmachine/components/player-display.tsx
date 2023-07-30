@@ -7,10 +7,10 @@ import { getEffectDelta } from '../utils';
 const ScDisplay = styled.div`
   background-color: var(--color-black);
   
-  /* border-top: var(--val-depth) solid var(--color-player-bordertop); */
-  border-left: var(--val-depth) solid var(--color-player-borderside);
-  border-right: var(--val-depth) solid var(--color-player-borderside);
-  border-bottom: var(--val-depth) solid var(--color-player-bordertop);
+  /* border-top: var(--val-depth) solid var(--co-player-bordertop); */
+  border-left: var(--val-depth) solid var(--co-player-borderside);
+  border-right: var(--val-depth) solid var(--co-player-borderside);
+  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
 `;
 
 interface Props {

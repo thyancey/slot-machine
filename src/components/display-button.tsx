@@ -8,8 +8,8 @@ export const StyledButton = styled.button`
   padding: 0.5rem;
 
   background-color: transparent;
-  border: .3rem dashed var(--color-pink);
-  color: var(--color-white);
+  border: .3rem dashed var(--co-button-primary);
+  color: var(--co-button-primary);
 
   cursor: pointer;
 `;

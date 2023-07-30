@@ -30,7 +30,8 @@ const ScWrapper = styled.div`
   position: relative;
 
   /* makes a cutout */
-  clip-path: inset(0 0 round 10px);
+  /* clip-path: inset(0 0 round 10px); */
+  clip-path: inset(0 0);
 `;
 
 // shadow at top/bottom of reel to give depth effect

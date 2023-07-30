@@ -7,14 +7,14 @@ export const StyledButton = styled.button`
   line-height: 2rem;
   padding: 0.5rem;
 
-  /* background-color: var(--color-player); */
+  /* background-color: var(--co-player); */
   background-color: transparent;
-  border: 1rem dashed var(--color-player);
+  border: 1rem dashed var(--co-player);
   color: var(--color-white);
-  border-top: var(--val-depth) solid var(--color-player-bordertop);
-  border-bottom: var(--val-depth) solid var(--color-player-bordertop);
-  border-left: var(--val-depth) solid var(--color-player-borderside);
-  border-right: var(--val-depth) solid var(--color-player-borderside);
+  border-top: var(--val-depth) solid var(--co-player-bordertop);
+  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
+  border-left: var(--val-depth) solid var(--co-player-borderside);
+  border-right: var(--val-depth) solid var(--co-player-borderside);
 
   cursor: pointer;
   &:hover{
@@ -59,15 +59,6 @@ export const StyledButton = styled.button`
     border-right: 0;
     border-bottom: 0;
   }
-
-  /* &.bs-special{
-    background-color: var(--color-purple);
-    border-color: var(--color-cyan);
-    
-    &:hover{
-      background-color: var(--color-pink);
-    }
-  } */
 `;
 
 type ButtonStyle = 'normal' | 'special' | 'disabled';

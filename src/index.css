@@ -13,47 +13,135 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --color-orange: #fe8240;
+  /*
+  --hsl-zzzz-h: 359;
+  --hsl-zzzz-s: 100%;
+  --hsl-zzzz-l: 73%;
+  --hsl-zzzz: var(--hsl-zzzz-h), var(--hsl-zzzz-s), var(--hsl-zzzz-l);
 
-  --color-blue: #71acfe;
-  --color-red-light: #ff9fa0;
-  --color-red: #ff7577;
-  --color-red-dark: #a84d4f;
-  --color-green-dark: #4aa850;
-  --color-green: #6dfe79;
-  --color-green-light: #c7ffdd;
-  --color-yellow: #ffff77;
-  --color-purple: #9975ff;
-  --color-pink: #eb99ff;
-  --color-cyan: #99ffff;
+  --color-zzzz: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), var(--hsl-zzzz-l), 1);
+  --color-zzzz-dark: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), calc(var(--hsl-zzzz-l) * .9));
+  --color-zzzz-light: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), calc(var(--hsl-zzzz-l) / .9));
+  --color-zzz-50: hsla(var(--hsl-zzz), .5);
+  --color-zzz-faded: hsl(var(--hsl-zzz-h), calc(var(--hsl-zzz-s) / 2), var(--hsl-zzz-l));
+  --color-zzz-warm: hsl(calc(var(--hsl-zzz-h) + 20), var(--hsl-zzz-s), var(--hsl-zzz-l));
+  --color-zzz-cold: hsl(calc(var(--hsl-zzz-h) - 20), var(--hsl-zzz-s), var(--hsl-zzz-l)); 
+  */
 
-  --color-slate-dark: #08141e;
-  --color-slate: #0f2a3f;
-  --color-slate-light: #20394f;
-  --color-slate-lighter: #2b4c69;
-  --color-brown-lighter: #f6d6bd;
-  --color-brown-light: #c3a38a;
-  --color-brown: #997577;
-  --color-brown-dark: #816271;
-  --color-brown-darker: #4e495f;
+  --hsl-red-h: 359;
+  --hsl-red-s: 100%;
+  --hsl-red-l: 73%;
+  --hsl-red: var(--hsl-red-h), var(--hsl-red-s), var(--hsl-red-l);
 
-  
-  --color-white: var(--color-brown-lighter);
-  --color-black: var(--color-slate-dark);
-  --color-grey: var(--color-slate);
-  --color-grey-light: var(--color-slate-light);
-  --color-grey-lighter: var(--color-slate-lighter);
+  --hsl-yellow-h: 44;
+  --hsl-yellow-s: 100%;
+  --hsl-yellow-l: 52%;
+  --hsl-yellow: var(--hsl-yellow-h), var(--hsl-yellow-s), var(--hsl-yellow-l);
 
-  --color-enemy: var(--color-red);
-  --color-enemy-borderside: var(--color-red-light);
-  --color-enemy-bordertop: var(--color-red-dark);
+  --hsl-green-h: 117;
+  --hsl-green-s: 100%;
+  --hsl-green-l: 37%;
+  --hsl-green: var(--hsl-green-h), var(--hsl-green-s), var(--hsl-green-l);
+ 
+  --hsl-blue-h: 195;
+  --hsl-blue-s: 95%;
+  --hsl-blue-l: 45%;
+  --hsl-blue: var(--hsl-blue-h), var(--hsl-blue-s), var(--hsl-blue-l);
 
-  --color-player: var(--color-brown);
-  --color-player-borderside: var(--color-brown-dark);
-  --color-player-bordertop: var(--color-brown-darker);
+  --hsl-cyan-h: 172;
+  --hsl-cyan-s: 100%;
+  --hsl-cyan-l: 48%;
+  --hsl-cyan: var(--hsl-cyan-h), var(--hsl-cyan-s), var(--hsl-cyan-l);
 
-  --color-health: var(--color-red-dark);
-  --color-defense: var(--color-blue);
+  --hsl-purple-h: 267;
+  --hsl-purple-s: 72%;
+  --hsl-purple-l: 63%;
+  --hsl-purple: var(--hsl-purple-h), var(--hsl-purple-s), var(--hsl-purple-l);
+
+  --hsl-pink-h: 324;
+  --hsl-pink-s: 84%;
+  --hsl-pink-l: 65%;
+  --hsl-pink: var(--hsl-pink-h), var(--hsl-pink-s), var(--hsl-pink-l);
+
+  --hsl-grey-h: 195;
+  --hsl-grey-s: 6%;
+  --hsl-grey-l: 40%;
+  --hsl-grey: var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l);
+
+  --hsl-black-h: var(--hsl-grey-h);
+  --hsl-black-s: var(--hsl-grey-s);
+  --hsl-black-l: 10%;
+  --hsl-black: var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l);
+
+  --hsl-white-h: var(--hsl-grey-h);
+  --hsl-white-s: var(--hsl-grey-s);
+  --hsl-white-l: 90%;
+  --hsl-white: var(--hsl-white-h), var(--hsl-white-s), var(--hsl-white-l);
+
+
+  --color-red: hsl(var(--hsl-red-h), var(--hsl-red-s), var(--hsl-red-l), 1);
+  --color-red-dark: hsl(var(--hsl-red-h), var(--hsl-red-s), calc(var(--hsl-red-l) * .9));
+  --color-red-light: hsl(var(--hsl-red-h), var(--hsl-red-s), calc(var(--hsl-red-l) / .9));
+
+  --color-purple: hsl(var(--hsl-purple-h), var(--hsl-purple-s), var(--hsl-purple-l), 1);
+  --color-purple-dark: hsl(var(--hsl-purple-h), var(--hsl-purple-s), calc(var(--hsl-purple-l) * .9));
+  --color-purple-light: hsl(var(--hsl-purple-h), var(--hsl-purple-s), calc(var(--hsl-purple-l) / .9));
+  --color-purple-50: hsla(var(--hsl-purple), .5);
+
+  --color-pink: hsl(var(--hsl-pink-h), var(--hsl-pink-s), var(--hsl-pink-l), 1);
+  --color-pink-dark: hsl(var(--hsl-pink-h), var(--hsl-pink-s), calc(var(--hsl-pink-l) * .9));
+  --color-pink-light: hsl(var(--hsl-pink-h), var(--hsl-pink-s), calc(var(--hsl-pink-l) / .9));
+
+  --color-blue: hsl(var(--hsl-blue-h), var(--hsl-blue-s), var(--hsl-blue-l), 1);
+  --color-blue-dark: hsl(var(--hsl-blue-h), var(--hsl-blue-s), calc(var(--hsl-blue-l) * .9));
+  --color-blue-light: hsl(var(--hsl-blue-h), var(--hsl-blue-s), calc(var(--hsl-blue-l) / .9));
+
+  --color-cyan: hsl(var(--hsl-cyan-h), var(--hsl-cyan-s), var(--hsl-cyan-l), 1);
+  --color-cyan-dark: hsl(var(--hsl-cyan-h), var(--hsl-cyan-s), calc(var(--hsl-cyan-l) * .9));
+  --color-cyan-light: hsl(var(--hsl-cyan-h), var(--hsl-cyan-s), calc(var(--hsl-cyan-l) / .9));
+
+  --color-green: hsl(var(--hsl-green-h), var(--hsl-green-s), var(--hsl-green-l), 1);
+  --color-green-dark: hsl(var(--hsl-green-h), var(--hsl-green-s), calc(var(--hsl-green-l) * .9));
+  --color-green-light: hsl(var(--hsl-green-h), var(--hsl-green-s), calc(var(--hsl-green-l) / .9));
+
+  --color-yellow: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), var(--hsl-yellow-l), 1);
+  --color-yellow-dark: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) * .9));
+  --color-yellow-light: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), 80%);
+
+  --color-grey: hsl(var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l), 1);
+  --color-grey-dark: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) * .9));
+  --color-grey-light: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) / .9));
+
+  --color-black: hsl(var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l), 1);
+  --color-black-dark: hsl(var(--hsl-black-h), var(--hsl-black-s), 5%);
+  --color-black-light: hsl(var(--hsl-black-h), var(--hsl-black-s), 15%);
+
+  --color-white: hsl(var(--hsl-white-h), var(--hsl-white-s), var(--hsl-white-l), 1);
+  --color-white-dark: hsl(var(--hsl-white-h), var(--hsl-white-s), 85%);
+  --color-white-light: hsl(var(--hsl-white-h), var(--hsl-white-s), 95%);
+
+  --co-enemy: var(--color-purple);
+  --co-enemy-highlight: var(--color-purple-light);
+  --co-enemy-borderside: var(--color-purple-light);
+  --co-enemy-bordertop: var(--color-purple-dark);
+
+  --co-player: var(--color-grey);
+  --co-player-bordertop: var(--color-grey-dark);
+  --co-player-borderside: var(--color-grey-light);
+  --co-player-borders: var(--color-grey-light);
+
+  --co-health: var(--color-red-dark);
+  --co-defense: var(--color-blue);
+
+  --co-reel-divider: var(--color-blue);
+
+  --co-card-primary: var(--color-pink);
+  --co-card-secondary: var(--color-purple);
+
+  --co-button-primary: var(--color-purple);
+  --co-button-secondary: var(--color-purple);
+  --co-button-disabled-primary: var(--color-grey-light);
+  --co-button-disabled-secondary: var(--color-grey);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -72,9 +160,8 @@
 
   font-family: var(--font-base);
 
-  background-color: var(--color-black);
-  color: var(--color-white);
-  
+  background-color: var(--color-black-dark);
+  color: var(--color-purple-50);
   
   user-select: none;
 }

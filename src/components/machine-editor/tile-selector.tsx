@@ -18,7 +18,7 @@ const ScTile = styled.li`
   padding: 0;
   list-style: none;
   padding: 1rem;
-  border: var(--border-width-small) solid var(--color-pink);
+  border: var(--border-width-small) solid var(--color-white);
   border-radius: 1.5rem;
 
   display: flex;
@@ -31,14 +31,14 @@ const ScTile = styled.li`
   transition: background-color 0.2s;
 
   &.chosen {
-    background-color: var(--color-pink);
+    background-color: var(--color-white);
   }
 
   &:hover {
-    background-color: var(--color-pink);
+    background-color: var(--color-white);
 
     &.chosen {
-      background-color: var(--color-pink);
+      background-color: var(--color-white);
     }
   }
 

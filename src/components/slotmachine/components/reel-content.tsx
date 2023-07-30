@@ -10,7 +10,7 @@ const ScWrapper = styled.div<ScProps>`
   height: ${(p) => p.height}px;
   color: var(--color-black);
   text-align: center;
-  border-bottom: 0.25rem solid var(--color-blue);
+  border-bottom: 0.25rem solid var(--co-reel-divider);
 
   display: flex;
   align-items: center;
@@ -27,7 +27,7 @@ const ScWrapper = styled.div<ScProps>`
     right: 0;
     z-index: 1;
     font-size: 3rem;
-    color: var(--color-cyan);
+    color: var(--color-white);
     -webkit-text-stroke: 2px var(--color-black);
     text-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-black), 2px -2px 0 var(--color-black),
       -2px 2px 0 var(--color-black), 2px 2px 0 var(--color-black);

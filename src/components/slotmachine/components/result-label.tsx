@@ -63,7 +63,7 @@ const ScScorePill = styled(ScPill)`
   color: var(--color-white);
 
   .lit-up & {
-    background-color: var(--color-purple);
+    background-color: var(--color-black);
   }
   ${ScWrapper}.lf-none & {
     height: 1rem;
@@ -72,12 +72,12 @@ const ScScorePill = styled(ScPill)`
   }
 
   ${ScWrapper}.special & {
-    background-color: var(--color-purple);
+    background-color: var(--color-black);
     height: 4rem;
   }
   
   .lit-up ${ScWrapper}.special & {
-    background-color: var(--color-pink);
+    background-color: var(--color-black);
   }
 `;
 

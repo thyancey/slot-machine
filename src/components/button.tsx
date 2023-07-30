@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const StyledButton = styled.button`
-  border: var(--border-width-small) solid var(--color-pink);
-  background-color: var(--color-grey);
+  border: var(--border-width-small) solid var(--color-button-primary);
+  background-color: var(--color-button-secondary);
   font-family: var(--font-base);
   border-radius: 0.75rem;
   font-size: 1.5rem;
@@ -10,26 +10,26 @@ export const StyledButton = styled.button`
   padding: 0.5rem;
 
   cursor: pointer;
-  color: var(--color-white);
+  color: var(--color-button-primary);
   &:hover{
-    background-color: var(--color-pink);
+    background-color: var(--color-button-primary);
   }
 
   &.disabled{
-    border-color: var(--color-grey-light);
-    color: var(--color-grey-light);
+    border-color: var(--co-button-disabled-primary);
+    color: var(--co-button-disabled-primary);
     cursor: default;
     &:hover{
-      background-color: var(--color-grey);
+      background-color: var(--co-button-disabled-secondary);
     }
   }
 
   &.bs-special{
-    background-color: var(--color-purple);
-    border-color: var(--color-cyan);
+    background-color: var(--co-button-secondary);
+    border-color: var(--co-button-primary);
     
     &:hover{
-      background-color: var(--color-pink);
+      background-color: var(--co-button-primary);
     }
   }
 `;

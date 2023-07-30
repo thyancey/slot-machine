@@ -59,10 +59,10 @@ const ScDisplay = styled.div`
 
   background-color: var(--color-black);
 
-  border-top: var(--val-depth) solid var(--color-enemy-bordertop);
-  border-left: var(--val-depth) solid var(--color-enemy-borderside);
-  border-right: var(--val-depth) solid var(--color-enemy-borderside);
-  /* border-bottom: var(--val-depth) solid var(--color-enemy-bordertop); */
+  border-top: var(--val-depth) solid var(--co-enemy-bordertop);
+  border-left: var(--val-depth) solid var(--co-enemy-borderside);
+  border-right: var(--val-depth) solid var(--co-enemy-borderside);
+  /* border-bottom: var(--val-depth) solid var(--co-enemy-bordertop); */
 `;
 
 const ScSideControls = styled.div`
@@ -71,10 +71,10 @@ const ScSideControls = styled.div`
   grid-column: 2;
   grid-row: 1 / 4;
 
-  border-top: var(--val-depth) solid var(--color-enemy-bordertop);
-  /* border-left: var(--val-depth) solid var(--color-enemy-borderside); */
-  border-right: var(--val-depth) solid var(--color-enemy-borderside);
-  /* border-bottom: var(--val-depth) solid var(--color-enemy-bordertop); */
+  border-top: var(--val-depth) solid var(--co-enemy-bordertop);
+  /* border-left: var(--val-depth) solid var(--co-enemy-borderside); */
+  border-right: var(--val-depth) solid var(--co-enemy-borderside);
+  /* border-bottom: var(--val-depth) solid var(--co-enemy-bordertop); */
   
   background-color: var(--color-black);
 

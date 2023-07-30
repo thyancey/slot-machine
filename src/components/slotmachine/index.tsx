@@ -26,7 +26,6 @@ const ScReelContainer = styled.div`
   grid-row: 2;
   grid-column: 1;
 
-  background-color: var(--color-brown-ligher);
   height: 100%;
   display: flex;
   padding: 0.5rem 0rem 0.75rem 0rem;
@@ -38,24 +37,24 @@ const ScReelContainer = styled.div`
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--color-brown);
+  background-color: var(--co-player-borders);
   margin: 0rem 0.5rem;
 
-  border-top: var(--val-depth) solid var(--color-player-bordertop);
-  border-left: var(--val-depth) solid var(--color-player-borderside);
-  border-right: var(--val-depth) solid var(--color-player-borderside);
-  border-bottom: var(--val-depth) solid var(--color-player-bordertop);
+  border-top: var(--val-depth) solid var(--co-player-bordertop);
+  border-left: var(--val-depth) solid var(--co-player-borderside);
+  border-right: var(--val-depth) solid var(--co-player-borderside);
+  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
 
   &:first-child {
-    border-top: var(--val-depth) solid var(--color-player-bordertop);
-    border-left: var(--val-depth) solid var(--color-player-borderside);
+    border-top: var(--val-depth) solid var(--co-player-bordertop);
+    border-left: var(--val-depth) solid var(--co-player-borderside);
     border-right: 0;
     margin-left: 0;
   }
   &:last-child {
-    border-top: var(--val-depth) solid var(--color-player-bordertop);
+    border-top: var(--val-depth) solid var(--co-player-bordertop);
     border-left: 0;
-    border-right: var(--val-depth) solid var(--color-player-borderside);
+    border-right: var(--val-depth) solid var(--co-player-borderside);
     margin-right: 0;
   }
 `;
@@ -74,12 +73,12 @@ const ScScoreBox = styled.div`
   grid-row: 1;
   grid-column: 1;
 
-  background-color: var(--color-purple);
+  background-color: var(--color-black);
   
-  border-top: var(--val-depth) solid var(--color-player-bordertop);
-  border-left: var(--val-depth) solid var(--color-player-borderside);
-  border-right: var(--val-depth) solid var(--color-player-borderside);
-  /* border-bottom: var(--val-depth) solid var(--color-player-bordertop); */
+  border-top: var(--val-depth) solid var(--co-player-bordertop);
+  border-left: var(--val-depth) solid var(--co-player-borderside);
+  border-right: var(--val-depth) solid var(--co-player-borderside);
+  /* border-bottom: var(--val-depth) solid var(--co-player-bordertop); */
 `;
 
 const ScDisplay = styled.div`
@@ -90,7 +89,6 @@ const ScDisplay = styled.div`
 const ScSideControls = styled.div`
   width: 7rem;
   height: 100%;
-  /* background-color: var(--color-yellow); */
   grid-column: 2;
   grid-row: 1 / 5;
 `;

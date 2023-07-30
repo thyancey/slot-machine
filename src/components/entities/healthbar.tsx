@@ -25,8 +25,8 @@ const ScStatLabels = styled.ul`
 
 const ScHealthBar = styled.div`
   position: absolute;
-  background-color: var(--color-health);
-  border: 0.25rem solid var(--color-health);
+  background-color: var(--co-health);
+  border: 0.25rem solid var(--co-health);
 
   top: 1.85rem;
   border-radius: .5rem;
@@ -49,11 +49,11 @@ const ScHealthBar = styled.div`
 
 const ScHealthBarBg = styled.div`
   position: absolute;
-  background-color: var(--color-health);
+  background-color: var(--co-health);
   /* border: 0.25rem solid var(--color-grey); */
 
   .defended & {
-    background-color: var(--color-defense);
+    background-color: var(--co-defense);
   }
 
   /* width % (0-100) is controlled inline by component */
@@ -72,8 +72,8 @@ const ScDefenseBox = styled.div`
   width: 3rem;
   height: 3.5rem;
   border-radius: 0 0 2rem 2rem;
-  border: .25rem solid var(--color-health);
-  background-color: var(--color-defense);
+  border: .25rem solid var(--co-health);
+  background-color: var(--co-defense);
   opacity: 0;
   /* border: 0.25rem solid var(--color-grey); */
   

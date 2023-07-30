@@ -10,10 +10,10 @@ const ScWrapper = styled.div`
     cursor: pointer;
 
     li{
-      background-color: var(--color-purple);
+      background-color: var(--co-card-secondary);
     }
     li:hover{
-      background-color: var(--color-pink);
+      background-color: var(--co-card-primary);
     }
   }
 `;
