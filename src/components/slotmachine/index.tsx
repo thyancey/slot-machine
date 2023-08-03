@@ -87,7 +87,7 @@ const ScDisplay = styled.div`
 
 const ScSideControls = styled.div`
   position:absolute;
-  left:100%;
+  left:calc(100% + 1rem);
   top:0;
   width: 7rem;
   height: 100%;

@@ -31,13 +31,13 @@ const ScEnemy = styled.div`
   text-align: center;
 `;
 
-const ScEnemyImage = styled.img`
-  position: absolute;
-  right: 0;
-  bottom: calc(100% - 4rem);
-  width: 8rem;
-  height: 8rem;
-`;
+// const ScEnemyImage = styled.img`
+//   position: absolute;
+//   right: 0;
+//   bottom: calc(100% - 4rem);
+//   width: 8rem;
+//   height: 8rem;
+// `;
 
 const ScGameInfo = styled.h1`
   font-size: 2rem;
@@ -58,22 +58,16 @@ const ScDisplay = styled.div`
 
 const ScSideControls = styled.div`
   position: absolute;
-  left: 100%;
-  margin-left: 1rem;
+  left: calc(100% + 2.5rem);
   top: 0;
-  width: 7rem;
+  width: 6rem;
   height: 100%;
   
   background-color: var(--color-black);
-`;
-
-const ScButton = styled.div`
-  position: absolute;
-  inset: 0.25rem;
-
-
+  
   > button {
-    height: 100%;
+    font-size: 3rem;
+    line-height: 4.25rem;
   }
 `;
 
@@ -105,11 +99,11 @@ export const Enemy = () => {
         <Display playerInfo={enemyInfo} messages={[`attacks with ${enemyInfo.attack} damage`]} />
       </ScDisplay>
       <ScSideControls>
-        <ScButton>
+        {/* <ScButton> */}
           <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
             {'A T K'}
           </DisplayButton>
-        </ScButton>
+        {/* </ScButton> */}
       </ScSideControls>
     </ScCard>
   );

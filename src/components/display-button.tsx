@@ -9,7 +9,8 @@ export const StyledButton = styled.button`
   font-size: 3rem;
   line-height: 4rem;
 
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: var(--co-button-secondary);
   border: .3rem dashed var(--co-button-primary);
   color: var(--co-button-primary);
 

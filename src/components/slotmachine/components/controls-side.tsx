@@ -17,7 +17,7 @@ const ScWrapper = styled.div`
 `;
 
 const ScInner = styled.div`
-  background-color: var(--color-black);
+  /* background-color: var(--color-black); */
   padding: 0.5rem;
   border-radius: 0 0 0.6rem 0;
   height: 100%;

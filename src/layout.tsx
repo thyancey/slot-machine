@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
 import Player from './components/entities/player';
-import Palette from './components/palette';
+import Bg from './components/bg';
+import { useMemo, useContext } from 'react';
+import { AppContext } from './store/appcontext';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -23,33 +25,19 @@ const ScMain = styled.div`
   align-items: center;
 `;
 
-const ScBg = styled.div`
-  position: absolute;
-  background-color: var(--color-black);
-  color: var(--color-black-light);
-
-  inset: calc(-1 * var(--val-reel-height));
-  font-size: var(--val-reel-height);
-  font-family: var(--font-8bit2);
-  line-height: 10rem;
-  z-index: -1;
-  letter-spacing: -3rem;
-  transform: rotate(-20deg);
-  top: -50%;
-  opacity: 1;
-`;
-
 function Layout() {
-  const bgText = Array(100).fill('S L O T S');
+  const { activeCombos } = useContext(AppContext);
+  const litUp = useMemo(() => {
+    return activeCombos.length > 0;
+  }, [ activeCombos.length ])
+  
   return (
-    <ScWrapper>
+    <ScWrapper className={litUp ? 'lit-up' : ''}>
       {/* <Palette /> */}
       <ScMain>
         <Player />
       </ScMain>
-      <ScBg>
-        <p>{bgText.join(' ! ')}</p>
-      </ScBg>
+      <Bg />
       <MachineEditor />
     </ScWrapper>
   );

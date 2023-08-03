@@ -1,22 +1,16 @@
 import styled from 'styled-components';
 import SlotMachine from '../slotmachine';
-import { useContext } from 'react';
-import { AppContext } from '../../store/appcontext';
 import Enemy from './enemy';
 
 const ScCard = styled.div`
   position: relative;
 
-  /* box-shadow: 0 0 1rem .5rem var(--color-grey); */
+  box-shadow: 0.25rem 0.25rem .5rem .3rem var(--color-black);
   border-radius: 1rem;
 
   display: flex;
   flex-direction: column;
   gap: 0rem;
-
-  &.lit-up {
-    box-shadow: 0 0 0.25rem 0.25rem var(--co-player);
-  }
 `;
 
 const ScShadowDiv = styled.div`
@@ -31,12 +25,18 @@ const ScEnemy = styled.div`
   padding: 1rem;
 
   position: relative;
+  
+  ${ScShadowDiv} {
+    box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight);
+  }
 
+  /*
   .lit-up & {
     ${ScShadowDiv} {
-      box-shadow: 0 0 3rem 2rem var(--co-enemy-highlight);
+      box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight);
     }
   }
+  */
 `;
 
 const ScPlayer = styled.div`
@@ -48,18 +48,22 @@ const ScPlayer = styled.div`
   background-color: var(--co-player);
   border-radius: 0 0 1rem 1rem;
 
+  ${ScShadowDiv} {
+    box-shadow: 0 0 6rem 3rem var(--co-player-highlight);
+  }
+
+  /*
   .lit-up & {
     ${ScShadowDiv} {
-      box-shadow: 0 0 3rem 1rem var(--co-player-highlight);
+      box-shadow: 0 0 6rem 2rem var(--co-player-highlight);
     }
   }
+  */
 `;
 
 export const Player = () => {
-  const { activeCombos } = useContext(AppContext);
-
   return (
-    <ScCard id='player' className={activeCombos.length > 0 ? 'lit-up' : ''}>
+    <ScCard id='player'>
       <ScEnemy>
         <Enemy />
         <ScShadowDiv />

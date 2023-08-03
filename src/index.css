@@ -106,13 +106,13 @@
   --co-enemy: var(--color-grey);
   --co-enemy-borderside: var(--color-grey-light);
   --co-enemy-bordertop: var(--color-grey-dark);
-  --co-enemy-highlight: var(--color-grey-light);
+  --co-enemy-highlight: var(--color-purple-light);
 
-  --co-player: var(--color-yellow);
-  --co-player-bordertop: var(--color-yellow-dark);
-  --co-player-borderside: var(--color-yellow-light);
-  --co-player-borders: var(--color-yellow-light);
-  --co-player-highlight: var(--color-yellow-light);
+  --co-player: var(--color-white);
+  --co-player-bordertop: var(--color-white-dark);
+  --co-player-borderside: var(--color-white-light);
+  --co-player-borders: var(--color-white-light);
+  --co-player-highlight: var(--color-green-light);
 
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);
@@ -122,10 +122,15 @@
   --co-card-primary: var(--color-red);
   --co-card-secondary: var(--color-purple);
 
-  --co-button-primary: var(--color-purple);
-  --co-button-secondary: var(--color-purple);
+  --co-button-primary: var(--color-white);
+  --co-button-secondary: var(--color-black);
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
+
+  --co-bg-secondary: var(--color-purple-dark);
+  --co-bg-primary: var(--color-purple-light);
+  --co-bg-secondary-lit: var(--color-green-dark);
+  --co-bg-primary-lit: var(--color-green);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -144,7 +149,7 @@
 
   font-family: var(--font-base);
 
-  background-color: var(--color-black);
+  background-color: var(--co-bg-secondary);
   color: var(--color-white);
   
   user-select: none;
