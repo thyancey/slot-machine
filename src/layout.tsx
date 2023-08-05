@@ -4,6 +4,7 @@ import Player from './components/entities/player';
 import Bg from './components/bg';
 import { useMemo, useContext } from 'react';
 import { AppContext } from './store/appcontext';
+// import Palette from './components/palette';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -33,7 +34,7 @@ function Layout() {
   
   return (
     <ScWrapper className={litUp ? 'lit-up' : ''}>
-      {/* <Palette /> */}
+    {/* <Palette /> */}
       <ScMain>
         <Player />
       </ScMain>

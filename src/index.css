@@ -58,6 +58,12 @@
   --hsl-grey-l: 40%;
   --hsl-grey: var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l);
 
+  
+  --hsl-offwhite-h: 195;
+  --hsl-offwhite-s: 20%;
+  --hsl-offwhite-l: 70%;
+  --hsl-offwhite: var(--hsl-offwhite-h), var(--hsl-offwhite-s), var(--hsl-offwhite-l);
+
   --hsl-black-h: var(--hsl-grey-h);
   --hsl-black-s: var(--hsl-grey-s);
   --hsl-black-l: 10%;
@@ -89,13 +95,18 @@
   --color-yellow-dark: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) * .8));
   --color-yellow-light: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) / .85));
 
-  --color-grey: hsl(var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l), 1);
-  --color-grey-dark: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) * .9));
-  --color-grey-light: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) / .9));
 
   --color-black: hsl(var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l), 1);
   --color-black-dark: hsl(var(--hsl-black-h), var(--hsl-black-s), 5%);
   --color-black-light: hsl(var(--hsl-black-h), var(--hsl-black-s), 15%);
+
+  --color-grey: hsl(var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l), 1);
+  --color-grey-dark: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) * .9));
+  --color-grey-light: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) / .9));
+
+  --color-offwhite: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), var(--hsl-offwhite-l), 1);
+  --color-offwhite-dark: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), 63%);
+  --color-offwhite-light: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), 75%);
 
   --color-white: hsl(var(--hsl-white-h), var(--hsl-white-s), var(--hsl-white-l), 1);
   --color-white-dark: hsl(var(--hsl-white-h), var(--hsl-white-s), 80%);
@@ -103,16 +114,16 @@
 
 
 
-  --co-enemy: var(--color-grey);
-  --co-enemy-borderside: var(--color-grey-light);
-  --co-enemy-bordertop: var(--color-grey-dark);
-  --co-enemy-highlight: var(--color-purple-light);
+  --co-enemy: var(--color-red);
+  --co-enemy-borderside: var(--color-red-light);
+  --co-enemy-bordertop: var(--color-red-dark);
+  --co-enemy-highlight: var(--color-red-light);
 
-  --co-player: var(--color-white);
-  --co-player-bordertop: var(--color-white-dark);
-  --co-player-borderside: var(--color-white-light);
-  --co-player-borders: var(--color-white-light);
-  --co-player-highlight: var(--color-green-light);
+  --co-player: var(--color-offwhite);
+  --co-player-bordertop: var(--color-offwhite-dark);
+  --co-player-borderside: var(--color-offwhite-light);
+  --co-player-borders: var(--color-offwhite-light);
+  --co-player-highlight: var(--color-white-light);
 
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);
@@ -127,10 +138,10 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-purple-dark);
-  --co-bg-primary: var(--color-purple-light);
-  --co-bg-secondary-lit: var(--color-green-dark);
-  --co-bg-primary-lit: var(--color-green);
+  --co-bg-secondary: var(--color-yellow-dark);
+  --co-bg-primary: var(--color-yellow-light);
+  --co-bg-secondary-lit: var(--color-purple-dark);
+  --co-bg-primary-lit: var(--color-purple);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -149,7 +160,7 @@
 
   font-family: var(--font-base);
 
-  background-color: var(--co-bg-secondary);
+  background-color: black;
   color: var(--color-white);
   
   user-select: none;

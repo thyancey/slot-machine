@@ -13,7 +13,8 @@ const ScBg = styled.div`
   letter-spacing: -3rem;
   transform: rotate(-20deg);
   top: -50%;
-  opacity: 1;
+  opacity: .8;
+  filter: blur(8px);
 
   transition: background-color .5s ease-out, color .3s linear;
 
