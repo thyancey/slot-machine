@@ -11,6 +11,7 @@ import Sound from '../../assets/sounds';
 import PlayerDisplay from './components/player-display';
 import ScoreBox from '../scorebox';
 import SideControls from './components/controls-side';
+import { MixinBorders } from '../../utils/styles';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -36,24 +37,17 @@ const ScReelContainer = styled.div`
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--co-player-borders);
+  background-color: var(--co-player-border);
   margin: 0rem 0.5rem;
 
-  border-top: var(--val-depth) solid var(--co-player-bordertop);
-  border-left: var(--val-depth) solid var(--co-player-borderside);
-  border-right: var(--val-depth) solid var(--co-player-borderside);
-  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
 
   &:first-child {
-    border-top: var(--val-depth) solid var(--co-player-bordertop);
-    border-left: var(--val-depth) solid var(--co-player-borderside);
     border-right: 0;
     margin-left: 0;
   }
   &:last-child {
-    border-top: var(--val-depth) solid var(--co-player-bordertop);
     border-left: 0;
-    border-right: var(--val-depth) solid var(--co-player-borderside);
     margin-right: 0;
   }
 `;
@@ -74,10 +68,8 @@ const ScScoreBox = styled.div`
 
   background-color: var(--color-black);
   
-  /* border-top: var(--val-depth) solid var(--co-player-bordertop); */
-  border-left: var(--val-depth) solid var(--co-player-borderside);
-  border-right: var(--val-depth) solid var(--co-player-borderside);
-  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-top: 0;
 `;
 
 const ScDisplay = styled.div`

@@ -4,14 +4,13 @@ import Display from './new-display';
 import styled from 'styled-components';
 import { getEffectDelta } from '../utils';
 import { PlayerInfo } from '../../../store/data';
+import { MixinBorders } from '../../../utils/styles';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
   
-  /* border-top: var(--val-depth) solid var(--co-player-bordertop); */
-  border-left: var(--val-depth) solid var(--co-player-borderside);
-  border-right: var(--val-depth) solid var(--co-player-borderside);
-  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-top: 0;
 `;
 
 interface Props {

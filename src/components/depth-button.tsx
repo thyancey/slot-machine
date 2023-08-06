@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { MixinBorders } from '../utils/styles';
 
 export const StyledButton = styled.button`
   font-family: var(--font-base);
@@ -11,10 +12,8 @@ export const StyledButton = styled.button`
   background-color: transparent;
   border: 1rem dashed var(--co-player);
   color: var(--color-white);
-  border-top: var(--val-depth) solid var(--co-player-bordertop);
-  border-bottom: var(--val-depth) solid var(--co-player-bordertop);
-  border-left: var(--val-depth) solid var(--co-player-borderside);
-  border-right: var(--val-depth) solid var(--co-player-borderside);
+  
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
 
   cursor: pointer;
   &:hover{

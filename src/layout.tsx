@@ -5,6 +5,7 @@ import Bg from './components/bg';
 import { useMemo, useContext } from 'react';
 import { AppContext } from './store/appcontext';
 // import Palette from './components/palette';
+// import Palette from './components/palette';
 
 const ScWrapper = styled.main`
   position: absolute;

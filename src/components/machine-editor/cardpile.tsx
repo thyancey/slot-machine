@@ -1,19 +1,26 @@
 import { useCallback, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../store/appcontext';
+import { clamp } from '../../utils';
 
 const ScWrapper = styled.div`
   position: absolute;
   bottom: 0rem;
 
+  li {
+    background-color: var(--color-grey);
+    color: var(--color-black-light);
+  }
+  
   &.active {
     cursor: pointer;
 
-    li{
-      background-color: var(--co-card-secondary);
+    li {
+      background-color: var(--color-purple-dark);
+      color: var(--color-white);
     }
-    li:hover{
-      background-color: var(--co-card-primary);
+    li:hover {
+      background-color: var(--color-purple-light);
     }
   }
 `;
@@ -25,18 +32,21 @@ const ScLabel = styled.span`
   transform: translateX(-50%);
 `;
 
-const ScCardWrapper = styled.ul``;
+const ScCardWrapper = styled.ul`
+  position: absolute;
+  left: -1.5rem;
+  bottom: 2rem;
+`;
 
 const ScTile = styled.li`
   left: 0;
   bottom: 0;
   position: absolute;
-  background-color: var(--color-grey);
-  border: var(--border-width-small) solid white;
-  border-radius: 1rem;
-  box-shadow: -1px -1px 1px 1px var(--color-grey);
+  border-radius: 0.25rem;
+
+  box-shadow: 2px -2px 1px 2px var(--color-black-light);
   width: 6rem;
-  height: 6rem;
+  height: 8rem;
 
   display: flex;
   justify-content: center;
@@ -45,13 +55,11 @@ const ScTile = styled.li`
   padding-bottom: 0.5rem;
 `;
 
-
-const CARD_SPACING = [ 0.5, 0.75 ];
+const CARD_SPACING = [-12, -10];
 const renderCardStyle = (cardIdx: number) => ({
   left: `${cardIdx * CARD_SPACING[0]}px`,
   bottom: `${cardIdx * CARD_SPACING[1]}px`,
-  transform: `translate(calc(-50% + ${cardIdx * CARD_SPACING[0]}px), -${cardIdx * CARD_SPACING[1]}px)`
-})
+});
 
 interface Props {
   cards: number[];
@@ -72,10 +80,14 @@ function CardPile({ cards, type, disabled }: Props) {
     return !disabled && type === 'draw' && deckState.draw.length > 0 && deckState.drawn.length === 0;
   }, [deckState.drawn.length, deckState.draw.length, type, disabled]);
 
+  const drawPile = useMemo(() => {
+    return Array(clamp(cards.length, 0, 4)).fill(null);
+  }, [cards.length]);
+
   return (
     <ScWrapper className={canDraw ? 'active' : ''} onClick={onDraw}>
       <ScCardWrapper>
-        {cards.map((_, cIdx) => (
+        {drawPile.map((_, cIdx) => (
           <ScTile key={cIdx} style={renderCardStyle(cIdx)}>
             <p>{cards.length}</p>
           </ScTile>

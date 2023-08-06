@@ -114,32 +114,30 @@
 
 
 
-  --co-enemy: var(--color-red);
-  --co-enemy-borderside: var(--color-red-light);
-  --co-enemy-bordertop: var(--color-red-dark);
-  --co-enemy-highlight: var(--color-red-light);
+  --co-enemy: var(--color-grey);
+  --co-enemy-borderside: var(--color-grey-light);
+  --co-enemy-bordertop: var(--color-grey-dark);
+  --co-enemy-highlight: var(--color-grey-light);
 
   --co-player: var(--color-offwhite);
   --co-player-bordertop: var(--color-offwhite-dark);
   --co-player-borderside: var(--color-offwhite-light);
-  --co-player-borders: var(--color-offwhite-light);
-  --co-player-highlight: var(--color-white-light);
+  --co-player-border: var(--color-offwhite-light);
+  --co-player-highlight: var(--color-white);
 
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);
 
   --co-reel-divider: var(--color-blue);
 
-  --co-card-primary: var(--color-red);
-  --co-card-secondary: var(--color-purple);
 
   --co-button-primary: var(--color-white);
   --co-button-secondary: var(--color-black);
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-yellow-dark);
-  --co-bg-primary: var(--color-yellow-light);
+  --co-bg-secondary: var(--color-purple-dark);
+  --co-bg-primary: var(--color-purple-light);
   --co-bg-secondary-lit: var(--color-purple-dark);
   --co-bg-primary-lit: var(--color-purple);
 
@@ -156,7 +154,7 @@
   --val-reel-width: 10rem;
   --val-reel-height: 15rem; /* SHOULD MATCH REEL_HEIGHT */
 
-  --val-depth: 1.0rem;
+  --val-depth: 1.5rem;
 
   font-family: var(--font-base);
 

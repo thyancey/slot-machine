@@ -3,6 +3,7 @@ import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
 import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
+import { MixinBorders } from '../../utils/styles';
 
 const ScCard = styled.div`
   position: relative;
@@ -50,10 +51,8 @@ const ScDisplay = styled.div`
 
   background-color: var(--color-black);
 
-  border-top: var(--val-depth) solid var(--co-enemy-bordertop);
-  border-left: var(--val-depth) solid var(--co-enemy-borderside);
-  border-right: var(--val-depth) solid var(--co-enemy-borderside);
-  /* border-bottom: var(--val-depth) solid var(--co-enemy-bordertop); */
+  ${MixinBorders('--co-enemy-bordertop', '--co-enemy-borderside')}
+  border-bottom: 0;
 `;
 
 const ScSideControls = styled.div`

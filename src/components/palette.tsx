@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { getRandomIdx } from './slotmachine/utils';
+import { MixinBorders } from '../utils/styles';
 
 export const ScWrapper = styled.div`
   position:absolute;
@@ -9,8 +10,13 @@ export const ScWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-export const ScPalette = styled.div`
-  background-color: var(--color-${(p) => p.color});
+type ScPaletteProps = {
+  $bgColor: string;
+  $topColor: string;
+  $sideColor: string;
+}
+export const ScPalette = styled.div<ScPaletteProps>`
+  background-color: var(${(p) => p.$bgColor});
   flex: 0;
   width: 12rem;
   height: 7rem;
@@ -20,12 +26,8 @@ export const ScPalette = styled.div`
     width: 10rem;
     height: 5rem;
 
-    border-top: var(--val-depth) solid var(--color-${(p) => p.color}-dark);
-    border-bottom: var(--val-depth) solid var(--color-${(p) => p.color}-dark);
-    border-left: var(--val-depth) solid var(--color-${(p) => p.color}-light);
-    border-right: var(--val-depth) solid var(--color-${(p) => p.color}-light);
+    ${p => MixinBorders(p.$topColor, p.$sideColor)}
     background-color: transparent;
-    /* background-color: var(--color-black); */
   }
 `;
 
@@ -34,7 +36,7 @@ interface PaletteProps {
 }
 function PaletteItem({ color }: PaletteProps) {
   return (
-    <ScPalette color={color}>
+    <ScPalette $bgColor={`--color-${color}`} $topColor={`--color-${color}-dark`} $sideColor={`--color-${color}-light`}>
       <div />
     </ScPalette>
   );
@@ -51,8 +53,8 @@ function Palette() {
 
   return (
     <ScWrapper>
-      {randColors.map((c) => (
-        <PaletteItem key={c} color={c} />
+      {randColors.map((c, idx) => (
+        <PaletteItem key={idx} color={c} />
       ))}
     </ScWrapper>
   );

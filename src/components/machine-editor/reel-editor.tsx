@@ -5,7 +5,7 @@ import { MAX_REELS, Tile } from '../../store/data';
 import { getReelTileStatesFromReelStates, getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.ul`
-  background-color: var(--color-grey);
+  background-color: var(--color-black);
   flex: 1;
 
   display: flex;
@@ -32,8 +32,8 @@ const ScTiles = styled.ul``;
 
 const ScInsertTileButton = styled.button`
   font-size: 1rem;
-  background-color: var(--color-grey);
-  border: 0.125rem dashed var(--color-white);
+  background-color: var(--color-black);
+  border: 0.125rem dashed var(--color-purple-dark);
   
 
   margin-bottom: 0.25rem;
