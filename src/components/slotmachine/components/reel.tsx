@@ -32,6 +32,15 @@ const ScWrapper = styled.div`
   /* makes a cutout */
   /* clip-path: inset(0 0 round 10px); */
   clip-path: inset(0 0);
+
+  &.enabled {
+    cursor: pointer;
+    transition: filter .5s ease;
+    &:hover{
+      background-color:green;
+      filter: brightness(1.50);
+    }
+  }
 `;
 
 // shadow at top/bottom of reel to give depth effect
@@ -86,10 +95,12 @@ type Props = {
   tileDeck: TileKeyCollection;
   targetSlotIdx: number; // idx of tiles to go to, regardless of how much spinning to be done
   spinCount: number; // this helps determine when a spin started
-  spinLock: boolean;
+  reelLock: boolean;
+  isEnabled: boolean; // can click to spin this weel
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
+  triggerSpin: (reelIdx: number) => void;
 };
-function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount, onSpinComplete }: Props) {
+function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, reelLock, spinCount, onSpinComplete, triggerSpin, isEnabled }: Props) {
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
@@ -107,7 +118,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
     // -1 happens on mount
-    if (spinLock && targetSlotIdx !== -1) {
+    if (!reelLock && targetSlotIdx !== -1) {
       // allows the reel to spin again
       setSpinProgress(0);
       setSpinSpeed(randInRange(Vars.SPIN_DURATION_RANGE));
@@ -118,7 +129,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
         getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(Vars.SLOT_DISTANCE_RANGE, true)),
       ]);
     }
-  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, spinLock]);
+  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, reelLock]);
 
   useEffect(() => {
     if (spinProgress >= 1) {
@@ -153,7 +164,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   }, [reelState, tileDeck]);
 
   return (
-    <ScWrapper>
+    <ScWrapper onClick={() => isEnabled && triggerSpin(reelIdx)} className={isEnabled ? 'enabled' : ''}>
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (

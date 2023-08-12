@@ -94,8 +94,6 @@ function TileSelector({ selectedTileIdx, onSelectTile }: Props) {
     return tiles.find((tile) => tile.deckIdx === selectedTileIdx)?.tile || null;
   }, [selectedTileIdx, tiles]);
 
-  console.log('selectedTile', selectedTile);
-
   return (
     <ScWrapper>
       <ScTiles>

@@ -37,22 +37,22 @@ const ScSpinTokens = styled.div`
 `;
 
 interface Props {
-  spinLock: boolean;
+  spinInProgress: boolean;
   spinTokens: number;
   triggerSpin: () => void;
 }
 
-function Controls({ spinLock, spinTokens, triggerSpin }: Props) {
+function Controls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
 
   return (
-    <ScWrapper className={spinLock || spinTokens <= 0 ? 'spin-disabled' : ''}>
+    <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
       <ScInner>
         <Button
           buttonStyle={upgradeTokens > 0 ? 'special' : 'normal'}
           onClick={() => setUiState('editor')}
         >{`x`}</Button>
-        <Button buttonStyle='special' disabled={spinLock || spinTokens <= 0} onClick={() => triggerSpin()}>
+        <Button buttonStyle='special' disabled={spinInProgress || spinTokens <= 0} onClick={() => triggerSpin()}>
           {'SPIN'}
         </Button>
         <ScSpinTokens>

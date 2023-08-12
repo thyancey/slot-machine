@@ -45,20 +45,20 @@ const ScSpinTokens = styled.div`
 `;
 
 interface Props {
-  spinLock: boolean;
+  spinInProgress: boolean;
   spinTokens: number;
   triggerSpin: () => void;
 }
 
-function SideControls({ spinLock, spinTokens, triggerSpin }: Props) {
+function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
 
   return (
-    <ScWrapper className={spinLock || spinTokens <= 0 ? 'spin-disabled' : ''}>
+    <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
       <ScInner>
         <DisplayButton
           buttonStyle='special'
-          disabled={spinLock || spinTokens <= 0}
+          disabled={spinInProgress || spinTokens <= 0}
           onClick={() => triggerSpin()}
         >
           {'S P I N'}
