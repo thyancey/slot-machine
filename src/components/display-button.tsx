@@ -15,6 +15,12 @@ export const StyledButton = styled.button`
   color: var(--co-button-primary);
 
   cursor: pointer;
+
+  &:hover{
+    background-color: var(--co-button-primary);
+  border: .3rem dashed var(--co-button-secondary);
+  color: var(--co-button-secondary);
+  }
 `;
 
 type ButtonStyle = 'normal' | 'special' | 'disabled';
