@@ -213,8 +213,8 @@ const AppProvider = ({ children }: Props) => {
     setPlayerInfo((prev) => {
       return {
         ...prev,
-        attack: prev.attack + attack,
-        defense: prev.defense + defense,
+        attack: attack,
+        defense: defense,
       }
     });
   }, [ setPlayerInfo, activeTiles, activeCombos ])
