@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { ReelComboResult, Tile } from '../../../store/data';
 import { useEffect, useMemo, useState } from 'react';
 
 const ScWrapper = styled.div`
-  width: 8rem;
+  width: var(--val-reel-width);
   height: 2rem;
   margin: 0.5rem;
   position: relative;
@@ -15,21 +14,28 @@ const ScAnimator = styled.div`
   top: 0rem;
   transition: top 0.2s cubic-bezier(0.62, 3, 0.8, 0.68), opacity 0.2s;
 
-  .lf-present & {
-    top: 0rem;
-    opacity: 1;
-  }
-  .lf-new & {
+  ${ScWrapper}.lf-new & {
     top: -1rem;
     opacity: 1;
   }
-  .lf-none & {
+  ${ScWrapper}.lf-present & {
+    top: 0rem;
+    opacity: 1;
+  }
+  ${ScWrapper}.lf-none & {
     top: -2rem;
     opacity: 0;
     > div {
       height: 1rem;
     }
     transition: top 0.2s cubic-bezier(0.46, 0, 0.78, -0.71), opacity 0.2s 0.1s;
+  }
+
+  ${ScWrapper}.special.lf-new & {
+    top: -3rem;
+  }
+  ${ScWrapper}.special.lf-present & {
+    top: -1rem;
   }
 `;
 
@@ -40,11 +46,11 @@ const ScPill = styled.div`
   justify-content: center;
   border-radius: 1rem;
   box-shadow: 0px 2px 5px 1px var(--color-grey);
-  text-align:center;
+  text-align: center;
   font-size: 1.5rem;
   font-family: var(--font-8bit2);
 
-  .lf-none & {
+  ${ScWrapper}.lf-none & {
     height: 1rem;
     background-color: var(--color-grey);
     transition: background-color 1s, height 0.2s;
@@ -57,36 +63,21 @@ const ScScorePill = styled(ScPill)`
   color: var(--color-white);
 
   .lit-up & {
-    background-color: var(--color-purple);
+    background-color: var(--color-black);
   }
-  .lf-none & {
+  ${ScWrapper}.lf-none & {
     height: 1rem;
     background-color: var(--color-grey);
     transition: background-color 1s, height 0.2s;
   }
-`;
 
-const ScAttrPill = styled(ScPill)`
-  font-size: 1.5rem;
-  height: 1rem;
-  padding: 1rem;
-  margin-top: -2.5rem;
-  opacity: 0;
-  transition: margin-top .3s, opacity .3s;
-
-  &.active{
-    margin-top: -0.5rem;
-    opacity: 1;
+  ${ScWrapper}.special & {
+    background-color: var(--color-black);
+    height: 4rem;
   }
-
-  .lf-present & {
-    background-color: var(--color-pink);
-    color: var(--color-white);
-    box-shadow: 0px 0px 15px 3px var(--color-pink);
-  }
-  .lf-none & {
-    height: 1rem;
-    background-color: var(--color-grey);
+  
+  .lit-up ${ScWrapper}.special & {
+    background-color: var(--color-black);
   }
 `;
 
@@ -95,47 +86,40 @@ export function EmptyResultLabel() {
     <ScWrapper className={'lf-none'}>
       <ScAnimator>
         <ScPill></ScPill>
-        <ScAttrPill></ScAttrPill>
       </ScAnimator>
     </ScWrapper>
   );
 }
 
-interface Props {
-  tile: Tile;
-  activeCombos: ReelComboResult[];
+interface BasicLabelProps {
+  label: string;
+  isSpecial?: boolean;
 }
-function ResultLabel({ activeCombos, tile }: Props) {
+export function BasicLabel({ label, isSpecial }: BasicLabelProps) {
   const [lifecycle, setLifecycle] = useState<string>('lf-none');
-  
 
   useEffect(() => {
     setLifecycle('lf-new');
     window.setTimeout(() => {
       setLifecycle('lf-present');
     }, 1);
-  }, [tile.label]);
+  }, [label]);
 
-  const matchingAttributes = useMemo(() => {
-    // console.log('matching with ',tile.attributes, activeCombos);
-    return tile.attributes.filter(
-      // if attribute matches with combo, or wildcard match for either
-      (a) => !!activeCombos.find((aC) => aC.attribute === a || aC.attribute === '*' || a === '*')
-    );
-  }, [ tile.attributes, activeCombos]);
+  const className = useMemo(() => {
+    const classes = [lifecycle];
+    if (isSpecial) classes.push('special');
+    return classes.join(' ');
+  }, [lifecycle, isSpecial]);
 
   return (
-    <ScWrapper className={lifecycle}>
+    <ScWrapper className={className}>
       <ScAnimator>
-        <ScAttrPill className={matchingAttributes.length > 0 ? 'active' : '' }>
-          <span>{matchingAttributes.join(',').toUpperCase()}</span>
-        </ScAttrPill>
         <ScScorePill>
-          <span>{`$${tile.score || 0}`}</span>
+          <span>{label}</span>
         </ScScorePill>
       </ScAnimator>
     </ScWrapper>
   );
 }
 
-export default ResultLabel;
+export default null;

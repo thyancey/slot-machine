@@ -6,6 +6,8 @@ import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
 import { discardTiles } from './utils';
 import CardPile from './cardpile';
+import MetalGlint from '../metal-glint';
+import { MixinBorders } from '../../utils/styles';
 
 const ScWrapper = styled.aside`
   position: absolute;
@@ -22,19 +24,24 @@ const ScWrapper = styled.aside`
 
 const ScPanel = styled.div`
   position: absolute;
-  inset: 5rem;
+  inset: 4rem;
   z-index: 1;
   text-align: center;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  color: var(--color-white);
 
-  background-color: var(--color-grey);
-  border: var(--border-width) solid var(--color-white);
-  border-radius: 1.5rem;
+  gap: 2rem;
+
+  border-radius: 1rem;
+  padding: 3rem 2rem;
 `;
 
 const ScHeader = styled.div`
-  border-bottom: var(--border-width-small) solid var(--color-white);
+  ${MixinBorders('--color-yellow-dark', '--color-yellow-light')}
+  border-bottom: 0;
+  background-color: var(--color-black);
 
   p {
     margin-top: -1rem;
@@ -57,6 +64,9 @@ const ScBody = styled.div`
   justify-content: center;
   gap: 1rem;
   position: relative;
+
+  ${MixinBorders('--color-yellow-dark', '--color-yellow-light')}
+  background-color: var(--color-black);
 `;
 
 const ScBg = styled.div`
@@ -67,7 +77,9 @@ const ScBg = styled.div`
 `;
 
 const ScFooter = styled.div`
-  border-top: var(--border-width-small) solid var(--color-white);
+  ${MixinBorders('--color-yellow-dark', '--color-yellow-light')}
+  border-top: 0;
+  background-color: var(--color-black);
 `;
 
 const ScFooterButtons = styled.div`
@@ -87,7 +99,7 @@ const ScDrawPile = styled.div`
 `;
 const ScDiscardPile = styled.div`
   position: absolute;
-  right: 5rem;
+  right: 7rem;
   bottom: 2rem;
 `;
 
@@ -102,7 +114,7 @@ function MachineEditor() {
     removeFromReel,
     insertReel,
     upgradeTokens,
-    setUpgradeTokens,
+    incrementUpgradeTokens,
     setDeckState,
     deckState,
     discardCards,
@@ -133,28 +145,28 @@ function MachineEditor() {
       insertIntoReel(reelIdx, tileIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
       discardCards(tileIdx);
     },
-    [insertIntoReel, upgradeTokens, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens, discardCards]
+    [insertIntoReel, setSelectedTileIdx, setPreselectedTileIdx, incrementUpgradeTokens, discardCards]
   );
   const onInsertReel = useCallback(
     (reelIdx: number) => {
       insertReel(reelIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
     },
-    [upgradeTokens, setSelectedTileIdx, insertReel, setUpgradeTokens]
+    [setSelectedTileIdx, insertReel, incrementUpgradeTokens]
   );
   const onRemoveFromReel = useCallback(
     (reelIdx: number, tileIdx: number) => {
       removeFromReel(reelIdx, tileIdx);
       setSelectedTileIdx(-1);
       setPreselectedTileIdx(-1);
-      setUpgradeTokens(upgradeTokens - 1);
+      incrementUpgradeTokens(-1);
     },
-    [upgradeTokens, removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, setUpgradeTokens]
+    [removeFromReel, setSelectedTileIdx, setPreselectedTileIdx, incrementUpgradeTokens]
   );
 
   return (
@@ -166,19 +178,12 @@ function MachineEditor() {
         </ScHeader>
         <ScBody>
           {editorMode === 'hand' ? (
-            <TileSelector
-              selectedTileIdx={preselectedTileIdx}
-              onSelectTile={(deckIdx: number) => setPreselectedTileIdx(deckIdx)}
-            />
-          ) : (
-            <ReelEditor
-              onInsertIntoReel={onInsertIntoReel}
-              onRemoveFromReel={onRemoveFromReel}
-              onInsertReel={onInsertReel}
-            />
-          )}
-          {editorMode === 'hand' && (
             <>
+              <TileSelector
+                selectedTileIdx={preselectedTileIdx}
+                onSelectTile={(deckIdx: number) => setPreselectedTileIdx(deckIdx)}
+              />
+              
               <ScDrawPile>
                 <CardPile type={'draw'} cards={deckState.draw} />
               </ScDrawPile>
@@ -186,6 +191,12 @@ function MachineEditor() {
                 <CardPile type={'discard'} cards={deckState.discard} />
               </ScDiscardPile>
             </>
+          ) : (
+            <ReelEditor
+              onInsertIntoReel={onInsertIntoReel}
+              onRemoveFromReel={onRemoveFromReel}
+              onInsertReel={onInsertReel}
+            />
           )}
         </ScBody>
         <ScFooter>
@@ -196,13 +207,14 @@ function MachineEditor() {
               upgradeTokens,
               setSelectedTileIdx,
               setPreselectedTileIdx,
-              setUpgradeTokens,
+              incrementUpgradeTokens,
               setEditorMode,
               discardCards,
               closeEditor
             )}
           </ScFooterButtons>
         </ScFooter>
+        <MetalGlint glintTheme='ui' />
       </ScPanel>
       <ScBg />
     </ScWrapper>
@@ -215,7 +227,7 @@ const renderFooter = (
   upgradeTokens: number,
   setSelectedTileIdx: (idx: number) => void,
   setPreselectedTileIdx: (idx: number) => void,
-  setUpgradeTokens: (idx: number) => void,
+  incrementUpgradeTokens: (idx: number) => void,
   setEditorMode: (str: MachineEditorMode) => void,
   discardCards: (idx: number) => void,
   closeEditor: () => void
@@ -252,9 +264,9 @@ const renderFooter = (
         <>
           <CloseButton />
           <Button
-            buttonStyle="special"
+            buttonStyle='special'
             onClick={() => {
-              setUpgradeTokens(3);
+              incrementUpgradeTokens(3);
             }}
           >
             {'(debug) MORE TOKENS'}

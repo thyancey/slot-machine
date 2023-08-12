@@ -13,18 +13,133 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --color-black: #070707;
-  --color-grey: #32292f;
-  --color-grey-light: #574751;
-  --color-white: #FFF9D6;
-  --color-blue: #00bbf9;
-  --color-cyan: #00f5d4;
-  --color-yellow: #fee440;
-  --color-green: #0bbf00;
-  --color-red: #f15b00;
-  --color-orange: #fe8240;
-  --color-pink: #f15bb5;
-  --color-purple: #9b5de5;
+  /*
+  --hsl-zzzz-h: 359;
+  --hsl-zzzz-s: 100%;
+  --hsl-zzzz-l: 73%;
+  --hsl-zzzz: var(--hsl-zzzz-h), var(--hsl-zzzz-s), var(--hsl-zzzz-l);
+
+  --color-zzzz: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), var(--hsl-zzzz-l), 1);
+  --color-zzzz-dark: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), calc(var(--hsl-zzzz-l) * .9));
+  --color-zzzz-light: hsl(var(--hsl-zzzz-h), var(--hsl-zzzz-s), calc(var(--hsl-zzzz-l) / .9));
+  --color-zzz-50: hsla(var(--hsl-zzz), .5);
+  --color-zzz-faded: hsl(var(--hsl-zzz-h), calc(var(--hsl-zzz-s) / 2), var(--hsl-zzz-l));
+  --color-zzz-warm: hsl(calc(var(--hsl-zzz-h) + 20), var(--hsl-zzz-s), var(--hsl-zzz-l));
+  --color-zzz-cold: hsl(calc(var(--hsl-zzz-h) - 20), var(--hsl-zzz-s), var(--hsl-zzz-l)); 
+  */
+
+  --hsl-red-h: 344;
+  --hsl-red-s: 80%;
+  --hsl-red-l: 69%;
+  --hsl-red: var(--hsl-red-h), var(--hsl-red-s), var(--hsl-red-l);
+
+  --hsl-yellow-h: 44;
+  --hsl-yellow-s: 70%;
+  --hsl-yellow-l: 60%;
+  --hsl-yellow: var(--hsl-yellow-h), var(--hsl-yellow-s), var(--hsl-yellow-l);
+ 
+  --hsl-green-h: 155;
+  --hsl-green-s: 90%;
+  --hsl-green-l: 45%;
+  --hsl-green: var(--hsl-green-h), var(--hsl-green-s), var(--hsl-green-l);
+  
+  --hsl-blue-h: 195;
+  --hsl-blue-s: 95%;
+  --hsl-blue-l: 45%;
+  --hsl-blue: var(--hsl-blue-h), var(--hsl-blue-s), var(--hsl-blue-l);
+
+  --hsl-purple-h: 267;
+  --hsl-purple-s: 78%;
+  --hsl-purple-l: 73%;
+  --hsl-purple: var(--hsl-purple-h), var(--hsl-purple-s), var(--hsl-purple-l);
+
+  --hsl-grey-h: 195;
+  --hsl-grey-s: 6%;
+  --hsl-grey-l: 40%;
+  --hsl-grey: var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l);
+
+  
+  --hsl-offwhite-h: 195;
+  --hsl-offwhite-s: 20%;
+  --hsl-offwhite-l: 70%;
+  --hsl-offwhite: var(--hsl-offwhite-h), var(--hsl-offwhite-s), var(--hsl-offwhite-l);
+
+  --hsl-black-h: var(--hsl-grey-h);
+  --hsl-black-s: var(--hsl-grey-s);
+  --hsl-black-l: 10%;
+  --hsl-black: var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l);
+
+  --hsl-white-h: var(--hsl-grey-h);
+  --hsl-white-s: var(--hsl-grey-s);
+  --hsl-white-l: 90%;
+  --hsl-white: var(--hsl-white-h), var(--hsl-white-s), var(--hsl-white-l);
+
+  --color-purple: hsl(var(--hsl-purple-h), var(--hsl-purple-s), var(--hsl-purple-l), 1);
+  --color-purple-dark: hsl(var(--hsl-purple-h), var(--hsl-purple-s), calc(var(--hsl-purple-l) * .93));
+  --color-purple-light: hsl(var(--hsl-purple-h), var(--hsl-purple-s), calc(var(--hsl-purple-l) / .95));
+  --color-purple-50: hsla(var(--hsl-purple), .5);
+
+  --color-red: hsl(var(--hsl-red-h), var(--hsl-red-s), var(--hsl-red-l), 1);
+  --color-red-dark: hsl(var(--hsl-red-h), var(--hsl-red-s), calc(var(--hsl-red-l) * .9));
+  --color-red-light: hsl(var(--hsl-red-h), var(--hsl-red-s), calc(var(--hsl-red-l) / .95));
+
+  --color-blue: hsl(var(--hsl-blue-h), var(--hsl-blue-s), var(--hsl-blue-l), 1);
+  --color-blue-dark: hsl(var(--hsl-blue-h), var(--hsl-blue-s), calc(var(--hsl-blue-l) * .9));
+  --color-blue-light: hsl(var(--hsl-blue-h), var(--hsl-blue-s), calc(var(--hsl-blue-l) / .9));
+
+  --color-green: hsl(var(--hsl-green-h), var(--hsl-green-s), var(--hsl-green-l), 1);
+  --color-green-dark: hsl(var(--hsl-green-h), var(--hsl-green-s), calc(var(--hsl-green-l) * .9));
+  --color-green-light: hsl(var(--hsl-green-h), var(--hsl-green-s), calc(var(--hsl-green-l) / .85));
+
+  --color-yellow: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), var(--hsl-yellow-l), 1);
+  --color-yellow-dark: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) * .8));
+  --color-yellow-light: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) / .85));
+
+
+  --color-black: hsl(var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l), 1);
+  --color-black-dark: hsl(var(--hsl-black-h), var(--hsl-black-s), 5%);
+  --color-black-light: hsl(var(--hsl-black-h), var(--hsl-black-s), 15%);
+
+  --color-grey: hsl(var(--hsl-grey-h), var(--hsl-grey-s), var(--hsl-grey-l), 1);
+  --color-grey-dark: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) * .9));
+  --color-grey-light: hsl(var(--hsl-grey-h), var(--hsl-grey-s), calc(var(--hsl-grey-l) / .9));
+
+  --color-offwhite: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), var(--hsl-offwhite-l), 1);
+  --color-offwhite-dark: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), 63%);
+  --color-offwhite-light: hsl(var(--hsl-offwhite-h), var(--hsl-offwhite-s), 75%);
+
+  --color-white: hsl(var(--hsl-white-h), var(--hsl-white-s), var(--hsl-white-l), 1);
+  --color-white-dark: hsl(var(--hsl-white-h), var(--hsl-white-s), 80%);
+  --color-white-light: hsl(var(--hsl-white-h), var(--hsl-white-s), 95%);
+
+
+
+  --co-enemy: var(--color-grey);
+  --co-enemy-borderside: var(--color-grey-light);
+  --co-enemy-bordertop: var(--color-grey-dark);
+  --co-enemy-highlight: var(--color-grey-light);
+
+  --co-player: var(--color-offwhite);
+  --co-player-bordertop: var(--color-offwhite-dark);
+  --co-player-borderside: var(--color-offwhite-light);
+  --co-player-border: var(--color-offwhite-light);
+  --co-player-highlight: var(--color-white);
+
+  --co-health: var(--color-red);
+  --co-defense: var(--color-blue);
+
+  --co-reel-divider: var(--color-blue);
+
+
+  --co-button-primary: var(--color-white);
+  --co-button-secondary: var(--color-black);
+  --co-button-disabled-primary: var(--color-grey-light);
+  --co-button-disabled-secondary: var(--color-grey);
+
+  --co-bg-secondary: var(--color-purple-dark);
+  --co-bg-primary: var(--color-purple-light);
+  --co-bg-secondary-lit: var(--color-purple-dark);
+  --co-bg-primary-lit: var(--color-purple);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -34,12 +149,17 @@
   --border-width-small: 0.5rem;
 
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
+  --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
+
+  --val-reel-width: 10rem;
+  --val-reel-height: 15rem; /* SHOULD MATCH REEL_HEIGHT */
+
+  --val-depth: 1.5rem;
 
   font-family: var(--font-base);
 
-  background-color: var(--color-grey);
+  background-color: black;
   color: var(--color-white);
-  
   
   user-select: none;
 }

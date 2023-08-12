@@ -1,51 +1,45 @@
 import styled from 'styled-components';
-import SlotMachine from './components/slotmachine';
-import TileList from './components/tilelist';
 import MachineEditor from './components/machine-editor';
+import Player from './components/entities/player';
+import Bg from './components/bg';
+import { useMemo, useContext } from 'react';
+import { AppContext } from './store/appcontext';
+// import Palette from './components/palette';
+// import Palette from './components/palette';
 
 const ScWrapper = styled.main`
   position: absolute;
   inset: 0;
-  overflow:hidden;
-
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
 `;
 
-const ScStage = styled.main`
+const ScMain = styled.div`
   flex: 1;
+  width: 100%;
+  height: 100%;
+
+  padding: 2rem;
+  padding-bottom: 4rem;
 
   display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-evenly;
   align-items: center;
-  justify-content: center;
-
-  padding: 5rem;
-  position: relative;
 `;
-
-const ScBg = styled.div`
-  position:absolute;
-  inset: -12rem;
-  font-size: 12rem;
-  font-family: var(--font-8bit2);
-  line-height: 10rem;
-  z-index:-1;
-  letter-spacing: -3rem;
-  transform: rotate(-20deg);
-  top: -50%;
-  color: var(--color-pink);
-  opacity: .2;
-`
 
 function Layout() {
-  const bgText = Array(100).fill('S L O T S');
+  const { activeCombos } = useContext(AppContext);
+  const litUp = useMemo(() => {
+    return activeCombos.length > 0;
+  }, [ activeCombos.length ])
+  
   return (
-    <ScWrapper>
-      <TileList />
-      <ScStage>
-        <SlotMachine />
-      </ScStage>
-      <ScBg><p>{bgText.join(' ! ')}</p></ScBg>
+    <ScWrapper className={litUp ? 'lit-up' : ''}>
+    {/* <Palette /> */}
+      <ScMain>
+        <Player />
+      </ScMain>
+      <Bg />
       <MachineEditor />
     </ScWrapper>
   );

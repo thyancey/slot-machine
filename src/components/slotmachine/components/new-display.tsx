@@ -1,20 +1,22 @@
 import styled from 'styled-components';
 import { useMemo } from 'react';
+import { PlayerInfo } from '../../../store/data';
+import HealthBar from '../../entities/healthbar';
 
 const ScOuter = styled.div`
   width: auto;
-  height: 7rem;
+  height: 10rem;
   position: relative;
 
+  display: flex;
+  flex-direction:column;
+
   cursor: pointer;
-  /* border-radius: 2rem; */
-  
-  /* filter: drop-shadow(-0.2rem -0.2rem 0.2rem var(--color-black)); */
 `;
 
-const ScWrapper = styled.div`
-  position: absolute;
-  inset: 0;
+const ScMessages = styled.div`
+  flex: 1;
+
   background-color: var(--color-black);
   color: var(--color-white);
   padding: 1rem;
@@ -35,22 +37,33 @@ const ScWrapper = styled.div`
   }
 `;
 
+const ScHealthBar = styled.div`
+  height: 3rem;
+  padding: 1rem;
+
+  position: relative;
+`
+
 interface Props {
   messages: string[];
+  playerInfo: PlayerInfo;
   displayType?: 'combo';
 }
-function Display({ messages, displayType }: Props) {
+function Display({ messages, displayType, playerInfo }: Props) {
   const className = useMemo(() => {
     return displayType === 'combo' ? 'winner' : '';
   }, [displayType]);
 
   return (
     <ScOuter>
-      <ScWrapper className={className}>
+      <ScMessages className={className}>
         {messages.map((m, idx) => (
           <p key={idx}>{m}</p>
         ))}
-      </ScWrapper>
+      </ScMessages>
+      <ScHealthBar>
+        <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />
+      </ScHealthBar>
     </ScOuter>
   );
 }

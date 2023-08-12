@@ -5,7 +5,7 @@ import { MAX_REELS, Tile } from '../../store/data';
 import { getReelTileStatesFromReelStates, getTileFromDeckIdx } from '../../store/utils';
 
 const ScWrapper = styled.ul`
-  background-color: var(--color-grey);
+  background-color: var(--color-black);
   flex: 1;
 
   display: flex;
@@ -32,8 +32,8 @@ const ScTiles = styled.ul``;
 
 const ScInsertTileButton = styled.button`
   font-size: 1rem;
-  background-color: var(--color-grey);
-  border: 0.125rem dashed var(--color-pink);
+  background-color: var(--color-black);
+  border: 0.125rem dashed var(--color-purple-dark);
   
 
   margin-bottom: 0.25rem;
@@ -70,7 +70,7 @@ const ScInsertTileButton = styled.button`
 
   &.active:hover {
     max-height: 5rem;
-    background-color: var(--color-pink);
+    background-color: var(--color-white);
     span{
       opacity:0;
     }
@@ -108,7 +108,6 @@ const ScRemoveLabel = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  /* border: 0.125rem dashed var(--color-pink); */
 
   cursor: pointer;
   opacity: 0;
@@ -124,7 +123,7 @@ const ScRemoveLabel = styled.div`
   }
   > div {
     position: absolute;
-    background-color: var(--color-pink);
+    background-color: var(--color-red);
     width: 100%;
     height: 100%;
     opacity: 0.9;

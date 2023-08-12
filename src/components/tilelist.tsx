@@ -19,7 +19,7 @@ const ScWrapper = styled.aside`
 `;
 
 const ScPanel = styled.div`
-  border: 0.75rem solid var(--color-pink);
+  /* border: 0.75rem solid var(--color-black); */
   border-radius: 0 1.5rem 1.5rem 0;
   width: 20rem;
   height: 100%;
@@ -31,7 +31,7 @@ const ScTile = styled.li`
   padding: 0;
   list-style: none;
   padding: .5rem 1rem;
-  border-bottom: 1px solid var(--color-purple);
+  /* border-bottom: 1px solid var(--color-black); */
   height: 6rem;
 
   display: flex;
@@ -52,12 +52,12 @@ const ScTab = styled.div`
   left: calc(100% - 0.75rem);
   top: 50%;
   transform: translateY(-50%);
-  border: 0.75rem solid var(--color-pink);
+  /* border: 0.75rem solid var(--color-black); */
   border-radius: 0 1.5rem 1.5rem 0;
   width: 4rem;
   height: 10rem;
 
-  background-color: var(--color-grey);
+  /* background-color: var(--color-grey); */
   cursor: pointer;
   >div{
     position: absolute;
@@ -69,7 +69,7 @@ const ScTab = styled.div`
     font-size:2rem;
   }
   &:hover{
-    background-color: var(--color-purple);
+    /* background-color: var(--color-black); */
   }
 `;
 

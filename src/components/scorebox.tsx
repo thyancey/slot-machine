@@ -4,9 +4,9 @@ import { useContext, useEffect, useState } from 'react';
 
 const ScScorebox = styled.div`
   border: var(--border-width-small) solid var(--color-black);
-  border-radius: 0.5rem;
   padding: 0.25rem 0.25rem 0.5rem 0.25rem;
   background-color: var(--color-black);
+  border-radius: 0 0 0.5rem 0;
   text-align: right;
   width:100%;
   height:100%;
@@ -14,7 +14,7 @@ const ScScorebox = styled.div`
   font-size: 3rem;
 
   &.highlighted{
-    color: var(--color-pink);
+    color: var(--color-white-light);
     font-size: 4rem;
     transition: color .15s ease-out, font-size .15s ease-out;
   }
@@ -39,7 +39,7 @@ function ScoreBox() {
 
   return (
     <ScScorebox className={highlighted ? 'highlighted' : ''}>
-      <p>{score}</p>
+      <p>{`$${score}`}</p>
     </ScScorebox>
   );
 }

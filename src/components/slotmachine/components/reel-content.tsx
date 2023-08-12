@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Tile } from '../../../store/data';
+import StatLabel from './stat-label';
 
 interface ScProps {
   height: number;
@@ -7,10 +8,9 @@ interface ScProps {
 const ScWrapper = styled.div<ScProps>`
   width: 100%;
   height: ${(p) => p.height}px;
-  background-color: var(--color-white);
   color: var(--color-black);
   text-align: center;
-  border-bottom: 0.25rem solid var(--color-blue);
+  border-bottom: 0.25rem solid var(--co-reel-divider);
 
   display: flex;
   align-items: center;
@@ -27,28 +27,54 @@ const ScWrapper = styled.div<ScProps>`
     right: 0;
     z-index: 1;
     font-size: 3rem;
-    color: var(--color-cyan);
+    color: var(--color-white);
     -webkit-text-stroke: 2px var(--color-black);
-    text-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-black),
-      2px -2px 0 var(--color-black), -2px 2px 0 var(--color-black),
-      2px 2px 0 var(--color-black);
+    text-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-black), 2px -2px 0 var(--color-black),
+      -2px 2px 0 var(--color-black), 2px 2px 0 var(--color-black);
   }
 
-  img {
+  >img {
     height: 100%;
     filter: var(--filter-shadow1);
+  }
+`;
+
+const ScStatLabels = styled.ul`
+  position: absolute;
+  bottom: -0.5rem;
+  text-align: center;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity .2s;
+
+  > li {
+    display: inline-block;
+    vertical-align: middle;
+    width: 2rem;
+  }
+
+  .lit-up & {
+    opacity: 1;
   }
 `;
 
 type Props = {
   tile: Tile;
   height: number;
+  isActive: boolean;
 };
 
-function ReelContent({ tile, height }: Props) {
+function ReelContent({ tile, height, isActive }: Props) {
   return (
     <ScWrapper height={height}>
       <img src={tile.img || ''} />
+      {isActive && (
+        <ScStatLabels>
+          {tile.effects.map((effect) => (
+            <StatLabel key={effect.type} type={effect.type} value={effect.value} />
+          ))}
+        </ScStatLabels>
+      )}
     </ScWrapper>
   );
 }

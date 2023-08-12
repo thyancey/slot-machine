@@ -1,12 +1,11 @@
-import { MinMaxTouple } from '../utils';
 import AssetMap from '../assets';
 
-export const REEL_HEIGHT = 120; // height of each reel cell
+export const REEL_HEIGHT = 150; // height of each reel cell, should match --val-reel-height rem value
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
-export const SPIN_POWER_RANGE: MinMaxTouple = [0.01, 0.03]; // RNG speed range for each reel
 export const MAX_REELS = 6;
-export const INITIAL_TOKENS = 2;
-export const MAX_REEL_TOKENS = 5;
+export const INITIAL_UPGRADE_TOKENS = 1;
+export const INITIAL_SPIN_TOKENS = 9;
+export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
 
 export type UiState = 'game' | 'editor';
@@ -16,11 +15,10 @@ export type UiState = 'game' | 'editor';
  * All tiles available to the player are stored in a draw TileDeck (subset, can have duplicate tiles)
  * Each turn, the payer will pull tiles from the TileDeck into their TileHand (subset of TileDeck, can have duplicate tiles)
  * Deferred/removed tiles are discarded into discard TileDeck. When the draw TileDeck is empty, it is refilled.
- * 
+ *
  * 1 to MAX_REELS exists in the SlotMachine
  * Each Reel contains a TileCollection
  */
-
 
 /**
  * An item that fits within a slot in a reel.
@@ -28,13 +26,16 @@ export type UiState = 'game' | 'editor';
 export type Tile = {
   label: string;
   img?: string;
-  effect?: string;
-  value?: number;
   attributes: string[];
   score?: number;
+  effects: EffectGroup[];
 };
 
-
+export type EffectType = 'attack' | 'defense' | 'health';
+export type EffectGroup = {
+  type: EffectType;
+  value: number;
+};
 
 /**
  * Internal definition for all tiles by unique Key. Player draws tiles from a TileDeck, however
@@ -43,44 +44,109 @@ export interface TileGlossary {
   [key: string]: Tile;
 }
 export const tileGlossary: TileGlossary = {
-  bat: { label: 'bat', img: AssetMap.Rbat, attributes: ['attack', 'creature'], effect: 'life steal', value: 1, score: 250 },
-  coins: { label: 'coins', img: AssetMap.Rcoins, attributes: ['money'], effect: 'gold bonus', value: 5, score: 1000 },
-  crazy: { label: 'crazy', img: AssetMap.Rcrazy, attributes: ['buff'], score: 0 },
-  flame: { label: 'flame', img: AssetMap.Rflame, attributes: ['attack'], effect: 'fire damage', value: 1.1, score: 250 },
-  halo: { label: 'halo', img: AssetMap.Rhalo, attributes: ['buff'], effect: 'extraLife', score: 1000 },
-  heart: { label: 'heart', img: AssetMap.Rheart, attributes: ['buff'], effect: 'health', value: 1, score: 50 },
+  bat: {
+    label: 'Bat - attack +1, steal 3hp',
+    img: AssetMap.Rbat,
+    attributes: ['attack', 'creature'],
+    score: 250,
+    effects: [{ type: 'attack', value: 1 }],
+  },
+  coins: { label: 'Coins - 1000 points', img: AssetMap.Rcoins, attributes: ['money'], score: 1000, effects: [] },
+  crazy: { label: 'Confusion - add 1 disoriented to enemy', img: AssetMap.Rcrazy, attributes: ['buff'], score: 0, effects: [] },
+  flame: {
+    label: 'Flame - attack +1, hurt self -1',
+    img: AssetMap.Rflame,
+    attributes: ['attack'],
+    score: 250,
+    effects: [
+      { type: 'attack', value: 1 },
+      { type: 'health', value: -1 },
+    ],
+  },
+  halo: {
+    label: 'Halo - heal self +10',
+    img: AssetMap.Rhalo,
+    attributes: ['buff'],
+    score: 1000,
+    effects: [{ type: 'health', value: 10 }],
+  },
+  heart: {
+    label: 'Heart - heal self +2',
+    img: AssetMap.Rheart,
+    attributes: ['buff'],
+    score: 50,
+    effects: [{ type: 'health', value: 2 }],
+  },
   lightning: {
-    label: 'lightning',
+    label: 'Lightning - attack +3, hurt self -1',
     img: AssetMap.Rlightning,
     attributes: ['attack'],
-    effect: 'lightning damage',
-    value: 1.4,
     score: 500,
+    effects: [
+      { type: 'attack', value: 3 },
+      { type: 'health', value: -1 },
+    ],
   },
-  poison: { label: 'poison', img: AssetMap.Rpoison, attributes: ['attack'], effect: 'poison damage', value: 1.5, score: 200 },
-  shield: { label: 'shield', img: AssetMap.Rshield, attributes: ['buff'], effect: 'defense', value: 1, score: 100 },
-  slot_seven: { label: 'seven', img: AssetMap.R7, attributes: [], effect: 'score', value: 7, score: 700 },
-  slot_bar1: { label: 'bar1', img: AssetMap.Rbar1, attributes: ['bar', '*'], score: 100 },
-  slot_bar2: { label: 'bar2', img: AssetMap.Rbar2, attributes: ['bar', '*'], score: 200 },
-  slot_bar3: { label: 'bar3', img: AssetMap.Rbar3, attributes: ['bar', '*'], score: 300 },
+  poison: {
+    label: 'Poison - apply 2 poison, hurt self -1',
+    img: AssetMap.Rpoison,
+    attributes: ['attack'],
+    score: 200,
+    effects: [
+      { type: 'attack', value: 2 },
+      { type: 'health', value: -1 },
+    ],
+  },
+  shield: {
+    label: 'Shield - attack +1, defend self +1',
+    img: AssetMap.Rshield,
+    attributes: ['buff'],
+    score: 100,
+    effects: [{ type: 'defense', value: 1 }],
+  },
+  slot_seven: { label: 'seven', img: AssetMap.R7, attributes: [], score: 700, effects: [] },
+  slot_bar1: {
+    label: 'BAR I - wildcard, defend self +1',
+    img: AssetMap.Rbar1,
+    attributes: ['bar', '*'],
+    score: 100,
+    effects: [{ type: 'defense', value: 1 }],
+  },
+  slot_bar2: {
+    label: 'BAR II - wildcard, defend self +2',
+    img: AssetMap.Rbar2,
+    attributes: ['bar', '*'],
+    score: 200,
+    effects: [{ type: 'defense', value: 2 }],
+  },
+  slot_bar3: {
+    label: 'BAR III - wildcard, defend self +3',
+    img: AssetMap.Rbar3,
+    attributes: ['bar', '*'],
+    score: 300,
+    effects: [{ type: 'defense', value: 3 }],
+  },
   snowflake: {
-    label: 'snowflake',
+    label: 'Freeze - attack +2, ice shield +1',
     img: AssetMap.Rsnowflake,
     attributes: ['attack'],
-    effect: 'freeze damage',
-    value: 1.2,
     score: 120,
+    effects: [
+      { type: 'attack', value: 2 },
+      { type: 'defense', value: 1 },
+    ],
   },
-  sword: { label: 'sword', img: AssetMap.Rsword, attributes: ['attack'], effect: 'extra damage', value: 2, score: 80 },
+  sword: {
+    label: 'Attack Boost - attack x2',
+    img: AssetMap.Rsword,
+    attributes: ['attack'],
+    score: 0,
+    effects: [{ type: 'attack', value: 1 }],
+  },
 };
-
 
 /* combo/bonus stuff */
 export type MatchType = 'label' | 'attrAny' | 'attrUnique';
-
-
-
-
 
 // unique: all reels must be bar, all labels must vary
 // same: all reels must be bar, all labels must match
@@ -157,7 +223,6 @@ export const reelComboDef: ReelCombo[] = [
   },
 ];
 
-
 /**
  * Holds a collection of tiles that the player will draw from. Typically contains a subset of all Tiles in the TileGlossary,
  * and will contain duplicates of tiles
@@ -179,8 +244,8 @@ export const defaultTileDeck: TileKeyCollection = [
   'shield', //10
   'crazy',
   'bat',
-  'poison'
-]
+  'poison',
+];
 
 /**
  * An array of tileKeys, used typically for state management and mapping
@@ -195,43 +260,84 @@ export type DeckIdxCollection = number[];
  * Generally, when discard is full, it refills draw
  */
 export type DeckState = {
-  drawn: number[],
-  draw: number[],
-  discard: number[]
-}
+  drawn: number[];
+  draw: number[];
+  discard: number[];
+};
 
 export const defaultReelState: DeckIdxCollection[] = [
-  [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    8,
-    9,
-    13
-  ],
-  [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    8,
-    9,
-    13
-  ],
-  [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    8,
-    9,
-    13
-  ],
+  [0, 1, 2, 3, 4, 5, 8, 9, 13],
+  [0, 1, 2, 3, 4, 5, 8, 9, 13],
+  [0, 1, 2, 3, 4, 5, 8, 9, 13],
+];
+/*
+export const defaultReelState: DeckIdxCollection[] = [
+  [0, 1, 2],
+  [0, 1, 2],
+  [0, 1, 2],
+];
+*/
+
+// for the player and enemies, will need to be expanded in the future
+export type PlayerInfo = {
+  label: string;
+  img?: string;
+  hp: number;
+  hpMax: number;
+  attack: number;
+  defense: number;
+};
+
+export type PlayerInfoDelta = {
+  hp: number;
+  attack: number;
+  defense: number;
+};
+
+export type AttackDelta = {
+  player: PlayerInfoDelta;
+  enemy: PlayerInfoDelta;
+};
+
+export const enemies: PlayerInfo[] = [
+  {
+    label: 'SQUIRREL',
+    hp: 5,
+    hpMax: 10,
+    attack: 1,
+    defense: 5,
+    img: AssetMap.Enemy_Squirrel,
+  },
+  {
+    label: 'TORT',
+    hp: 10,
+    hpMax: 10,
+    attack: 1,
+    defense: 10,
+    img: AssetMap.Enemy_Tortoise,
+  },
+  {
+    label: 'OPOSSUM',
+    hp: 10,
+    hpMax: 10,
+    attack: 1,
+    defense: 0,
+    img: AssetMap.Enemy_Squirrel,
+  },
+  {
+    label: 'SNEK',
+    hp: 4,
+    hpMax: 4,
+    attack: 6,
+    defense: 0,
+    img: AssetMap.Enemy_Squirrel,
+  },
+  {
+    label: 'TROLL',
+    hp: 20,
+    hpMax: 20,
+    attack: 3,
+    defense: 10,
+    img: AssetMap.Enemy_Squirrel,
+  },
 ];

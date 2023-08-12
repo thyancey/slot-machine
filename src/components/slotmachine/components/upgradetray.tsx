@@ -50,7 +50,6 @@ function UpgradeTray() {
   return (
     <ScWrapper>
       <Button
-        // disabled={upgradeTokens <= 0}
         buttonStyle={upgradeTokens > 0 ? 'special' : 'normal'}
         onClick={() => setUiState('editor')}
       >{`modify`}</Button>

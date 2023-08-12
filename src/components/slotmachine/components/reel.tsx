@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
@@ -10,19 +10,28 @@ import { MinMaxTouple, clamp, randInRange } from '../../../utils';
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
 // REEL_OVERLAP should be just enough to give the illusion of a wheel within the view area
 
-const SPIN_TICK = 30;
-const SPIN_DURATION_RANGE = [0.005, 0.02] as MinMaxTouple;
-const SLOT_DISTANCE_RANGE = [20, 40] as MinMaxTouple;
+const Vars = {
+  SPIN_TICK: 30,
+  SPIN_DURATION_RANGE: [0.005, 0.02] as MinMaxTouple,
+  SLOT_DISTANCE_RANGE: [20, 40] as MinMaxTouple,
+};
+
+const debug = window.location.search.indexOf('debug') > -1;
+if (debug) {
+  Vars.SPIN_TICK = 10;
+  Vars.SPIN_DURATION_RANGE = [0.05, 0.1];
+}
 
 // kinda like the cutout you can see the reel through
 const ScWrapper = styled.div`
-  border: 0.5rem solid var(--color-white);
-  width: 8rem;
-  height: 12rem;
+  /* border: 0.5rem solid var(--color-white); */
+  width: var(--val-reel-width);
+  height: var(--val-reel-height);
   position: relative;
 
   /* makes a cutout */
-  clip-path: inset(0 0 round 10px);
+  /* clip-path: inset(0 0 round 10px); */
+  clip-path: inset(0 0);
 `;
 
 // shadow at top/bottom of reel to give depth effect
@@ -55,6 +64,22 @@ const ScReelTape = styled.div`
   top: 0;
 `;
 
+interface ScReelBgProps {
+  bg?: string;
+}
+const ScReelBg = styled.div<ScReelBgProps>`
+  position: absolute;
+  inset: 0;
+  ${(props) =>
+    props.bg &&
+    css`
+      background: url(${props.bg});
+    `};
+  background-color: var(--color-white);
+  background-size: contain;
+  z-index: -1;
+`;
+
 type Props = {
   reelIdx: number;
   reelState: DeckIdxCollection;
@@ -71,6 +96,8 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
   const [spinProgress, setSpinProgress] = useState(1);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
+  const reelBg = ''; // eventually, stored in reel data
+  // const reelBg = AssetMap.Reel_BG;
 
   // on initialize
   useEffect(() => {
@@ -83,12 +110,12 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
     if (spinLock && targetSlotIdx !== -1) {
       // allows the reel to spin again
       setSpinProgress(0);
-      setSpinSpeed(randInRange(SPIN_DURATION_RANGE));
+      setSpinSpeed(randInRange(Vars.SPIN_DURATION_RANGE));
       // the targetLoopedIdx (index [1]) will now be come the previous, so assign it as such, and
       // use it to calculate the next targetLoopedIdx all at once
       setLoopedIdxs((prev) => [
         prev[1],
-        getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(SLOT_DISTANCE_RANGE, true)),
+        getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(Vars.SLOT_DISTANCE_RANGE, true)),
       ]);
     }
   }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, spinLock]);
@@ -98,16 +125,16 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
       // have to calculate the end result value here, over using "targetSlotIdx", because adding that
       // prop to this useEffect dependency array makes the reel think it finished spinning on a brand
       // new pull, cause spinProgress had not changed to 0 yet
-      
+
       // this check avoids a false spin trigger after editing reel
-      if(loopedIdxs[0] > -1){
+      if (loopedIdxs[0] > -1) {
         onSpinComplete(reelIdx, loopedIdxs[1] % reelState.length);
       }
     } else {
       setTimeout(() => {
         // use an easing function to smoothly increment the % progress up to the value of 1
         setSpinProgress((prevProgress) => clamp(prevProgress + spinSpeed, 0, 1));
-      }, SPIN_TICK);
+      }, Vars.SPIN_TICK);
     }
   }, [spinProgress, setSpinProgress, onSpinComplete, reelIdx, loopedIdxs, reelState.length, spinSpeed]);
 
@@ -130,8 +157,9 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (
-            <ReelContent key={`${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} />
+            <ReelContent key={`s${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} isActive={idx - REEL_OVERLAP === targetSlotIdx} />
           ))}
+          <ScReelBg bg={reelBg} />
         </ScReelTape>
       </ScReelCenterer>
       <ScReelOverlay />

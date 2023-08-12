@@ -35,10 +35,3 @@ export const checkUniqueStrings = (items: string[]) => {
 export const checkForWildCards = (bonuses: BonusGroup[], tiles: Tile[]) => {
   return !!tiles.find(t => t.attributes.includes('*')) && !!bonuses.find(b => b.bonusType === '*');
 }
-
-export const pickRandomFromArray = (numChoices: number, array: unknown[]) => {
-  const idxs = Array.from(Array(array.length).keys());
-  const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
-  
-  return shuffledIdxs.slice(0, numChoices).map(i => array[i]);
-};

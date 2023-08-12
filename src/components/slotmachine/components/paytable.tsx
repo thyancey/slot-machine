@@ -6,7 +6,7 @@ const ScWrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: auto;
 
-  background-color: var(--color-purple);
+  background-color: var(--color-black);
   border-radius: .5rem;
   padding: .5rem;
 `
