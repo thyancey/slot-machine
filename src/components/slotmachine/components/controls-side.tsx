@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
 import DisplayButton from '../../display-button';
+import { UiContext } from '../../../store/uicontext';
 
 const ScWrapper = styled.div`
   color: var(--color-white);
@@ -52,6 +53,11 @@ interface Props {
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
+  const { setPlayerText } = useContext(UiContext);
+
+  const onHover = ()=> {
+    setPlayerText(`spin all reels`);
+  }
 
   return (
     <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
@@ -60,6 +66,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
           buttonStyle='special'
           disabled={spinInProgress || spinTokens <= 0}
           onClick={() => triggerSpin()}
+          onMouseEnter={() => onHover()}
         >
           {'S P I N'}
         </DisplayButton>
@@ -67,7 +74,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
           <span>{spinTokens}</span>
         </ScSpinTokens>
         <DisplayButton
-          buttonStyle={upgradeTokens > 0 ? 'special' : 'normal'}
+          disabled={spinInProgress || upgradeTokens <= 0}
           onClick={() => setUiState('editor')}
         >{`?`}</DisplayButton>
       </ScInner>

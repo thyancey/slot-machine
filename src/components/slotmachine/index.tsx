@@ -12,6 +12,7 @@ import PlayerDisplay from './components/player-display';
 import ScoreBox from '../scorebox';
 import SideControls from './components/controls-side';
 import { MixinBorders } from '../../utils/styles';
+import Rivets from './components/rivets';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -28,17 +29,25 @@ const ScReelContainer = styled.div`
 
   height: 100%;
   display: flex;
-  padding: 0.5rem 0rem 0.75rem 0rem;
+  position: relative;
+
+  padding: 1rem 1.75rem;
+  background-color: var(--co-player-door);
+  border-radius: 0.75rem;
 
   align-items: center;
   justify-content: center;
 
   overflow: hidden;
+
+  > ul {
+    display: flex;
+  }
 `;
 
 const ScReelSegment = styled.div`
   background-color: var(--co-player-border);
-  margin: 0rem 0.5rem;
+  margin: 0rem 0.75rem;
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
 
@@ -62,10 +71,17 @@ const ScReelSegment = styled.div`
 //   }
 // `;
 
-const ScScoreBox = styled.div`
+const ScScoreBoxContainer = styled.div`
   grid-row: 3;
   grid-column: 1;
 
+  position: relative;
+  padding: 1rem 1.75rem;
+  background-color: var(--co-player-door);
+  border-radius: 0.75rem;
+`;
+
+const ScScoreBox = styled.div`
   background-color: var(--color-black);
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
@@ -73,8 +89,13 @@ const ScScoreBox = styled.div`
 `;
 
 const ScDisplay = styled.div`
+  position: relative;
   grid-row: 2;
   grid-column: 1;
+
+  padding: 1rem 1.75rem;
+  background-color: var(--co-player-door);
+  border-radius: 0.75rem;
 `;
 
 const ScSideControls = styled.div`
@@ -150,7 +171,7 @@ function SlotMachine() {
         setSpinCount(spinCount + 1);
         if (onlyThisReelIdx !== undefined) {
           // all should be locked/true EXCEPT the one that we are spinnin
-          setReelResults(prev => prev.map((rR, reelIdx) => reelIdx === onlyThisReelIdx ? -1 : rR));
+          setReelResults((prev) => prev.map((rR, reelIdx) => (reelIdx === onlyThisReelIdx ? -1 : rR)));
           setReelLock(reelStates.map((_, reelIdx) => reelIdx !== onlyThisReelIdx));
         } else {
           setReelResults(Array(reelStates.length).fill(-1));
@@ -234,34 +255,45 @@ function SlotMachine() {
 
   return (
     <ScWrapper>
-      <ScScoreBox>
-        <ScoreBox />
-      </ScScoreBox>
       <ScReelContainer>
-        {reelStates.map((reelState, reelIdx) => (
-          <ScReelSegment key={reelIdx}>
-            <Reel
-              key={`reel-${reelIdx}`}
-              reelIdx={reelIdx}
-              reelState={reelState}
-              tileDeck={tileDeck}
-              spinCount={spinCount}
-              reelLock={reelLock[reelIdx]}
-              // can only single-spin this reel if there are spins left, and all reels have been spun at least once
-              isEnabled={spinTokens > 0 && !reelResults.includes(-1)}
-              targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
-              onSpinComplete={onSpinComplete}
-              triggerSpin={(reelIdx) => triggerSpin(reelStates, reelIdx)}
-            />
-          </ScReelSegment>
-        ))}
+        <ul>
+          {reelStates.map((reelState, reelIdx) => (
+            <ScReelSegment key={reelIdx}>
+              <Reel
+                key={`reel-${reelIdx}`}
+                reelIdx={reelIdx}
+                reelState={reelState}
+                tileDeck={tileDeck}
+                spinCount={spinCount}
+                reelLock={reelLock[reelIdx]}
+                // can only single-spin this reel if there are spins left, and all reels have been spun at least once
+                isEnabled={spinTokens > 0 && !reelResults.includes(-1)}
+                targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
+                onSpinComplete={onSpinComplete}
+                triggerSpin={(reelIdx) => triggerSpin(reelStates, reelIdx)}
+              />
+            </ScReelSegment>
+          ))}
+        </ul>
+        <Rivets />
       </ScReelContainer>
       <ScDisplay>
         <PlayerDisplay onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo} />
+        <Rivets />
       </ScDisplay>
       <ScSideControls>
-        <SideControls spinInProgress={spinInProgress} spinTokens={spinTokens} triggerSpin={() => triggerSpin(reelStates)} />
+        <SideControls
+          spinInProgress={spinInProgress}
+          spinTokens={spinTokens}
+          triggerSpin={() => triggerSpin(reelStates)}
+        />
       </ScSideControls>
+      <ScScoreBoxContainer>
+        <ScScoreBox>
+          <ScoreBox />
+        </ScScoreBox>
+        <Rivets />
+      </ScScoreBoxContainer>
     </ScWrapper>
   );
 }

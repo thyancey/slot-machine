@@ -4,6 +4,7 @@ import { AppContext } from '../../store/appcontext';
 import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
+import Rivets from '../slotmachine/components/rivets';
 
 const ScCard = styled.div`
   position: relative;
@@ -16,6 +17,11 @@ const ScCard = styled.div`
   grid-gap: 0.5rem;
 
   color: var(--color-black);
+
+  position: relative;
+  padding: 1rem 1.75rem;
+  background-color: var(--co-enemy-door);
+  border-radius: 0.75rem;
 `;
 
 const ScEnemy = styled.div`
@@ -57,7 +63,7 @@ const ScDisplay = styled.div`
 
 const ScSideControls = styled.div`
   position: absolute;
-  left: calc(100% + 2.5rem);
+  left: calc(100% + 3.5rem);
   top: 0;
   width: 6rem;
   height: 100%;
@@ -66,7 +72,7 @@ const ScSideControls = styled.div`
   
   > button {
     font-size: 3rem;
-    line-height: 4.25rem;
+    line-height: 4.85rem;
   }
 `;
 
@@ -104,6 +110,7 @@ export const Enemy = () => {
           </DisplayButton>
         {/* </ScButton> */}
       </ScSideControls>
+      <Rivets />
     </ScCard>
   );
 };

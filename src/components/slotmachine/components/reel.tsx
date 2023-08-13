@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
+import { AppContext } from '../../../store/appcontext';
+import { UiContext } from '../../../store/uicontext';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
@@ -35,10 +37,10 @@ const ScWrapper = styled.div`
 
   &.enabled {
     cursor: pointer;
-    transition: filter .5s ease;
-    &:hover{
-      background-color:green;
-      filter: brightness(1.50);
+    transition: filter 0.5s ease;
+    &:hover {
+      background-color: green;
+      filter: brightness(1.5);
     }
   }
 `;
@@ -100,7 +102,18 @@ type Props = {
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
   triggerSpin: (reelIdx: number) => void;
 };
-function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, reelLock, spinCount, onSpinComplete, triggerSpin, isEnabled }: Props) {
+function Reel({
+  reelIdx,
+  reelState,
+  tileDeck,
+  targetSlotIdx,
+  reelLock,
+  spinCount,
+  onSpinComplete,
+  triggerSpin,
+  isEnabled,
+}: Props) {
+  const { playerText, setPlayerText } = useContext(UiContext);
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
@@ -163,12 +176,27 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, reelLock, spinCount
     return getReelTileStateFromReelState(loopedReelState, tileDeck);
   }, [reelState, tileDeck]);
 
+  const onHover = () => {
+    if(isEnabled){
+      setPlayerText(`spin reel #${reelIdx + 1}`);
+    }
+  };
+
   return (
-    <ScWrapper onClick={() => isEnabled && triggerSpin(reelIdx)} className={isEnabled ? 'enabled' : ''}>
+    <ScWrapper
+      onClick={() => isEnabled && triggerSpin(reelIdx)}
+      className={isEnabled ? 'enabled' : ''}
+      onMouseEnter={onHover}
+    >
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (
-            <ReelContent key={`s${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} isActive={idx - REEL_OVERLAP === targetSlotIdx} />
+            <ReelContent
+              key={`s${reelIdx}-${idx}`}
+              tile={tile}
+              height={REEL_HEIGHT}
+              isActive={idx - REEL_OVERLAP === targetSlotIdx}
+            />
           ))}
           <ScReelBg bg={reelBg} />
         </ScReelTape>
