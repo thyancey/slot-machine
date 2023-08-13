@@ -5,6 +5,7 @@ const RIVETS = [1, 1, 1, 1];
 const ScWrapper = styled.div`
   position:absolute;
   inset: .5rem 0.5rem;
+  pointer-events: none;
 `;
 
 const ScRivet = styled.div`
