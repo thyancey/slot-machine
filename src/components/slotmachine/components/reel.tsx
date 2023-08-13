@@ -5,7 +5,6 @@ import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from 
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
-import { AppContext } from '../../../store/appcontext';
 import { UiContext } from '../../../store/uicontext';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
@@ -113,7 +112,7 @@ function Reel({
   triggerSpin,
   isEnabled,
 }: Props) {
-  const { playerText, setPlayerText } = useContext(UiContext);
+  const { setPlayerText } = useContext(UiContext);
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]

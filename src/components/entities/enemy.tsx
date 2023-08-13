@@ -5,6 +5,7 @@ import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';
+import { UiContext } from '../../store/uicontext';
 
 const ScCard = styled.div`
   position: relative;
@@ -78,6 +79,7 @@ const ScSideControls = styled.div`
 
 export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
+  const { setPlayerText } = useContext(UiContext);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
@@ -88,6 +90,10 @@ export const Enemy = () => {
     if (canAttack) classes.push('active');
     return classes.join(' ');
   }, [canAttack]);
+
+  const onHover = (text: string)=> {
+    setPlayerText(text);
+  }
 
   if (!enemyInfo) {
     return null;
@@ -105,7 +111,8 @@ export const Enemy = () => {
       </ScDisplay>
       <ScSideControls>
         {/* <ScButton> */}
-          <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()}>
+          <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()} 
+          onMouseEnter={() => onHover(`end turn`)}>
             {'A T K'}
           </DisplayButton>
         {/* </ScButton> */}

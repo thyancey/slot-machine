@@ -55,8 +55,8 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
   const { setPlayerText } = useContext(UiContext);
 
-  const onHover = ()=> {
-    setPlayerText(`spin all reels`);
+  const onHover = (text: string)=> {
+    setPlayerText(text);
   }
 
   return (
@@ -66,7 +66,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
           buttonStyle='special'
           disabled={spinInProgress || spinTokens <= 0}
           onClick={() => triggerSpin()}
-          onMouseEnter={() => onHover()}
+          onMouseEnter={() => onHover(`spin all reels`)}
         >
           {'S P I N'}
         </DisplayButton>
@@ -76,6 +76,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
         <DisplayButton
           disabled={spinInProgress || upgradeTokens <= 0}
           onClick={() => setUiState('editor')}
+          onMouseEnter={() => onHover(`upgrade slot machine`)}
         >{`?`}</DisplayButton>
       </ScInner>
     </ScWrapper>
