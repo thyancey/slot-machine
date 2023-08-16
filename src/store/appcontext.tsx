@@ -13,11 +13,31 @@ import {
   ReelComboResult,
   ReelCombo,
   Tile,
+  GameState,
 } from './data';
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { computeRound, getActiveCombos, getEffectDelta, pickRandomFromArray } from '../components/slotmachine/utils';
+import {
+  computeEnemyAttack,
+  computePlayerAttack,
+  computeRound,
+  getActiveCombos,
+  getEffectDelta,
+  pickRandomFromArray,
+} from '../components/slotmachine/utils';
+
+const gameState_queue: GameState[] = [
+  // 'MENU',
+  // 'NEW_ROUND',
+  'SPIN',
+  'PLAYER_ATTACK',
+  'ENEMY_ATTACK',
+  // 'ROUND_WIN',
+  // 'ROUND_OVER',
+  // 'GAME_OVER',
+  // 'GAME_WIN'
+];
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -86,6 +106,7 @@ const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
   const [round, setRound] = useState(-1);
+  const [gameState, setGameState] = useState<GameState>('SPIN');
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
     hp: 10,
@@ -209,10 +230,9 @@ const AppProvider = ({ children }: Props) => {
     }
   }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
-  // next turn, fight each other then reset or whatever
+  // next turn, reset stuff
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
-    console.log('INITIAL_UPGRADE_TOKENS: ue2');
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
@@ -234,6 +254,107 @@ const AppProvider = ({ children }: Props) => {
     });
   }, [setPlayerInfo, activeTiles, activeCombos]);
 
+  // handles states during round and turn transitions
+
+  const playerAttack = useCallback(() => {
+    if (enemyInfo) {
+      console.log('>>> PLAYER ATTACKS!');
+      const attackResult = computePlayerAttack(playerInfo, enemyInfo);
+
+      if (attackResult.enemy.hp <= 0) {
+        console.log('>>> PLAYER KILLS ENEMY!');
+        // enemy dead
+        setEnemyInfo(null);
+        setGameState('NEW_ROUND');
+        return;
+      } else {
+        console.log(`>>> ENEMY IS ATTACKED FOR ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
+        setEnemyInfo((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            attack: attackResult.enemy.attack,
+            hp: attackResult.enemy.hp,
+            defense: attackResult.enemy.defense,
+          };
+        });
+        setGameState('ENEMY_ATTACK');
+      }
+    } else {
+      setGameState('NEW_ROUND');
+    }
+  }, [setGameState, playerInfo, enemyInfo]);
+
+  const enemyAttack = useCallback(() => {
+    if (enemyInfo) {
+      console.log('>>> ENEMY ATTACKS!');
+      const attackResult = computeEnemyAttack(playerInfo, enemyInfo);
+
+      if (attackResult.player.hp <= 0) {
+        console.log(`>>> PLAYER DIED!`);
+        // player dead
+        window.alert('you died!');
+      } else {
+        console.log(`>>> PLAYER WAS ATTACKED FOR ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
+        setPlayerInfo((prev) => {
+          return {
+            ...prev,
+            attack: attackResult.player.attack,
+            hp: attackResult.player.hp,
+            defense: attackResult.player.defense,
+          };
+        });
+        setGameState('NEW_TURN');
+      }
+    } else {
+      setGameState('NEW_ROUND');
+    }
+  }, [setGameState, playerInfo, enemyInfo]);
+
+  const newTurn = useCallback(() => {
+    setTurn((prev) => prev + 1);
+    setGameState('SPIN');
+  }, [setTurn]);
+
+  const newRound = useCallback(() => {
+    setRound((prev) => prev + 1);
+    setGameState('SPIN');
+  }, [setRound]);
+
+  useEffect(() => {
+    // console.log('newState>>>>>>>>>>>>> ', gameState);
+    switch (gameState) {
+      case 'PLAYER_ATTACK':
+        playerAttack();
+        break;
+      case 'ENEMY_ATTACK':
+        setTimeout(() => {
+          enemyAttack();
+        }, 2000);
+        break;
+      case 'NEW_TURN':
+        setTimeout(() => {
+          newTurn();
+        }, 2000);
+        break;
+      case 'NEW_ROUND':
+        setTimeout(() => {
+          newRound();
+        }, 2000);
+        break;
+    }
+  }, [gameState, playerAttack, enemyAttack, newTurn, newRound]);
+
+  // DO SOME FIGHTING
+  const finishTurn = useCallback(() => {
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
+      return;
+    }
+
+    setGameState('PLAYER_ATTACK');
+  }, [setGameState, enemyInfo, setTurn]);
+  /*
   const finishTurn = useCallback(() => {
     if (!enemyInfo) {
       setTurn((prev) => prev + 1);
@@ -280,7 +401,7 @@ const AppProvider = ({ children }: Props) => {
       setTurn((prev) => prev + 1);
     }
   }, [playerInfo, enemyInfo, setTurn, activeTiles, activeCombos, setPlayerInfo, setEnemyInfo, finishRound]);
-
+*/
   return (
     <AppContext.Provider
       value={

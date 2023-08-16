@@ -10,6 +10,18 @@ export const MAX_HAND_SIZE = 3;
 
 export type UiState = 'game' | 'editor';
 
+export type GameState =
+  | 'MENU'
+  | 'NEW_ROUND'
+  | 'NEW_TURN'
+  | 'SPIN'
+  | 'PLAYER_ATTACK'
+  | 'ENEMY_ATTACK'
+  | 'ROUND_WIN'
+  | 'ROUND_OVER'
+  | 'GAME_OVER'
+  | 'GAME_WIN';
+
 /**
  * Tiles are defined in the TileGlossary (unique)
  * All tiles available to the player are stored in a draw TileDeck (subset, can have duplicate tiles)
@@ -52,7 +64,13 @@ export const tileGlossary: TileGlossary = {
     effects: [{ type: 'attack', value: 1 }],
   },
   coins: { label: 'Coins - 1000 points', img: AssetMap.Rcoins, attributes: ['money'], score: 1000, effects: [] },
-  crazy: { label: 'Confusion - add 1 disoriented to enemy', img: AssetMap.Rcrazy, attributes: ['buff'], score: 0, effects: [] },
+  crazy: {
+    label: 'Confusion - add 1 disoriented to enemy',
+    img: AssetMap.Rcrazy,
+    attributes: ['buff'],
+    score: 0,
+    effects: [],
+  },
   flame: {
     label: 'Flame - attack +1, hurt self -1',
     img: AssetMap.Rflame,

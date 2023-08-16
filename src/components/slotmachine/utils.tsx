@@ -274,3 +274,45 @@ export const computeRound = (
 
   return compute('');
 };
+
+
+export const computePlayerAttack = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo
+) => {
+  const attackResult = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
+  console.log('attackResult:', enemyInfo, attackResult);
+
+  return {
+    player: { 
+      attack: playerInfo.attack,
+      hp: playerInfo.hp,
+      defense: playerInfo.defense
+    },
+    enemy: {
+      attack: enemyInfo.attack,
+      hp: attackResult.hp,
+      defense: attackResult.defense
+    }
+  }
+};
+
+export const computeEnemyAttack = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo
+) => {
+  const attackResult = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
+
+  return {
+    player: { 
+      attack: playerInfo.attack,
+      hp: attackResult.hp,
+      defense: attackResult.defense
+    },
+    enemy: {
+      attack: enemyInfo.attack,
+      hp: enemyInfo.hp,
+      defense: enemyInfo.defense
+    }
+  }
+};
