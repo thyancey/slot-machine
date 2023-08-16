@@ -1,4 +1,4 @@
-import { ReactNode, SetStateAction, createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, SetStateAction, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DeckState,
   MAX_REELS,
@@ -55,7 +55,7 @@ interface AppContextType {
   turn: number;
   setTurn: (value: SetStateAction<number>) => void;
   finishTurn: () => void;
-  
+
   spinTurn: number;
   setSpinTurn: (value: SetStateAction<number>) => void;
   finishSpinTurn: () => void;
@@ -100,7 +100,11 @@ const AppProvider = ({ children }: Props) => {
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
   // const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
-  const [reelStates, setReelStates] = useState<DeckIdxCollection[]>([]);
+  const [reelStates, setReelStatesState] = useState<DeckIdxCollection[]>([]);
+
+  // for acting on reelStates in a useEffect, but dont get triggered by them
+  const numReelsRef = useRef(reelStates.length);
+
   const [reelResults, setReelResults] = useState<DeckIdxCollection>([]);
   const [tileDeck, setTileDeck] = useState<TileKeyCollection>([]);
   const [deckState, setDeckState] = useState<DeckState>({
@@ -108,6 +112,14 @@ const AppProvider = ({ children }: Props) => {
     draw: [],
     discard: [],
   });
+
+  const setReelStates = useCallback(
+    (reelStates: DeckIdxCollection[]) => {
+      setReelStatesState(reelStates);
+      numReelsRef.current = reelStates.length;
+    },
+    [setReelStatesState]
+  );
 
   const incrementScore = useCallback(
     (increment = 0) => {
@@ -167,6 +179,7 @@ const AppProvider = ({ children }: Props) => {
   }, [activeTiles, reelCombos]);
 
   const incrementUpgradeTokens = (newAmount: number) => {
+    console.log('incrementUpgradeTokens:', newAmount);
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
 
@@ -175,6 +188,7 @@ const AppProvider = ({ children }: Props) => {
 
   // next round
   useEffect(() => {
+    console.log('ue1:', round, numReelsRef.current);
     if (round > -1) {
       if (round <= enemies.length - 1) {
         setEnemyInfo(enemies[round]);
@@ -185,26 +199,27 @@ const AppProvider = ({ children }: Props) => {
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
+      console.log('INITIAL_UPGRADE_TOKENS: ue1');
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
-      setReelResults(Array(reelStates.length).fill(-1));
+      setReelResults(Array(numReelsRef.current).fill(-1));
 
       setTurn(0);
     } else {
       setRound(0);
     }
-  }, [round, reelStates, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults ]);
+  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
   // next turn, fight each other then reset or whatever
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
+    console.log('INITIAL_UPGRADE_TOKENS: ue2');
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
-    setReelResults(Array(reelStates.length).fill(-1));
-  }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults, reelStates.length]);
+    setReelResults(Array(numReelsRef.current).fill(-1));
+  }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
   const finishRound = useCallback(() => {
     setRound((prev) => prev + 1);
   }, [setRound]);
-
 
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
@@ -213,11 +228,11 @@ const AppProvider = ({ children }: Props) => {
     setPlayerInfo((prev) => {
       return {
         ...prev,
-        attack: prev.attack + attack,
-        defense: prev.defense + defense,
-      }
+        attack: attack,
+        defense: defense,
+      };
     });
-  }, [ setPlayerInfo, activeTiles, activeCombos ])
+  }, [setPlayerInfo, activeTiles, activeCombos]);
 
   const finishTurn = useCallback(() => {
     if (!enemyInfo) {
@@ -250,7 +265,7 @@ const AppProvider = ({ children }: Props) => {
           attack: roundResult.player.attack,
           hp: roundResult.player.hp,
           defense: roundResult.player.defense,
-        }
+        };
       });
 
       setEnemyInfo((prev) => {

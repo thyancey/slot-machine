@@ -10,7 +10,7 @@ const ScWrapper = styled.div<ScProps>`
   height: ${(p) => p.height}px;
   color: var(--color-black);
   text-align: center;
-  border-bottom: 0.25rem solid var(--co-reel-divider);
+  border-bottom: 0.25rem dashed var(--co-reel-divider);
 
   display: flex;
   align-items: center;

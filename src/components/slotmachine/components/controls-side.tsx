@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
 import DisplayButton from '../../display-button';
+import { UiContext } from '../../../store/uicontext';
 
 const ScWrapper = styled.div`
   color: var(--color-white);
@@ -45,21 +46,27 @@ const ScSpinTokens = styled.div`
 `;
 
 interface Props {
-  spinLock: boolean;
+  spinInProgress: boolean;
   spinTokens: number;
   triggerSpin: () => void;
 }
 
-function SideControls({ spinLock, spinTokens, triggerSpin }: Props) {
+function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
+  const { setPlayerText } = useContext(UiContext);
+
+  const onHover = (text: string)=> {
+    setPlayerText(text);
+  }
 
   return (
-    <ScWrapper className={spinLock || spinTokens <= 0 ? 'spin-disabled' : ''}>
+    <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
       <ScInner>
         <DisplayButton
           buttonStyle='special'
-          disabled={spinLock || spinTokens <= 0}
+          disabled={spinInProgress || spinTokens <= 0}
           onClick={() => triggerSpin()}
+          onMouseEnter={() => onHover(`spin all reels`)}
         >
           {'S P I N'}
         </DisplayButton>
@@ -67,8 +74,9 @@ function SideControls({ spinLock, spinTokens, triggerSpin }: Props) {
           <span>{spinTokens}</span>
         </ScSpinTokens>
         <DisplayButton
-          buttonStyle={upgradeTokens > 0 ? 'special' : 'normal'}
+          disabled={spinInProgress || upgradeTokens <= 0}
           onClick={() => setUiState('editor')}
+          onMouseEnter={() => onHover(`upgrade slot machine`)}
         >{`?`}</DisplayButton>
       </ScInner>
     </ScWrapper>

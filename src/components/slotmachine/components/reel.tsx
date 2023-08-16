@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
 import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
+import { UiContext } from '../../../store/uicontext';
 
 // imagine the construction as a ribbon, rendering each tile top to bottom
 // to complete the looping effect, REEL_OVERLAP n of tiles are repeated at the top and bottom
@@ -32,6 +33,15 @@ const ScWrapper = styled.div`
   /* makes a cutout */
   /* clip-path: inset(0 0 round 10px); */
   clip-path: inset(0 0);
+
+  &.enabled {
+    cursor: pointer;
+    transition: filter 0.5s ease;
+    &:hover {
+      background-color: green;
+      filter: brightness(1.5);
+    }
+  }
 `;
 
 // shadow at top/bottom of reel to give depth effect
@@ -86,10 +96,23 @@ type Props = {
   tileDeck: TileKeyCollection;
   targetSlotIdx: number; // idx of tiles to go to, regardless of how much spinning to be done
   spinCount: number; // this helps determine when a spin started
-  spinLock: boolean;
+  reelLock: boolean;
+  isEnabled: boolean; // can click to spin this weel
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
+  triggerSpin: (reelIdx: number) => void;
 };
-function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount, onSpinComplete }: Props) {
+function Reel({
+  reelIdx,
+  reelState,
+  tileDeck,
+  targetSlotIdx,
+  reelLock,
+  spinCount,
+  onSpinComplete,
+  triggerSpin,
+  isEnabled,
+}: Props) {
+  const { setPlayerText } = useContext(UiContext);
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
@@ -107,7 +130,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
   /* THIS SHOULD BE THE CATALYST TO START SPINNING */
   useEffect(() => {
     // -1 happens on mount
-    if (spinLock && targetSlotIdx !== -1) {
+    if (!reelLock && targetSlotIdx !== -1) {
       // allows the reel to spin again
       setSpinProgress(0);
       setSpinSpeed(randInRange(Vars.SPIN_DURATION_RANGE));
@@ -118,7 +141,7 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
         getSpinTarget(prev[1], targetSlotIdx, reelState.length, randInRange(Vars.SLOT_DISTANCE_RANGE, true)),
       ]);
     }
-  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, spinLock]);
+  }, [targetSlotIdx, reelIdx, spinCount, reelState, setLoopedIdxs, setSpinProgress, setSpinSpeed, reelLock]);
 
   useEffect(() => {
     if (spinProgress >= 1) {
@@ -152,12 +175,27 @@ function Reel({ reelIdx, reelState, tileDeck, targetSlotIdx, spinLock, spinCount
     return getReelTileStateFromReelState(loopedReelState, tileDeck);
   }, [reelState, tileDeck]);
 
+  const onHover = () => {
+    if(isEnabled){
+      setPlayerText(`spin reel #${reelIdx + 1}`);
+    }
+  };
+
   return (
-    <ScWrapper>
+    <ScWrapper
+      onClick={() => isEnabled && triggerSpin(reelIdx)}
+      className={isEnabled ? 'enabled' : ''}
+      onMouseEnter={onHover}
+    >
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (
-            <ReelContent key={`s${reelIdx}-${idx}`} tile={tile} height={REEL_HEIGHT} isActive={idx - REEL_OVERLAP === targetSlotIdx} />
+            <ReelContent
+              key={`s${reelIdx}-${idx}`}
+              tile={tile}
+              height={REEL_HEIGHT}
+              isActive={idx - REEL_OVERLAP === targetSlotIdx}
+            />
           ))}
           <ScReelBg bg={reelBg} />
         </ScReelTape>

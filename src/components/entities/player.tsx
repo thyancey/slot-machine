@@ -3,13 +3,11 @@ import SlotMachine from '../slotmachine';
 import Enemy from './enemy';
 import MetalGlint from '../metal-glint';
 
-const ScCard = styled.div`
+const ScWrapper = styled.div`
   position: relative;
 
   box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
-  border-radius: 1rem;
-
-  /* background: var(--color-red); */
+  border-radius: 1rem 1rem 0.25rem 0.25rem;
 
   display: flex;
   flex-direction: column;
@@ -25,9 +23,10 @@ const ScShadowDiv = styled.div`
 const ScEnemy = styled.div`
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
-  padding: 1rem;
+  padding: 1.5rem 2rem 1rem 2rem;
 
   position: relative;
+  
 
   ${ScShadowDiv} {
     /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
@@ -44,9 +43,9 @@ const ScEnemy = styled.div`
 
 const ScPlayer = styled.div`
   position: relative;
-  padding: 1rem;
-  padding-bottom: 1.5rem;
-  border-top: 0.25rem dashed var(--co-enemy);
+  padding: 1.75rem;
+  padding-bottom: 2.25rem;
+  border-top: 0.25rem solid var(--co-player-bordertop);
 
   border-radius: 0 0 1rem 1rem;
   background-color: transparent;
@@ -66,7 +65,7 @@ const ScPlayer = styled.div`
 
 export const Player = () => {
   return (
-    <ScCard id='player'>
+    <ScWrapper id='player'>
       <ScEnemy>
         <Enemy />
         <ScShadowDiv />
@@ -76,7 +75,7 @@ export const Player = () => {
         <MetalGlint glintTheme="player"/>
         <ScShadowDiv />
       </ScPlayer>
-    </ScCard>
+    </ScWrapper>
   );
 };
 

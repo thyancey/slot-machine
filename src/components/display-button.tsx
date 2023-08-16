@@ -5,16 +5,30 @@ export const StyledButton = styled.button`
   /* border-radius: 0.25rem; */
 
   padding: 0.5rem;
-  
+
   font-size: 3rem;
   line-height: 4rem;
 
   /* background-color: transparent; */
   background-color: var(--co-button-secondary);
-  border: .3rem dashed var(--co-button-primary);
+  border: 0.3rem dashed var(--co-button-primary);
   color: var(--co-button-primary);
 
-  cursor: pointer;
+
+  &.enabled {
+    cursor: pointer;
+    
+    &:hover {
+      background-color: var(--co-button-primary);
+      border: 0.3rem dashed var(--co-button-secondary);
+      color: var(--co-button-secondary);
+    }
+  }
+
+  &.disabled {
+    border: 0.3rem dashed var(--color-grey-dark);
+    color: var(--color-grey-dark);
+  }
 `;
 
 type ButtonStyle = 'normal' | 'special' | 'disabled';
@@ -22,15 +36,20 @@ type ButtonStyle = 'normal' | 'special' | 'disabled';
 interface Props {
   children: string | JSX.Element | JSX.Element[];
   onClick?: React.MouseEventHandler;
+  onMouseEnter?: React.MouseEventHandler;
   disabled?: boolean;
   buttonStyle?: ButtonStyle;
 }
 
-function DisplayButton({ children, onClick, disabled, buttonStyle = 'normal'}: Props) {
-  const className = disabled ? 'disabled' : `bs-${buttonStyle}`;
+function DisplayButton({ children, onClick, disabled, buttonStyle = 'normal', onMouseEnter }: Props) {
+  const className = disabled ? 'disabled' : `enabled bs-${buttonStyle}`;
 
   return (
-    <StyledButton className={className} onClick={(e) => !disabled && onClick && onClick(e)}>
+    <StyledButton
+      className={className}
+      onClick={(e) => !disabled && onClick && onClick(e)}
+      onMouseEnter={(e) => !disabled && onMouseEnter && onMouseEnter(e)}
+    >
       {children}
     </StyledButton>
   );

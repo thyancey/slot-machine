@@ -4,7 +4,7 @@ export const REEL_HEIGHT = 150; // height of each reel cell, should match --val-
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 export const MAX_REELS = 6;
 export const INITIAL_UPGRADE_TOKENS = 1;
-export const INITIAL_SPIN_TOKENS = 9;
+export const INITIAL_SPIN_TOKENS = 3;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
 
@@ -302,10 +302,10 @@ export type AttackDelta = {
 export const enemies: PlayerInfo[] = [
   {
     label: 'SQUIRREL',
-    hp: 5,
-    hpMax: 10,
+    hp: 6,
+    hpMax: 6,
     attack: 1,
-    defense: 5,
+    defense: 0,
     img: AssetMap.Enemy_Squirrel,
   },
   {
