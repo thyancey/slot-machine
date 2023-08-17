@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useMemo } from 'react';
 
 const ScOuter = styled.div`
   width: auto;
@@ -40,9 +39,7 @@ interface Props {
   displayType?: 'combo';
 }
 function Display({ messages, displayType }: Props) {
-  const className = useMemo(() => {
-    return displayType === 'combo' ? 'winner' : '';
-  }, [displayType]);
+  const className = displayType === 'combo' ? 'winner' : '';
 
   return (
     <ScOuter>

@@ -7,6 +7,9 @@ export const INITIAL_UPGRADE_TOKENS = 1;
 export const INITIAL_SPIN_TOKENS = 3;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
+export const TRANSITION_DELAY = 3000;
+
+export const ENEMY_HEIGHT = 304;
 
 export type UiState = 'game' | 'editor';
 
@@ -322,7 +325,7 @@ export const enemies: PlayerInfo[] = [
     label: 'SQUIRREL',
     hp: 6,
     hpMax: 6,
-    attack: 1,
+    attack: 3,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
   },
@@ -330,7 +333,7 @@ export const enemies: PlayerInfo[] = [
     label: 'TORT',
     hp: 10,
     hpMax: 10,
-    attack: 1,
+    attack: 8,
     defense: 10,
     img: AssetMap.Enemy_Tortoise,
   },

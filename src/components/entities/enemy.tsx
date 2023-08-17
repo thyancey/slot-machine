@@ -1,11 +1,13 @@
 import styled from 'styled-components';
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
 import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';
 import { UiContext } from '../../store/uicontext';
+import { TRANSITION_DELAY } from '../../store/data';
+import { off, on } from '../../utils/events';
 
 const ScCard = styled.div`
   position: relative;
@@ -79,7 +81,19 @@ const ScSideControls = styled.div`
 
 export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
-  const { setPlayerText } = useContext(UiContext);
+  const { enemyText, setEnemyText } = useContext(UiContext);
+
+  const messages = useMemo(() => {
+    if (enemyText) {
+      return [enemyText];
+    }
+    const mssgs = [];
+    if (enemyInfo && enemyInfo.attack !== 0) {
+      mssgs.push(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
+    }
+
+    return mssgs.length > 0 ? mssgs : [];
+  }, [enemyText, enemyInfo]);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
@@ -91,8 +105,28 @@ export const Enemy = () => {
     return classes.join(' ');
   }, [canAttack]);
 
+  const setText = useCallback(
+    (e: CustomEvent) => {
+      console.log('setText', e.detail);
+      if (Array.isArray(e.detail)) {
+        setEnemyText(e.detail[0], e.detail[1]);
+      } else {
+        setEnemyText(e.detail, TRANSITION_DELAY);
+      }
+    },
+    [setEnemyText]
+  );
+
+  useEffect(() => {
+    on('enemyDisplay', setText);
+
+    return () => {
+      off('enemyDisplay', setText);
+    };
+  });
+
   const onHover = (text: string)=> {
-    setPlayerText(text);
+    setEnemyText(text);
   }
 
   if (!enemyInfo) {
@@ -107,7 +141,7 @@ export const Enemy = () => {
         {/* <ScEnemyImage src={enemyInfo.img} /> */}
       </ScEnemy>
       <ScDisplay>
-        <Display playerInfo={enemyInfo} messages={[`attacks with ${enemyInfo.attack} damage`]} />
+        <Display playerInfo={enemyInfo} messages={messages} />
       </ScDisplay>
       <ScSideControls>
         {/* <ScButton> */}

@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
 import DisplayButton from '../../display-button';
-import { UiContext } from '../../../store/uicontext';
+import { trigger } from '../../../utils/events';
+// import { UiContext } from '../../../store/uicontext';
 
 const ScWrapper = styled.div`
   color: var(--color-white);
@@ -53,10 +54,11 @@ interface Props {
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
-  const { setPlayerText } = useContext(UiContext);
+  // const { setPlayerText } = useContext(UiContext);
 
   const onHover = (text: string)=> {
-    setPlayerText(text);
+    // setPlayerText(text);
+    trigger('playerDisplay', [text, 1000]);
   }
 
   return (
@@ -66,7 +68,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
           buttonStyle='special'
           disabled={spinInProgress || spinTokens <= 0}
           onClick={() => triggerSpin()}
-          onMouseEnter={() => onHover(`spin all reels`)}
+          onMouseEnter={() => onHover(`SPIN TO WIN ! ${spinTokens} TOKENS LEFT`)}
         >
           {'S P I N'}
         </DisplayButton>

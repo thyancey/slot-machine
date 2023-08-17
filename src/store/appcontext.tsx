@@ -14,6 +14,7 @@ import {
   ReelCombo,
   Tile,
   GameState,
+  TRANSITION_DELAY,
 } from './data';
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
@@ -21,23 +22,11 @@ import { discardTiles, drawTiles } from '../components/machine-editor/utils';
 import {
   computeEnemyAttack,
   computePlayerAttack,
-  computeRound,
   getActiveCombos,
   getEffectDelta,
   pickRandomFromArray,
 } from '../components/slotmachine/utils';
-
-const gameState_queue: GameState[] = [
-  // 'MENU',
-  // 'NEW_ROUND',
-  'SPIN',
-  'PLAYER_ATTACK',
-  'ENEMY_ATTACK',
-  // 'ROUND_WIN',
-  // 'ROUND_OVER',
-  // 'GAME_OVER',
-  // 'GAME_WIN'
-];
+import { trigger } from '../utils/events';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -209,7 +198,6 @@ const AppProvider = ({ children }: Props) => {
 
   // next round
   useEffect(() => {
-    console.log('ue1:', round, numReelsRef.current);
     if (round > -1) {
       if (round <= enemies.length - 1) {
         setEnemyInfo(enemies[round]);
@@ -220,6 +208,7 @@ const AppProvider = ({ children }: Props) => {
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
+      trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
       console.log('INITIAL_UPGRADE_TOKENS: ue1');
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
       setReelResults(Array(numReelsRef.current).fill(-1));
@@ -233,13 +222,14 @@ const AppProvider = ({ children }: Props) => {
   // next turn, reset stuff
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
+    trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
-  const finishRound = useCallback(() => {
-    setRound((prev) => prev + 1);
-  }, [setRound]);
+  // const finishRound = useCallback(() => {
+  //   setRound((prev) => prev + 1);
+  // }, [setRound]);
 
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
@@ -258,17 +248,16 @@ const AppProvider = ({ children }: Props) => {
 
   const playerAttack = useCallback(() => {
     if (enemyInfo) {
-      console.log('>>> PLAYER ATTACKS!');
       const attackResult = computePlayerAttack(playerInfo, enemyInfo);
 
       if (attackResult.enemy.hp <= 0) {
-        console.log('>>> PLAYER KILLS ENEMY!');
+        trigger('enemyDisplay', `ENEMY DESTROYED WITH ${playerInfo.attack} DAMAGE!`);
         // enemy dead
         setEnemyInfo(null);
         setGameState('NEW_ROUND');
         return;
       } else {
-        console.log(`>>> ENEMY IS ATTACKED FOR ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
+        trigger('enemyDisplay', `PLAYER ATTACKS ENEMY FOR ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
         setEnemyInfo((prev) => {
           if (!prev) return null;
           return {
@@ -291,11 +280,11 @@ const AppProvider = ({ children }: Props) => {
       const attackResult = computeEnemyAttack(playerInfo, enemyInfo);
 
       if (attackResult.player.hp <= 0) {
-        console.log(`>>> PLAYER DIED!`);
+        trigger('enemyDisplay', `PLAYER DIED!`);
         // player dead
         window.alert('you died!');
       } else {
-        console.log(`>>> PLAYER WAS ATTACKED FOR ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
+        trigger('enemyDisplay', `PLAYER WAS ATTACKED FOR ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
         setPlayerInfo((prev) => {
           return {
             ...prev,
@@ -317,9 +306,10 @@ const AppProvider = ({ children }: Props) => {
   }, [setTurn]);
 
   const newRound = useCallback(() => {
+    trigger('enemyDisplay', `ROUND ${round + 1} COMPLETE!`);
     setRound((prev) => prev + 1);
     setGameState('SPIN');
-  }, [setRound]);
+  }, [setRound, round]);
 
   useEffect(() => {
     // console.log('newState>>>>>>>>>>>>> ', gameState);
@@ -330,17 +320,17 @@ const AppProvider = ({ children }: Props) => {
       case 'ENEMY_ATTACK':
         setTimeout(() => {
           enemyAttack();
-        }, 2000);
+        }, TRANSITION_DELAY);
         break;
       case 'NEW_TURN':
         setTimeout(() => {
           newTurn();
-        }, 2000);
+        }, TRANSITION_DELAY);
         break;
       case 'NEW_ROUND':
         setTimeout(() => {
           newRound();
-        }, 2000);
+        }, TRANSITION_DELAY);
         break;
     }
   }, [gameState, playerAttack, enemyAttack, newTurn, newRound]);
