@@ -153,7 +153,7 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 10rem;
+  --val-reel-width: 12rem;
   --val-reel-height: 15rem; /* SHOULD MATCH REEL_HEIGHT */
 
   --val-depth: 1.25rem;

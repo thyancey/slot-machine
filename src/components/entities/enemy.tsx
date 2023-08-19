@@ -54,14 +54,14 @@ const ScLabel = styled.h3`
   text-align: right;
   margin-top: -.5rem;
   margin-bottom: -.5rem;
-  color: var(--color-black-light)
+  color: var(--color-black-light);
 `;
 
 const ScDisplay = styled.div`
   grid-row: 1;
   grid-column: 1;
 
-  background-color: var(--color-black);
+  /* background-color: var(--color-black); */
 
   ${MixinBorders('--co-enemy-bordertop', '--co-enemy-borderside')}
   border-bottom: 0;

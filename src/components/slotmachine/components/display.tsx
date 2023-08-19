@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 const ScOuter = styled.div`
@@ -29,7 +30,7 @@ const ScWrapper = styled.div`
     line-height: 1.5rem;
   }
   &.winner {
-    background-color: var(--color-black-light);
+    background-color: var(--color-yellow);
     color: var(--color-white);
   }
 `;
@@ -39,7 +40,21 @@ interface Props {
   displayType?: 'combo';
 }
 function Display({ messages, displayType }: Props) {
-  const className = displayType === 'combo' ? 'winner' : '';
+  const [ highlighted, setHighlighted] = useState(false);
+  
+  useEffect(() => {
+    setHighlighted(true);
+    setTimeout(() => {
+      setHighlighted(false);
+    }, 150)
+  }, [messages])
+
+  // const className = useMemo(() => {
+  //   if(highlighted) return 'winner';
+  //   return displayType === 'combo' ? 'winner' : '';
+  // }, [ displayType, highlighted])
+  const className = 'winner';
+
 
   return (
     <ScOuter>
