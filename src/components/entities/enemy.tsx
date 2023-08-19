@@ -83,7 +83,7 @@ const ScSideControls = styled.div`
 `;
 
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
+  const { enemyInfo, turn, finishTurn, reelResults, gameState } = useContext(AppContext);
   const { enemyText, setEnemyText } = useContext(UiContext);
 
   const message = useMemo(() => {
@@ -128,6 +128,14 @@ export const Enemy = () => {
       off('enemyDisplay', setText);
     };
   });
+
+  
+  useEffect(() => {
+    if(gameState === 'NEW_TURN'){
+      console.log('set that text to nothin!')
+      setEnemyText('');
+    }
+  }, [ gameState, setEnemyText ]);
 
   const onHover = (text: string)=> {
     // setEnemyText(text);

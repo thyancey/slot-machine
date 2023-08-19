@@ -178,18 +178,16 @@ export const predictAttack = (
   attacker: PlayerInfo,
   defender: PlayerInfo
 ) => {
-  console.log('predictAttack', attacker, defender);
+  // console.log('predictAttack', attacker, defender);
 
   // const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
   // console.log('player ATTACK POWER', attackPower);
   const shieldedDamage = defender.defense - attacker.attack;
   const hpDelta = shieldedDamage < 0 ? shieldedDamage : 0;
 
-  const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
-  console.log('hpDelta:', hpDelta);
-  console.log('defenseDelta:', defenseDelta);
-
-
+  // const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
+  // console.log('hpDelta:', hpDelta);
+  // console.log('defenseDelta:', defenseDelta);
 
   return {
     // do other wacky checking here in the future about flame/poison weakness, etc
