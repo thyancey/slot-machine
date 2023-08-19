@@ -211,7 +211,6 @@ const AppProvider = ({ children }: Props) => {
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
-      // trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
       setReelResults(Array(numReelsRef.current).fill(-1));
 
@@ -224,7 +223,6 @@ const AppProvider = ({ children }: Props) => {
   // next turn, reset stuff
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
-    // trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);

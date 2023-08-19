@@ -3,9 +3,9 @@ import { ReactNode, SetStateAction, createContext, useCallback, useRef, useState
 const UiContext = createContext({} as UiContextType);
 interface UiContextType {
   playerText: string;
-  setPlayerText: (text: SetStateAction<string>, timeout?: number) => void;
+  setPlayerText: (text?: SetStateAction<string>, timeout?: number) => void;
   enemyText: string;
-  setEnemyText: (text: SetStateAction<string>, timeout?: number) => void;
+  setEnemyText: (text?: SetStateAction<string>, timeout?: number) => void;
 }
 
 interface Props {
@@ -16,35 +16,43 @@ const UiProvider = ({ children }: Props) => {
   const [enemyText, setEnemyTextState] = useState<string>('');
   const timeoutRef = useRef<number | null>(null);
 
-  const setPlayerText = useCallback((text: string, timeout: undefined | number = 1000) => {
-    setPlayerTextState(text);
-    console.log('setPayerText', timeout);
+  const setPlayerText = useCallback(
+    (text: string | undefined = '', timeout: number | undefined = 0) => {
+      setPlayerTextState(text);
+      console.log('setPlayerText', text, timeout);
 
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    // @ts-ignore
-    timeoutRef.current = setTimeout(() => {
-      setPlayerTextState('');
-    }, timeout);
-  }, [ setPlayerTextState ])
-  
-  const setEnemyText = useCallback((text: string, timeout: undefined | number = 1000) => {
-    setEnemyTextState(text);
-    console.log('setEnemyText', timeout);
-    
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
-    if(timeout !== 0){
-      // @ts-ignore
-      timeoutRef.current = setTimeout(() => {
-        setEnemyTextState('');
-      }, timeout);
-    }
+      if (timeout > 0) {
+        // @ts-ignore
+        timeoutRef.current = setTimeout(() => {
+          setPlayerTextState('');
+        }, timeout);
+      }
+    },
+    [setPlayerTextState]
+  );
 
-  }, [ setEnemyTextState ])
+  const setEnemyText = useCallback(
+    (text: string | undefined = '', timeout: number | undefined = 0) => {
+      setEnemyTextState(text);
+      console.log('setEnemyText', timeout);
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      if (timeout > 0) {
+        // @ts-ignore
+        timeoutRef.current = setTimeout(() => {
+          setEnemyTextState('');
+        }, timeout);
+      }
+    },
+    [setEnemyTextState]
+  );
 
   return (
     <UiContext.Provider
@@ -53,7 +61,7 @@ const UiProvider = ({ children }: Props) => {
           playerText,
           setPlayerText,
           enemyText,
-          setEnemyText
+          setEnemyText,
         } as UiContextType
       }
     >

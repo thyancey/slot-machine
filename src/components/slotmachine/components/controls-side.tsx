@@ -15,7 +15,6 @@ const ScWrapper = styled.div`
     font-size: 3rem;
     line-height: 4rem;
   }
-
 `;
 
 const ScInner = styled.div`
@@ -56,10 +55,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
   // const { setPlayerText } = useContext(UiContext);
 
-  const onHover = (text: string)=> {
-    // setPlayerText(text);
-    // trigger('playerDisplay', [text, 1000]);
-  }
+  const onHover = (text: string) => {};
 
   return (
     <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
