@@ -21,9 +21,7 @@ function once(eventType: string, listener: (event: CustomEvent) => void) {
 }
 
 function trigger(eventType: string, data: unknown = {}) {
-  console.log('a');
   const event = new CustomEvent(eventType, { detail: data });
-  console.log('b');
   document.dispatchEvent(event);
 }
 

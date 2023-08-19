@@ -177,7 +177,7 @@ function Reel({
 
   const onHover = () => {
     if(isEnabled){
-      setPlayerText(`spin reel #${reelIdx + 1}`);
+      // setPlayerText(`spin reel #${reelIdx + 1}`);
     }
   };
 

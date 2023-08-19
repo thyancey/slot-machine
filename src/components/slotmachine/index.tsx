@@ -24,7 +24,7 @@ const ScWrapper = styled.div`
 `;
 
 const ScReelContainer = styled.div`
-  grid-row: 1;
+  grid-row: 2;
   grid-column: 1;
 
   height: 100%;
@@ -90,7 +90,7 @@ const ScScoreBox = styled.div`
 
 const ScDisplay = styled.div`
   position: relative;
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
 
   padding: 1rem 1.75rem;
@@ -104,6 +104,14 @@ const ScSideControls = styled.div`
   top: 0;
   width: 7rem;
   height: 100%;
+`;
+
+const ScLabel = styled.h1`
+  color: var(--color-grey-light);
+  margin-top: .25rem;
+  margin-bottom: -.25rem;
+  font-size: 1rem;
+  text-align: center;
 `;
 
 function SlotMachine() {

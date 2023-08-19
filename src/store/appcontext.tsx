@@ -208,8 +208,7 @@ const AppProvider = ({ children }: Props) => {
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
-      trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
-      console.log('INITIAL_UPGRADE_TOKENS: ue1');
+      // trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
       setReelResults(Array(numReelsRef.current).fill(-1));
 
@@ -222,7 +221,7 @@ const AppProvider = ({ children }: Props) => {
   // next turn, reset stuff
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
-    trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
+    // trigger('playerDisplay', [`SPIN TO WIN ! ${INITIAL_SPIN_TOKENS} TOKENS LEFT`, 1000]);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
@@ -257,7 +256,7 @@ const AppProvider = ({ children }: Props) => {
         setGameState('NEW_ROUND');
         return;
       } else {
-        trigger('enemyDisplay', `PLAYER ATTACKS ENEMY FOR ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
+        trigger('enemyDisplay', `ENEMY TOOK ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
         setEnemyInfo((prev) => {
           if (!prev) return null;
           return {
@@ -280,11 +279,11 @@ const AppProvider = ({ children }: Props) => {
       const attackResult = computeEnemyAttack(playerInfo, enemyInfo);
 
       if (attackResult.player.hp <= 0) {
-        trigger('enemyDisplay', `PLAYER DIED!`);
+        trigger('playerDisplay', `PLAYER DIED!`);
         // player dead
         window.alert('you died!');
       } else {
-        trigger('enemyDisplay', `PLAYER WAS ATTACKED FOR ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
+        trigger('playerDisplay', `PLAYER TOOK ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
         setPlayerInfo((prev) => {
           return {
             ...prev,
@@ -306,7 +305,7 @@ const AppProvider = ({ children }: Props) => {
   }, [setTurn]);
 
   const newRound = useCallback(() => {
-    trigger('enemyDisplay', `ROUND ${round + 1} COMPLETE!`);
+    trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
     setRound((prev) => prev + 1);
     setGameState('SPIN');
   }, [setRound, round]);

@@ -59,7 +59,7 @@ function PlayerDisplay({ onClick, playerInfo }: Props) {
       mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
     }
 
-    return mssgs.length > 0 ? mssgs : [];
+    return mssgs.length > 0 ? mssgs : [ ' SPIN TO WIN! '];
   }, [activeCombos, playerText, attack]);
 
   return (

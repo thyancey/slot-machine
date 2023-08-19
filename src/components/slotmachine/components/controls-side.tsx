@@ -58,7 +58,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
 
   const onHover = (text: string)=> {
     // setPlayerText(text);
-    trigger('playerDisplay', [text, 1000]);
+    // trigger('playerDisplay', [text, 1000]);
   }
 
   return (

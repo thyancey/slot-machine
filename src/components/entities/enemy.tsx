@@ -49,9 +49,12 @@ const ScEnemy = styled.div`
 //   height: 8rem;
 // `;
 
-const ScGameInfo = styled.h1`
-  font-size: 2rem;
+const ScLabel = styled.h3`
+  /* font-size: 2rem; */
   text-align: right;
+  margin-top: -.5rem;
+  margin-bottom: -.5rem;
+  color: var(--color-black-light)
 `;
 
 const ScDisplay = styled.div`
@@ -126,7 +129,7 @@ export const Enemy = () => {
   });
 
   const onHover = (text: string)=> {
-    setEnemyText(text);
+    // setEnemyText(text);
   }
 
   if (!enemyInfo) {
@@ -136,13 +139,13 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       {/* <AttackBar attack={enemyInfo.attack} modifiers={[]} /> */}
-      <ScEnemy>
-        <ScGameInfo>{`enemy: ${enemyInfo.label}`}</ScGameInfo>
-        {/* <ScEnemyImage src={enemyInfo.img} /> */}
-      </ScEnemy>
       <ScDisplay>
         <Display playerInfo={enemyInfo} messages={messages} />
       </ScDisplay>
+      <ScEnemy>
+        <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
+        {/* <ScEnemyImage src={enemyInfo.img} /> */}
+      </ScEnemy>
       <ScSideControls>
         {/* <ScButton> */}
           <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()} 
