@@ -13,11 +13,20 @@ import {
   ReelComboResult,
   ReelCombo,
   Tile,
+  GameState,
+  TRANSITION_DELAY,
 } from './data';
 import { clamp } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import { discardTiles, drawTiles } from '../components/machine-editor/utils';
-import { computeRound, getActiveCombos, getEffectDelta, pickRandomFromArray } from '../components/slotmachine/utils';
+import {
+  computeEnemyAttack,
+  computePlayerAttack,
+  getActiveCombos,
+  getEffectDelta,
+  pickRandomFromArray,
+} from '../components/slotmachine/utils';
+import { trigger } from '../utils/events';
 
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
@@ -33,6 +42,8 @@ interface AppContextType {
 
   score: number;
   incrementScore: (increment: number) => void;
+
+  gameState: GameState;
 
   selectedTileIdx: number;
   setSelectedTileIdx: (idx: SetStateAction<number>) => void;
@@ -86,6 +97,8 @@ const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
   const [round, setRound] = useState(-1);
+  const [gameState, setGameState] = useState<GameState>('SPIN');
+  const prevGameState = useRef(gameState);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
     hp: 10,
@@ -188,7 +201,6 @@ const AppProvider = ({ children }: Props) => {
 
   // next round
   useEffect(() => {
-    console.log('ue1:', round, numReelsRef.current);
     if (round > -1) {
       if (round <= enemies.length - 1) {
         setEnemyInfo(enemies[round]);
@@ -199,7 +211,6 @@ const AppProvider = ({ children }: Props) => {
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
       setSpinTokens(INITIAL_SPIN_TOKENS);
-      console.log('INITIAL_UPGRADE_TOKENS: ue1');
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
       setReelResults(Array(numReelsRef.current).fill(-1));
 
@@ -209,17 +220,16 @@ const AppProvider = ({ children }: Props) => {
     }
   }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
-  // next turn, fight each other then reset or whatever
+  // next turn, reset stuff
   useEffect(() => {
     setSpinTokens(INITIAL_SPIN_TOKENS);
-    console.log('INITIAL_UPGRADE_TOKENS: ue2');
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
-  const finishRound = useCallback(() => {
-    setRound((prev) => prev + 1);
-  }, [setRound]);
+  // const finishRound = useCallback(() => {
+  //   setRound((prev) => prev + 1);
+  // }, [setRound]);
 
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
@@ -234,6 +244,120 @@ const AppProvider = ({ children }: Props) => {
     });
   }, [setPlayerInfo, activeTiles, activeCombos]);
 
+  // handles states during round and turn transitions
+
+  const playerAttack = useCallback(() => {
+    if (enemyInfo) {
+      const attackResult = computePlayerAttack(playerInfo, enemyInfo);
+
+      if (attackResult.enemy.hp <= 0) {
+        trigger('enemyDisplay', `ENEMY DESTROYED WITH ${playerInfo.attack} DAMAGE!`);
+        // enemy dead
+        setEnemyInfo(null);
+        return 'NEW_ROUND';
+      } else {
+        trigger('enemyDisplay', `ENEMY TOOK ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
+        setEnemyInfo((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            attack: attackResult.enemy.attack,
+            hp: attackResult.enemy.hp,
+            defense: attackResult.enemy.defense,
+          };
+        });
+        return 'ENEMY_ATTACK';
+      }
+    } else {
+      return 'NEW_ROUND';
+    }
+  }, [playerInfo, enemyInfo]);
+
+  const enemyAttack = useCallback(() => {
+    if (enemyInfo) {
+      console.log('>>> ENEMY ATTACKS!');
+      const attackResult = computeEnemyAttack(playerInfo, enemyInfo);
+
+      if (attackResult.player.hp <= 0) {
+        trigger('playerDisplay', `PLAYER DIED!`);
+        // player dead
+        window.alert('you died!');
+        return null;
+      } else {
+        trigger('playerDisplay', `PLAYER TOOK ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
+        setPlayerInfo((prev) => {
+          return {
+            ...prev,
+            attack: attackResult.player.attack,
+            hp: attackResult.player.hp,
+            defense: attackResult.player.defense,
+          };
+        });
+        return 'NEW_TURN';
+      }
+    } else {
+      return 'NEW_ROUND';
+    }
+  }, [playerInfo, enemyInfo]);
+
+  const newTurn = useCallback(() => {
+    setTurn((prev) => prev + 1);
+    // setGameState('SPIN');
+    return 'SPIN';
+  }, [setTurn]);
+
+  const newRound = useCallback(() => {
+    trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
+    setRound((prev) => prev + 1);
+    console.log('newRound spin')
+    setGameState('SPIN');
+  }, [setRound, round]);
+
+  useEffect(() => {
+    // the timeouts here are brittle and likely to cause problems later
+    if(prevGameState.current !== gameState){
+      console.log(`gameState: ${prevGameState.current} > ${gameState}`);
+      prevGameState.current = gameState;
+      switch (gameState) {
+        case 'PLAYER_ATTACK': {
+          const next = playerAttack();
+          next && setTimeout(() => {
+            setGameState(next);
+          }, TRANSITION_DELAY);
+          break;
+        }
+        case 'ENEMY_ATTACK':{
+          const next = enemyAttack();
+          next && setTimeout(() => {
+            setGameState(next);
+          }, TRANSITION_DELAY);
+          break;
+        }
+        case 'NEW_TURN':
+          // is this state necessary? it just triggers "SPIN" state next
+          {
+            const next = newTurn();
+            next && setGameState(next);
+            break;
+          }
+        case 'NEW_ROUND':
+            // eventually, might wanna delay this a bit
+            newRound();
+          break;
+      }
+    }
+  }, [gameState,  playerAttack, enemyAttack, newTurn, newRound]);
+
+  // DO SOME FIGHTING
+  const finishTurn = useCallback(() => {
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
+      return;
+    }
+
+    setGameState('PLAYER_ATTACK');
+  }, [setGameState, enemyInfo, setTurn]);
+  /*
   const finishTurn = useCallback(() => {
     if (!enemyInfo) {
       setTurn((prev) => prev + 1);
@@ -280,11 +404,13 @@ const AppProvider = ({ children }: Props) => {
       setTurn((prev) => prev + 1);
     }
   }, [playerInfo, enemyInfo, setTurn, activeTiles, activeCombos, setPlayerInfo, setEnemyInfo, finishRound]);
-
+*/
   return (
     <AppContext.Provider
       value={
         {
+          gameState,
+
           activeTiles,
           finishSpinTurn,
 

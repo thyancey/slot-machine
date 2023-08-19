@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import SlotMachine from '../slotmachine';
 import Enemy from './enemy';
 import MetalGlint from '../metal-glint';
+import { ENEMY_HEIGHT } from '../../store/data';
 
 const ScWrapper = styled.div`
   position: relative;
@@ -21,12 +22,14 @@ const ScShadowDiv = styled.div`
   border-radius: 1rem;
 `;
 const ScEnemy = styled.div`
+  position: absolute;
+  width:100%;
+  height: ${ENEMY_HEIGHT}px;
+  
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
   padding: 1.5rem 2rem 1rem 2rem;
 
-  position: relative;
-  
 
   ${ScShadowDiv} {
     /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
@@ -46,6 +49,8 @@ const ScPlayer = styled.div`
   padding: 1.75rem;
   padding-bottom: 2.25rem;
   border-top: 0.25rem solid var(--co-player-bordertop);
+
+  margin-top: ${ENEMY_HEIGHT}px;
 
   border-radius: 0 0 1rem 1rem;
   background-color: transparent;

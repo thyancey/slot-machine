@@ -7,8 +7,23 @@ export const INITIAL_UPGRADE_TOKENS = 1;
 export const INITIAL_SPIN_TOKENS = 3;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
+export const TRANSITION_DELAY = 3000;
+
+export const ENEMY_HEIGHT = 304;
 
 export type UiState = 'game' | 'editor';
+
+export type GameState =
+  | 'MENU'
+  | 'NEW_ROUND'
+  | 'NEW_TURN'
+  | 'SPIN'
+  | 'PLAYER_ATTACK'
+  | 'ENEMY_ATTACK'
+  | 'ROUND_WIN'
+  | 'ROUND_OVER'
+  | 'GAME_OVER'
+  | 'GAME_WIN';
 
 /**
  * Tiles are defined in the TileGlossary (unique)
@@ -52,7 +67,13 @@ export const tileGlossary: TileGlossary = {
     effects: [{ type: 'attack', value: 1 }],
   },
   coins: { label: 'Coins - 1000 points', img: AssetMap.Rcoins, attributes: ['money'], score: 1000, effects: [] },
-  crazy: { label: 'Confusion - add 1 disoriented to enemy', img: AssetMap.Rcrazy, attributes: ['buff'], score: 0, effects: [] },
+  crazy: {
+    label: 'Confusion - add 1 disoriented to enemy',
+    img: AssetMap.Rcrazy,
+    attributes: ['buff'],
+    score: 0,
+    effects: [],
+  },
   flame: {
     label: 'Flame - attack +1, hurt self -1',
     img: AssetMap.Rflame,
@@ -304,7 +325,7 @@ export const enemies: PlayerInfo[] = [
     label: 'SQUIRREL',
     hp: 6,
     hpMax: 6,
-    attack: 1,
+    attack: 3,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
   },
@@ -312,7 +333,7 @@ export const enemies: PlayerInfo[] = [
     label: 'TORT',
     hp: 10,
     hpMax: 10,
-    attack: 1,
+    attack: 8,
     defense: 10,
     img: AssetMap.Enemy_Tortoise,
   },

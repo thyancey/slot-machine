@@ -178,18 +178,16 @@ export const predictAttack = (
   attacker: PlayerInfo,
   defender: PlayerInfo
 ) => {
-  console.log('predictAttack', attacker, defender);
+  // console.log('predictAttack', attacker, defender);
 
   // const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
   // console.log('player ATTACK POWER', attackPower);
   const shieldedDamage = defender.defense - attacker.attack;
   const hpDelta = shieldedDamage < 0 ? shieldedDamage : 0;
 
-  const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
-  console.log('hpDelta:', hpDelta);
-  console.log('defenseDelta:', defenseDelta);
-
-
+  // const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
+  // console.log('hpDelta:', hpDelta);
+  // console.log('defenseDelta:', defenseDelta);
 
   return {
     // do other wacky checking here in the future about flame/poison weakness, etc
@@ -273,4 +271,46 @@ export const computeRound = (
   // enemy check for thorns, burning, poison?
 
   return compute('');
+};
+
+
+export const computePlayerAttack = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo
+) => {
+  const attackResult = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
+  console.log('attackResult:', enemyInfo, attackResult);
+
+  return {
+    player: { 
+      attack: playerInfo.attack,
+      hp: playerInfo.hp,
+      defense: playerInfo.defense
+    },
+    enemy: {
+      attack: enemyInfo.attack,
+      hp: attackResult.hp,
+      defense: attackResult.defense
+    }
+  }
+};
+
+export const computeEnemyAttack = (
+  playerInfo: PlayerInfo,
+  enemyInfo: PlayerInfo
+) => {
+  const attackResult = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
+
+  return {
+    player: { 
+      attack: playerInfo.attack,
+      hp: attackResult.hp,
+      defense: attackResult.defense
+    },
+    enemy: {
+      attack: enemyInfo.attack,
+      hp: enemyInfo.hp,
+      defense: enemyInfo.defense
+    }
+  }
 };

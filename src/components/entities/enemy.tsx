@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { AppContext } from '../../store/appcontext';
 import Display from '../slotmachine/components/new-display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';
 import { UiContext } from '../../store/uicontext';
+import { off, on } from '../../utils/events';
 
 const ScCard = styled.div`
   position: relative;
@@ -14,7 +15,7 @@ const ScCard = styled.div`
 
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: min-content auto ;
+  grid-template-rows: min-content auto;
   grid-gap: 0.5rem;
 
   color: var(--color-black);
@@ -30,10 +31,6 @@ const ScEnemy = styled.div`
   grid-column: 1;
   position: relative;
 
-  /* position: absolute; */
-  /* right: 0; */
-  /* bottom: calc(100% - 5rem); */
-
   font-size: 3rem;
   line-height: 4rem;
   text-align: center;
@@ -47,16 +44,17 @@ const ScEnemy = styled.div`
 //   height: 8rem;
 // `;
 
-const ScGameInfo = styled.h1`
-  font-size: 2rem;
+const ScLabel = styled.h3`
+  /* font-size: 2rem; */
   text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+  color: var(--color-black-light);
 `;
 
 const ScDisplay = styled.div`
   grid-row: 1;
   grid-column: 1;
-
-  background-color: var(--color-black);
 
   ${MixinBorders('--co-enemy-bordertop', '--co-enemy-borderside')}
   border-bottom: 0;
@@ -68,9 +66,9 @@ const ScSideControls = styled.div`
   top: 0;
   width: 6rem;
   height: 100%;
-  
+
   background-color: var(--color-black);
-  
+
   > button {
     font-size: 3rem;
     line-height: 4.85rem;
@@ -78,8 +76,28 @@ const ScSideControls = styled.div`
 `;
 
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
-  const { setPlayerText } = useContext(UiContext);
+  const { enemyInfo, turn, finishTurn, reelResults, gameState } = useContext(AppContext);
+  const { enemyText, setEnemyText } = useContext(UiContext);
+  const enemyAttackRef = useRef(enemyInfo && enemyInfo.attack);
+
+  const enemyAttackMessage = useMemo(() => {
+    const mssgs = [];
+    if (enemyInfo && enemyInfo.attack !== 0) {
+      mssgs.push(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
+    }
+
+    return mssgs.length > 0 ? mssgs.join('\n') : '';
+  }, [enemyInfo]);
+
+  // TODO, centralize this somewhere else, also better state check on new enemy move
+  useEffect(() => {
+    if (enemyInfo && enemyInfo.attack !== enemyAttackRef.current) {
+      enemyAttackRef.current = enemyInfo.attack;
+      if (enemyInfo && enemyInfo.attack !== 0) {
+        setEnemyText(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
+      }
+    }
+  }, [enemyAttackRef, enemyInfo, setEnemyText]);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
@@ -91,30 +109,59 @@ export const Enemy = () => {
     return classes.join(' ');
   }, [canAttack]);
 
-  const onHover = (text: string)=> {
-    setPlayerText(text);
-  }
+  const setText = useCallback(
+    (e: CustomEvent) => {
+      // console.log('enemy.setText:', e.detail);
+      setEnemyText(e.detail);
+    },
+    [setEnemyText]
+  );
+
+  useEffect(() => {
+    on('enemyDisplay', setText);
+
+    return () => {
+      off('enemyDisplay', setText);
+    };
+  });
+
+  useEffect(() => {
+    if (gameState === 'NEW_TURN') {
+      setEnemyText();
+    }
+  }, [gameState, setEnemyText]);
+
+  const onHover = (text: string) => {
+    console.log('onHover ', text);
+    // setEnemyText(text);
+  };
 
   if (!enemyInfo) {
     return null;
   }
 
+  const message = enemyText || enemyAttackMessage;
+
   return (
     <ScCard id='enemy' className={className}>
       {/* <AttackBar attack={enemyInfo.attack} modifiers={[]} /> */}
+      <ScDisplay>
+        <Display playerInfo={enemyInfo} message={message} />
+      </ScDisplay>
       <ScEnemy>
-        <ScGameInfo>{`enemy: ${enemyInfo.label}`}</ScGameInfo>
+        <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
         {/* <ScEnemyImage src={enemyInfo.img} /> */}
       </ScEnemy>
-      <ScDisplay>
-        <Display playerInfo={enemyInfo} messages={[`attacks with ${enemyInfo.attack} damage`]} />
-      </ScDisplay>
       <ScSideControls>
         {/* <ScButton> */}
-          <DisplayButton buttonStyle='special' disabled={!canAttack} onClick={() => finishTurn()} 
-          onMouseEnter={() => onHover(`end turn`)}>
-            {'A T K'}
-          </DisplayButton>
+        <DisplayButton
+          buttonStyle='special'
+          disabled={!canAttack}
+          onClick={() => finishTurn()}
+          onMouseEnter={() => onHover(`end turn`)}
+        >
+          {'A T K'}
+        </DisplayButton>
         {/* </ScButton> */}
       </ScSideControls>
       <Rivets />
