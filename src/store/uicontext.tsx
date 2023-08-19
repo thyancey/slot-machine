@@ -32,14 +32,18 @@ const UiProvider = ({ children }: Props) => {
   const setEnemyText = useCallback((text: string, timeout: undefined | number = 1000) => {
     setEnemyTextState(text);
     console.log('setEnemyText', timeout);
-
+    
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    // @ts-ignore
-    timeoutRef.current = setTimeout(() => {
-      setEnemyTextState('');
-    }, timeout);
+
+    if(timeout !== 0){
+      // @ts-ignore
+      timeoutRef.current = setTimeout(() => {
+        setEnemyTextState('');
+      }, timeout);
+    }
+
   }, [ setEnemyTextState ])
 
   return (

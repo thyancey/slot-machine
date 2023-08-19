@@ -86,16 +86,16 @@ export const Enemy = () => {
   const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
   const { enemyText, setEnemyText } = useContext(UiContext);
 
-  const messages = useMemo(() => {
+  const message = useMemo(() => {
     if (enemyText) {
-      return [enemyText];
+      return enemyText;
     }
     const mssgs = [];
     if (enemyInfo && enemyInfo.attack !== 0) {
       mssgs.push(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
     }
 
-    return mssgs.length > 0 ? mssgs : [];
+    return mssgs.length > 0 ? mssgs.join('\n') : '';
   }, [enemyText, enemyInfo]);
 
   const canAttack = useMemo(() => {
@@ -110,11 +110,12 @@ export const Enemy = () => {
 
   const setText = useCallback(
     (e: CustomEvent) => {
-      console.log('setText', e.detail);
+      console.log('setEnemyText123:', e.detail);
       if (Array.isArray(e.detail)) {
         setEnemyText(e.detail[0], e.detail[1]);
       } else {
-        setEnemyText(e.detail, TRANSITION_DELAY);
+        // setEnemyText(e.detail, TRANSITION_DELAY);
+        setEnemyText(e.detail, 0);
       }
     },
     [setEnemyText]
@@ -140,7 +141,7 @@ export const Enemy = () => {
     <ScCard id='enemy' className={className}>
       {/* <AttackBar attack={enemyInfo.attack} modifiers={[]} /> */}
       <ScDisplay>
-        <Display playerInfo={enemyInfo} messages={messages} />
+        <Display playerInfo={enemyInfo} message={message} />
       </ScDisplay>
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>

@@ -311,7 +311,7 @@ const AppProvider = ({ children }: Props) => {
   }, [setRound, round]);
 
   useEffect(() => {
-    // console.log('newState>>>>>>>>>>>>> ', gameState);
+    console.log('newState>>>>>>>>>>>>> ', gameState);
     switch (gameState) {
       case 'PLAYER_ATTACK':
         playerAttack();

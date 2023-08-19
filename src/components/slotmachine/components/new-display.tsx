@@ -26,12 +26,15 @@ const ScMessages = styled.div`
   padding: 1rem;
   font-family: var(--font-8bit2);
 
+  overflow-y:auto; /* hopefully this will never be needed... */
+
   p {
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: 1.5rem;
     line-height: 1.5rem;
+    white-space: pre-wrap; /* interpret /n as line breaks */
   }
 `;
 
@@ -43,11 +46,11 @@ const ScHealthBar = styled.div`
 `;
 
 interface Props {
-  messages: string[];
+  message: string;
   playerInfo: PlayerInfo;
   displayType?: 'combo';
 }
-function Display({ messages, displayType, playerInfo }: Props) {
+function Display({ message, displayType, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -77,14 +80,12 @@ function Display({ messages, displayType, playerInfo }: Props) {
 
   useEffect(() => {
     setHighlightPlease();
-  }, [messages, setHighlightPlease]);
+  }, [message, setHighlightPlease]);
 
   return (
     <ScOuter className={className}>
       <ScMessages>
-        {messages.map((m, idx) => (
-          <p key={idx}>{m}</p>
-        ))}
+        <p>{message}</p>
       </ScMessages>
       <ScHealthBar>
         <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />

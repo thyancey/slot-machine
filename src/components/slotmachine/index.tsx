@@ -96,6 +96,8 @@ const ScDisplay = styled.div`
   padding: 1rem 1.75rem;
   background-color: var(--co-player-door);
   border-radius: 0.75rem;
+
+  max-width: var(--var-reels-width, 100%);
 `;
 
 const ScSideControls = styled.div`
@@ -108,8 +110,8 @@ const ScSideControls = styled.div`
 
 const ScLabel = styled.h1`
   color: var(--color-grey-light);
-  margin-top: .25rem;
-  margin-bottom: -.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: -0.25rem;
   font-size: 1rem;
   text-align: center;
 `;
@@ -159,6 +161,14 @@ function SlotMachine() {
 
   useEffect(() => {
     setReelResults(Array(reelStates.length).fill(-1));
+
+    // TODO: move this somewhere better, when reels actually change size
+    const middleRow = document.querySelector('#reels-container');
+    if (middleRow) {
+      // @ts-ignore
+      const middleRowWidth = middleRow.offsetWidth;
+      document.documentElement.style.setProperty('--var-reels-width', middleRowWidth + 'px');
+    }
   }, [reelStates, setReelResults]);
 
   const triggerSpin = useCallback(
@@ -263,7 +273,11 @@ function SlotMachine() {
 
   return (
     <ScWrapper>
-      <ScReelContainer>
+      <ScDisplay>
+        <PlayerDisplay onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo} />
+        <Rivets />
+      </ScDisplay>
+      <ScReelContainer id="reels-container">
         <ul>
           {reelStates.map((reelState, reelIdx) => (
             <ScReelSegment key={reelIdx}>
@@ -285,10 +299,6 @@ function SlotMachine() {
         </ul>
         <Rivets />
       </ScReelContainer>
-      <ScDisplay>
-        <PlayerDisplay onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo} />
-        <Rivets />
-      </ScDisplay>
       <ScSideControls>
         <SideControls
           spinInProgress={spinInProgress}

@@ -47,9 +47,9 @@ function PlayerDisplay({ onClick, playerInfo }: Props) {
     return getEffectDelta('attack', activeTiles, activeCombos);
   }, [activeTiles, activeCombos]);
 
-  const messages = useMemo(() => {
+  const message = useMemo(() => {
     if (playerText) {
-      return [playerText];
+      return playerText;
     }
     const mssgs = [];
     if (attack !== 0) {
@@ -59,14 +59,15 @@ function PlayerDisplay({ onClick, playerInfo }: Props) {
       mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
     }
 
-    return mssgs.length > 0 ? mssgs : [ ' SPIN TO WIN! '];
+    // return mssgs.length > 0 ? mssgs.join('\n') : ' SPIN TO WIN! ';
+    return mssgs.length > 0 ? mssgs.join('\n') : ' SPIN TO WIN! ';
   }, [activeCombos, playerText, attack]);
 
   return (
     <ScDisplay onClick={onClick}>
       <Display
         playerInfo={playerInfo}
-        messages={messages}
+        message={message}
         displayType={activeCombos.length > 0 ? 'combo' : undefined}
       />
     </ScDisplay>
