@@ -165,6 +165,7 @@ function SlotMachine() {
   const triggerSpin = useCallback(
     (reelStates: DeckIdxCollection[], onlyThisReelIdx?: number) => {
       if (!spinInProgress && spinTokens > 0) {
+        trigger('playerDisplay', `LETS GOOOO \n ${spinTokens - 1} SPINS LEFT \n YOU CAN SPIN INDIVIDUAL REELS TOO!`);
         // determine what the next line of slots will be, someday make this weighted
         if (onlyThisReelIdx !== undefined) {
           setTargetSlotIdxs(

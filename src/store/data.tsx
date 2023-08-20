@@ -7,7 +7,8 @@ export const INITIAL_UPGRADE_TOKENS = 1;
 export const INITIAL_SPIN_TOKENS = 3;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
-export const TRANSITION_DELAY = 3000; // how long to wait between player/enemy attack messages during battle
+export const TRANSITION_DELAY = 1500; // how long to wait between player/enemy attack messages during battle
+export const TRANSITION_DELAY_TURN_END = 2000; // how long to see round results before next turn
 
 export const ENEMY_HEIGHT = 290;
 

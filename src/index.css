@@ -114,11 +114,11 @@
 
 
 
-  --co-enemy: var(--color-green);
-  --co-enemy-borderside: var(--color-green-light);
-  --co-enemy-bordertop: var(--color-green-dark);
-  --co-enemy-highlight: var(--color-green-light);
-  --co-enemy-door: var(--color-green-dark);
+  --co-enemy: var(--color-red);
+  --co-enemy-borderside: var(--color-red-light);
+  --co-enemy-bordertop: var(--color-red-dark);
+  --co-enemy-highlight: var(--color-red-light);
+  --co-enemy-door: var(--color-red-dark);
 
   --co-player: var(--color-offwhite);
   --co-player-bordertop: var(--color-offwhite-dark);
@@ -138,10 +138,10 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-green-dark);
-  --co-bg-primary: var(--color-green-light);
-  --co-bg-secondary-lit: var(--color-green-dark);
-  --co-bg-primary-lit: var(--color-green);
+  --co-bg-secondary: var(--color-purple-dark);
+  --co-bg-primary: var(--color-purple-light);
+  --co-bg-secondary-lit: var(--color-purple-dark);
+  --co-bg-primary-lit: var(--color-purple);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;

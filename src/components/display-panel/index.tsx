@@ -10,6 +10,7 @@ const ScDisplay = styled.div`
 
   /* ${MixinBorders('--co-player-bordertop', '--co-player-borderside')} */
   border-top: 0;
+  text-align:center;
 `;
 
 interface Props {
@@ -21,7 +22,6 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
   const [ message, setMessageState ] = useState('');
   const timeoutRef = useRef<number | null>(null);
   const eventId = playerType === 'player' ? 'playerDisplay' : 'enemyDisplay';
-  const defaultText = playerType === 'player' ? 'DEFAULT PLAYER TEXT' : 'DEFAULT ENEMY TEXT';
 
   const setMessage = useCallback(
     (text: string | undefined = '', timeout: number | undefined = 0) => {

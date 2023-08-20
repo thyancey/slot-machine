@@ -158,6 +158,7 @@ export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], acti
     return val;
   }, 0);
 
+// dang, this needs to get reworked it could be way simpler
 export const predictAttack = (
   attacker: PlayerInfo,
   defender: PlayerInfo
@@ -179,6 +180,41 @@ export const predictAttack = (
     defense: clamp(defender.defense - attacker.attack, 0, 100)
   };
 };
+
+export const calcAttackAndBlock = (
+  attacker: PlayerInfo,
+  defender: PlayerInfo
+) => {
+  if (attacker.attack >= defender.defense) {
+    // busted through shield
+    return {
+      defense: defender.defense,
+      hp: attacker.attack - defender.defense
+    }
+  } else {
+    // blocked!
+    return {
+      defense: defender.defense - attacker.attack,
+      hp: 0
+    }
+  }
+}
+
+export const predictAttack2 = (
+  attacker: PlayerInfo,
+  defender: PlayerInfo
+) => {
+  const deltas = calcAttackAndBlock(attacker, defender);
+  console.log('deltas', deltas)
+
+  return {
+    hp: clamp(defender.hp - deltas.hp, 0, defender.hpMax),
+    hpDelta: deltas.hp,
+    defense: defender.defense - deltas.defense,
+    defenseDelta: deltas.defense
+  }
+};
+
 
 export const getEnemyAttackDelta = (
   playerInfo: PlayerInfo,
@@ -209,64 +245,28 @@ export const getEnemyAttackDelta = (
   };
 };
 
+// eventually, thorns, poison, flame stuff
 export const computeAttack = (
   attacker: PlayerInfo,
   defender: PlayerInfo
 ) => {
-  const attackResult = predictAttack(attacker as PlayerInfo, defender as PlayerInfo);
+  const attackResult = predictAttack2(attacker as PlayerInfo, defender as PlayerInfo);
   console.log('attackResult:', defender, attackResult);
 
   return {
     attacker: { 
       attack: attacker.attack,
       hp: attacker.hp,
-      defense: attacker.defense
+      defense: attacker.defense,
+      hpDelta: 0,
+      defenseDelta: 0
     },
     defender: {
       attack: defender.attack,
       hp: attackResult.hp,
-      defense: attackResult.defense
-    }
-  }
-};
-
-export const computePlayerAttack = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
-) => {
-  const attackResult = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
-  console.log('attackResult:', enemyInfo, attackResult);
-
-  return {
-    player: { 
-      attack: playerInfo.attack,
-      hp: playerInfo.hp,
-      defense: playerInfo.defense
-    },
-    enemy: {
-      attack: enemyInfo.attack,
-      hp: attackResult.hp,
-      defense: attackResult.defense
-    }
-  }
-};
-
-export const computeEnemyAttack = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
-) => {
-  const attackResult = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
-
-  return {
-    player: { 
-      attack: playerInfo.attack,
-      hp: attackResult.hp,
-      defense: attackResult.defense
-    },
-    enemy: {
-      attack: enemyInfo.attack,
-      hp: enemyInfo.hp,
-      defense: enemyInfo.defense
+      defense: attackResult.defense,
+      hpDelta: attackResult.hpDelta,
+      defenseDelta: attackResult.defenseDelta
     }
   }
 };

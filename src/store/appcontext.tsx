@@ -15,6 +15,7 @@ import {
   Tile,
   GameState,
   TRANSITION_DELAY,
+  TRANSITION_DELAY_TURN_END,
 } from './data';
 import { clamp, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
@@ -210,12 +211,17 @@ const AppProvider = ({ children }: Props) => {
       trigger('playerDisplay', '');
 
       if (attackResult.defender.hp <= 0) {
-        trigger('enemyDisplay', `ENEMY DESTROYED WITH ${playerInfo.attack} DAMAGE!`);
+        trigger('playerDisplay', `${enemyInfo.label} WAS DESTROYED!`);
         // enemy dead
         setEnemyInfo(null);
         return 'NEW_ROUND';
       } else {
-        trigger('enemyDisplay', `ENEMY TOOK ${enemyInfo.hp - attackResult.defender.hp} DAMAGE!`);
+        const mssg = [];
+        if (attackResult.defender.defenseDelta > 0) mssg.push(`BLOCKED ${attackResult.defender.defenseDelta}`);
+        if (attackResult.defender.hpDelta > 0) mssg.push(`TOOK ${attackResult.defender.hpDelta} DAMAGE`);
+        const combinedMssg = (mssg.length === 0) ? 'PLAYER STUMBLED!' : [ 'ENEMY WAS ATTACKED!' ].concat(mssg).join('\n');
+
+        trigger('enemyDisplay', combinedMssg);
         setEnemyInfo((prev) => {
           if (!prev) return null;
           return {
@@ -243,7 +249,13 @@ const AppProvider = ({ children }: Props) => {
         window.alert('you died!');
         return null;
       } else {
-        trigger('playerDisplay', `PLAYER TOOK ${playerInfo.hp - attackResult.defender.hp} DAMAGE!`);
+        const mssg = [];
+        if (attackResult.defender.defenseDelta > 0) mssg.push(`BLOCKED ${attackResult.defender.defenseDelta}`);
+        if (attackResult.defender.hpDelta > 0) mssg.push(`TOOK ${attackResult.defender.hpDelta} DAMAGE`);
+        const combinedMssg = (mssg.length === 0) ? 'ENEMY STUMBLED!' : [ 'PLAYER WAS ATTACKED!' ].concat(mssg).join('\n');
+
+        trigger('playerDisplay', combinedMssg);
+        console.log(attackResult.defender)
         setPlayerInfo((prev) => {
           return {
             ...prev,
@@ -303,7 +315,7 @@ const AppProvider = ({ children }: Props) => {
           const next = enemyAttack();
           next && setTimeout(() => {
             setGameState(next);
-          }, TRANSITION_DELAY);
+          }, TRANSITION_DELAY_TURN_END);
           break;
         }
         case 'NEW_TURN':
