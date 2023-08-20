@@ -19,8 +19,7 @@ import {
 import { clamp, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
-  computeEnemyAttack,
-  computePlayerAttack,
+  computeAttack,
   discardTiles,
   drawTiles,
   getActiveCombos,
@@ -207,23 +206,23 @@ const AppProvider = ({ children }: Props) => {
 
   const playerAttack = useCallback(() => {
     if (enemyInfo) {
-      const attackResult = computePlayerAttack(playerInfo, enemyInfo);
+      const attackResult = computeAttack(playerInfo, enemyInfo);
       trigger('playerDisplay', '');
 
-      if (attackResult.enemy.hp <= 0) {
+      if (attackResult.defender.hp <= 0) {
         trigger('enemyDisplay', `ENEMY DESTROYED WITH ${playerInfo.attack} DAMAGE!`);
         // enemy dead
         setEnemyInfo(null);
         return 'NEW_ROUND';
       } else {
-        trigger('enemyDisplay', `ENEMY TOOK ${enemyInfo.hp - attackResult.enemy.hp} DAMAGE!`);
+        trigger('enemyDisplay', `ENEMY TOOK ${enemyInfo.hp - attackResult.defender.hp} DAMAGE!`);
         setEnemyInfo((prev) => {
           if (!prev) return null;
           return {
             ...prev,
-            attack: attackResult.enemy.attack,
-            hp: attackResult.enemy.hp,
-            defense: attackResult.enemy.defense,
+            attack: attackResult.defender.attack,
+            hp: attackResult.defender.hp,
+            defense: attackResult.defender.defense,
           };
         });
         return 'ENEMY_ATTACK';
@@ -236,21 +235,21 @@ const AppProvider = ({ children }: Props) => {
   const enemyAttack = useCallback(() => {
     if (enemyInfo) {
       console.log('>>> ENEMY ATTACKS!');
-      const attackResult = computeEnemyAttack(playerInfo, enemyInfo);
+      const attackResult = computeAttack(enemyInfo, playerInfo);
 
-      if (attackResult.player.hp <= 0) {
+      if (attackResult.defender.hp <= 0) {
         trigger('playerDisplay', `PLAYER DIED!`);
         // player dead
         window.alert('you died!');
         return null;
       } else {
-        trigger('playerDisplay', `PLAYER TOOK ${playerInfo.hp - attackResult.player.hp} DAMAGE!`);
+        trigger('playerDisplay', `PLAYER TOOK ${playerInfo.hp - attackResult.defender.hp} DAMAGE!`);
         setPlayerInfo((prev) => {
           return {
             ...prev,
-            attack: attackResult.player.attack,
-            hp: attackResult.player.hp,
-            defense: attackResult.player.defense,
+            attack: attackResult.defender.attack,
+            hp: attackResult.defender.hp,
+            defense: attackResult.defender.defense,
           };
         });
         return 'NEW_TURN';

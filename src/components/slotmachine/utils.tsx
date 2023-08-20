@@ -209,54 +209,26 @@ export const getEnemyAttackDelta = (
   };
 };
 
-export const computeRound = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
+export const computeAttack = (
+  attacker: PlayerInfo,
+  defender: PlayerInfo
 ) => {
-  const curPlayer = { ...playerInfo };
-  const curEnemy = { ...enemyInfo };
+  const attackResult = predictAttack(attacker as PlayerInfo, defender as PlayerInfo);
+  console.log('attackResult:', defender, attackResult);
 
-  const compute = (reason: string) => {
-    return {
-      result: reason,
-      // player: { attack: 0, hp: curPlayer.hp, defense: curPlayer.defense },
-      player: { attack: 0, hp: curPlayer.hp, defense: 0 }, // player has attack and defense reset each turn regardless
-      enemy: { attack: curEnemy.attack, hp: curEnemy.hp, defense: curEnemy.defense }, // TODO: when enemies pick moves, replace attack w/0
-    };
-  } 
-
-  // 1. player attempt to attack enemy
-  const predictedPlayerAttack = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
-  console.log('predictedPlayerAttack:', curEnemy, predictedPlayerAttack);
-
-  // apply attack to enemy
-  curEnemy.defense = predictedPlayerAttack.defense;
-  curEnemy.hp = predictedPlayerAttack.hp;
-  if (curEnemy.hp <= 0) {
-    // 2b. enemy dead
-    return compute('enemy died');
+  return {
+    attacker: { 
+      attack: attacker.attack,
+      hp: attacker.hp,
+      defense: attacker.defense
+    },
+    defender: {
+      attack: defender.attack,
+      hp: attackResult.hp,
+      defense: attackResult.defense
+    }
   }
-
-  // todo, player check for thorns, burning, poison?
-
-  // 3. enemy attempt to attack player
-  const predictedEnemyAttack = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
-
-  console.log('predictedEnemyAttack:', predictedEnemyAttack);
-
-  // apply attack to player
-  curPlayer.defense = predictedEnemyAttack.defense;
-  curPlayer.hp = predictedEnemyAttack.hp;
-  if (curPlayer.hp <= 0) {
-    // 3a. player dead
-    return compute('player died');
-  }
-
-  // enemy check for thorns, burning, poison?
-
-  return compute('');
 };
-
 
 export const computePlayerAttack = (
   playerInfo: PlayerInfo,
