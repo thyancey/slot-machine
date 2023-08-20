@@ -16,15 +16,15 @@ import {
   GameState,
   TRANSITION_DELAY,
 } from './data';
-import { clamp } from '../utils';
+import { clamp, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
-import { discardTiles, drawTiles } from '../components/machine-editor/utils';
 import {
   computeEnemyAttack,
   computePlayerAttack,
+  discardTiles,
+  drawTiles,
   getActiveCombos,
   getEffectDelta,
-  pickRandomFromArray,
 } from '../components/slotmachine/utils';
 import { trigger } from '../utils/events';
 
@@ -98,7 +98,7 @@ const AppProvider = ({ children }: Props) => {
   const [turn, setTurn] = useState(-1);
   const turnRef = useRef(turn);
   const [round, setRound] = useState(-1);
-  const [gameState, setGameState] = useState<GameState>('');
+  const [gameState, setGameState] = useState<GameState>('NEW_GAME');
   const prevGameState = useRef(gameState);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',

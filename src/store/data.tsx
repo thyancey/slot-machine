@@ -15,6 +15,7 @@ export type UiState = 'game' | 'editor';
 
 export type GameState =
   | 'MENU'
+  | 'NEW_GAME'
   | 'NEW_ROUND'
   | 'NEW_TURN'
   | 'SPIN'

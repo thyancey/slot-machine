@@ -3,16 +3,17 @@ import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
-import { getBasicScore, getComboScore, getEffectDelta, getRandomIdx } from './utils';
+import { getBasicScore, getComboScore, getEffectDelta } from './utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
-import ScoreBox from '../scorebox';
+import ScoreBox from './components/scorebox';
 import SideControls from './components/controls-side';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
+import { getRandomIdx } from '../../utils';
 
 const ScWrapper = styled.div`
   text-align: center;

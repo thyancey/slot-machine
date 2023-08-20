@@ -1,4 +1,4 @@
-import { checkForWildCards, checkSameStrings, checkUniqueStrings, clamp, getEasing } from '../../utils';
+import { checkSameStrings, checkUniqueStrings, clamp, getEasing } from '../../utils';
 import {
   Tile,
   ReelCombo,
@@ -7,26 +7,10 @@ import {
   DeckIdxCollection,
   PlayerInfo,
   EffectType,
+  DeckState,
 } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
-
-// later on, some factors should weight the "random"
-export const getRandomIdx = (array: unknown[]) => Math.floor(Math.random() * array.length);
-export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
-  return arrayOfArrays.map((array) => getRandomIdx(array));
-};
-
-export const pickRandomsFromArray = (numChoices: number, array: unknown[]) => {
-  const idxs = Array.from(Array(array.length).keys());
-  const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
-
-  return shuffledIdxs.slice(0, numChoices).map((i) => array[i]) as unknown[];
-};
-
-export const pickRandomFromArray = (array: unknown[]) => {
-  return array[getRandomIdx(array)];
-};
 
 // what the hell is this, redo this
 export const getFirstMatchingBonus = (bonuses: BonusGroup[], tiles: Tile[]) => {
@@ -313,4 +297,51 @@ export const computeEnemyAttack = (
       defense: enemyInfo.defense
     }
   }
+};
+
+// if a tile has a wildcard AND a bonus accepts wildcards, then you can allow it
+export const checkForWildCards = (bonuses: BonusGroup[], tiles: Tile[]) => {
+  return !!tiles.find(t => t.attributes.includes('*')) && !!bonuses.find(b => b.bonusType === '*');
+}
+
+
+/**
+ * Pull cards from the top of the deck. If there is no more draw pile, refill it from the discard. Do not
+ */
+export const drawTile = (deckState: DeckState, noRefill?: boolean) => {
+  if (deckState.draw.length === 0) {
+    if (noRefill || deckState.discard.length === 0) {
+      console.log('!! no more cards!');
+      // well apparently theres no cards left, so just give back what you had
+      return deckState;
+    }
+
+    // refill / shuffle the deck
+    const shuffledDraw = deckState.discard.sort(() => Math.random() - 0.5);
+    deckState.draw = shuffledDraw;
+    deckState.discard = [];
+  }
+
+  return {
+    drawn: [...deckState.drawn, deckState.draw[deckState.draw.length - 1]],
+    draw: deckState.draw.slice(0, -1),
+    discard: deckState.discard,
+  };
+};
+
+export const drawTiles = (numToDraw: number, deckState: DeckState) => {
+  const availableToDraw = clamp(numToDraw, 1, deckState.draw.length + deckState.discard.length);
+  const operations = Array.from(Array(availableToDraw).keys());
+
+  return operations.reduce((acc) => {
+    return drawTile(acc);
+  }, deckState);
+};
+
+export const discardTiles = (discardIdxs: number[], deckState: DeckState) => {
+  return {
+    drawn: deckState.drawn.filter((tileIdx) => !discardIdxs.includes(tileIdx)),
+    draw: deckState.draw,
+    discard: [...deckState.discard, ...discardIdxs],
+  };
 };

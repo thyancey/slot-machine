@@ -60,7 +60,7 @@ const ScSideControls = styled.div`
 
   > button {
     font-size: 3rem;
-    line-height: 4.85rem;
+    line-height: 5.2rem;
   }
 `;
 

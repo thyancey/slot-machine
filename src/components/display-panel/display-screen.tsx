@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PlayerInfo } from '../../store/data';
-import HealthBar from '../entities/healthbar';
+import HealthBar from './healthbar';
 
 const ScOuter = styled.div`
   width: auto;

@@ -4,10 +4,10 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { AppContext } from '../../store/appcontext';
 import TileSelector from './tile-selector';
 import ReelEditor from './reel-editor';
-import { discardTiles } from './utils';
 import CardPile from './cardpile';
 import MetalGlint from '../metal-glint';
 import { MixinBorders } from '../../utils/styles';
+import { discardTiles } from '../slotmachine/utils';
 
 const ScWrapper = styled.aside`
   position: absolute;
