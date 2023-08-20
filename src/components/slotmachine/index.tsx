@@ -51,6 +51,7 @@ const ScReelSegment = styled.div`
   margin: 0rem 0.75rem;
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-top: 0;
 
   &:first-child {
     border-right: 0;
@@ -89,6 +90,12 @@ const ScDisplay = styled.div`
   border-radius: 0.75rem;
 
   max-width: var(--var-reels-width, 100%);
+`;
+
+const ScDisplayWrapper = styled.div`
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  /* border-top: 0; */
+  /* border-bottom: 0; */
 `;
 
 const ScSideControls = styled.div`
@@ -241,7 +248,6 @@ function SlotMachine() {
     incrementScore(spinScore);
   }, [spinScore, incrementScore]);
 
-    
   // TODO, centralize this somewhere else, also better state check on new player move
   const attack = useMemo(() => {
     return getEffectDelta('attack', activeTiles, activeCombos);
@@ -266,10 +272,12 @@ function SlotMachine() {
   return (
     <ScWrapper>
       <ScDisplay>
-        <DisplayPanel playerType="player" playerInfo={playerInfo} />
+        <ScDisplayWrapper>
+          <DisplayPanel playerType='player' playerInfo={playerInfo} />
+        </ScDisplayWrapper>
         <Rivets />
       </ScDisplay>
-      <ScReelContainer id="reels-container">
+      <ScReelContainer id='reels-container'>
         <ul>
           {reelStates.map((reelState, reelIdx) => (
             <ScReelSegment key={reelIdx}>

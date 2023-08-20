@@ -50,18 +50,20 @@ interface Props {
 }
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
-  const { upgradeTokens, setUiState } = useContext(AppContext);
+  const { upgradeTokens, setUiState, gameState } = useContext(AppContext);
 
   const onHover = (text: string) => {
     console.log('onHover', text);
   };
+
+  const disableButtons = gameState !== 'SPIN' || spinInProgress;
 
   return (
     <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>
       <ScInner>
         <DisplayButton
           buttonStyle='special'
-          disabled={spinInProgress || spinTokens <= 0}
+          disabled={disableButtons || spinTokens <= 0}
           onClick={() => triggerSpin()}
           onMouseEnter={() => onHover(`SPIN TO WIN ! ${spinTokens} TOKENS LEFT`)}
         >
@@ -71,7 +73,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
           <span>{spinTokens}</span>
         </ScSpinTokens>
         <DisplayButton
-          disabled={spinInProgress || upgradeTokens <= 0}
+          disabled={disableButtons || upgradeTokens <= 0}
           onClick={() => setUiState('editor')}
           onMouseEnter={() => onHover(`upgrade slot machine`)}
         >{`?`}</DisplayButton>

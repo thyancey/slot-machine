@@ -15,10 +15,10 @@ const ScOuter = styled.div`
 
   background-color: var(--color-black-dark);
   color: var(--color-white);
-  transition: background-color ease-in 0.6s;
+  transition: background-color ease-in 0.5s;
 
   &.highlighted {
-    background-color: var(--color-black-light);
+    background-color: var(--color-grey-dark);
     transition: background-color ease-out 0.2s;
   }
 `;

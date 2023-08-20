@@ -8,7 +8,7 @@ import DisplayScreen from './display-screen';
 const ScDisplay = styled.div`
   background-color: var(--color-black);
 
-  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  /* ${MixinBorders('--co-player-bordertop', '--co-player-borderside')} */
   border-top: 0;
 `;
 
@@ -21,7 +21,7 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
   const [ message, setMessageState ] = useState('');
   const timeoutRef = useRef<number | null>(null);
   const eventId = playerType === 'player' ? 'playerDisplay' : 'enemyDisplay';
-  const defaultText = playerType === 'player' ? 'SPIN TO WIN!' : 'DEFAULT ENEMY TEXT';
+  const defaultText = playerType === 'player' ? 'DEFAULT PLAYER TEXT' : 'DEFAULT ENEMY TEXT';
 
   const setMessage = useCallback(
     (text: string | undefined = '', timeout: number | undefined = 0) => {
@@ -61,7 +61,7 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
 
   return (
     <ScDisplay onClick={onClick}>
-      <DisplayScreen playerInfo={playerInfo} message={message || defaultText} />
+      <DisplayScreen playerInfo={playerInfo} message={message} />
     </ScDisplay>
   );
 }

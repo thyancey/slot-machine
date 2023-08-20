@@ -65,11 +65,11 @@ const ScSideControls = styled.div`
 `;
 
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
+  const { enemyInfo, finishTurn, reelResults, gameState } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
-    return turn > -1 && !reelResults.includes(-1);
-  }, [reelResults, turn]);
+    return gameState === 'SPIN' && !reelResults.includes(-1);
+  }, [reelResults, gameState]);
 
   const className = useMemo(() => {
     const classes = [];
@@ -88,7 +88,7 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       <ScDisplay>
-        <DisplayPanel playerType="enemy" playerInfo={enemyInfo} />
+        <DisplayPanel playerType='enemy' playerInfo={enemyInfo} />
       </ScDisplay>
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>

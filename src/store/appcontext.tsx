@@ -208,6 +208,7 @@ const AppProvider = ({ children }: Props) => {
   const playerAttack = useCallback(() => {
     if (enemyInfo) {
       const attackResult = computePlayerAttack(playerInfo, enemyInfo);
+      trigger('playerDisplay', '');
 
       if (attackResult.enemy.hp <= 0) {
         trigger('enemyDisplay', `ENEMY DESTROYED WITH ${playerInfo.attack} DAMAGE!`);
@@ -261,7 +262,7 @@ const AppProvider = ({ children }: Props) => {
 
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
-    trigger('playerDisplay', '');
+    trigger('playerDisplay', '! SPIN TO WIN !');
     trigger('enemyDisplay', '');
 
     setTurn((prev) => prev + 1);

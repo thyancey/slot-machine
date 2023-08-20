@@ -1,15 +1,15 @@
 import AssetMap from '../assets';
 
-export const REEL_HEIGHT = 150; // height of each reel cell, should match --val-reel-height rem value
+export const REEL_HEIGHT = 160; // height of each reel cell, should match --val-reel-height rem value
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 export const MAX_REELS = 6;
 export const INITIAL_UPGRADE_TOKENS = 1;
 export const INITIAL_SPIN_TOKENS = 3;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
-export const TRANSITION_DELAY = 3000;
+export const TRANSITION_DELAY = 3000; // how long to wait between player/enemy attack messages during battle
 
-export const ENEMY_HEIGHT = 310;
+export const ENEMY_HEIGHT = 290;
 
 export type UiState = 'game' | 'editor';
 
