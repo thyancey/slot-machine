@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 import MachineEditor from './components/machine-editor';
-import Player from './components/entities/player';
 import Bg from './components/bg';
-import { useMemo, useContext } from 'react';
+import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
-// import Palette from './components/palette';
-// import Palette from './components/palette';
+import Enemy from './components/enemy';
+import MetalGlint from './components/metal-glint';
+import SlotMachine from './components/slotmachine';
+import { ENEMY_HEIGHT } from './store/data';
+import Palette from './components/palette';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -13,32 +15,108 @@ const ScWrapper = styled.main`
   overflow: hidden;
 `;
 
-const ScMain = styled.div`
-  flex: 1;
+// TODO: get rid of this extra div, make machine more responsive
+const ScComboContainer = styled.div`
   width: 100%;
   height: 100%;
 
-  padding: 2rem;
-  padding-bottom: 4rem;
-
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
 `;
+
+const ScCombo = styled.div`
+  position: relative;
+
+  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
+  border-radius: 1rem 1rem 0.25rem 0.25rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+`;
+
+const ScShadowDiv = styled.div`
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: 1rem;
+`;
+const ScEnemy = styled.div`
+  position: absolute;
+  width:100%;
+  height: ${ENEMY_HEIGHT}px;
+  
+  background-color: var(--co-enemy);
+  border-radius: 1rem 1rem 0 0;
+  padding: 1.5rem 2rem 1rem 2rem;
+
+
+  ${ScShadowDiv} {
+    /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
+  }
+
+  /*
+  .lit-up & {
+    ${ScShadowDiv} {
+      box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight);
+    }
+  }
+  */
+`;
+
+const ScPlayer = styled.div`
+  position: relative;
+  padding: 1.75rem;
+  padding-bottom: 2.25rem;
+  border-top: 0.25rem solid var(--co-player-bordertop);
+
+  margin-top: ${ENEMY_HEIGHT}px;
+
+  border-radius: 0 0 1rem 1rem;
+  background-color: transparent;
+
+  ${ScShadowDiv} {
+    /* box-shadow: 0 0 6rem 3rem var(--co-player-highlight); */
+  }
+
+  /*
+  .lit-up & {
+    ${ScShadowDiv} {
+      box-shadow: 0 0 6rem 2rem var(--co-player-highlight);
+    }
+  }
+  */
+`;
+
+let paletteActive = false;
 
 function Layout() {
   const { activeCombos } = useContext(AppContext);
   const litUp = useMemo(() => {
     return activeCombos.length > 0;
-  }, [ activeCombos.length ])
+  }, [ activeCombos.length ]);
+
+  useEffect(() => {
+    paletteActive = window.location.search.indexOf('palette') > -1; 
+  })
   
   return (
     <ScWrapper className={litUp ? 'lit-up' : ''}>
-    {/* <Palette /> */}
-      <ScMain>
-        <Player />
-      </ScMain>
+      {paletteActive && <Palette /> }
+      <ScComboContainer>
+        <ScCombo id='player'>
+          <ScEnemy>
+            <Enemy />
+            <ScShadowDiv />
+          </ScEnemy>
+          <ScPlayer>
+            <SlotMachine />
+            <MetalGlint glintTheme="player"/>
+            <ScShadowDiv />
+          </ScPlayer>
+        </ScCombo>
+      </ScComboContainer>
       <Bg />
       <MachineEditor />
     </ScWrapper>
