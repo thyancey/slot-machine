@@ -9,7 +9,7 @@ export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
 export const TRANSITION_DELAY = 3000;
 
-export const ENEMY_HEIGHT = 304;
+export const ENEMY_HEIGHT = 310;
 
 export type UiState = 'game' | 'editor';
 

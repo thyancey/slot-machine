@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PlayerInfo } from '../../store/data';
 import HealthBar from './healthbar';
 
+const FLASH_DURATION = 200;
+
 const ScOuter = styled.div`
   width: auto;
   height: 10rem;
@@ -11,13 +13,13 @@ const ScOuter = styled.div`
   display: flex;
   flex-direction: column;
 
-  transition: background-color ease-out 0.3s, color ease-out 0.3s;
-  background-color: var(--color-black);
+  background-color: var(--color-black-dark);
   color: var(--color-white);
+  transition: background-color ease-in 0.6s;
 
-  &.winner {
-    background-color: var(--color-grey-dark);
-    color: var(--color-white);
+  &.highlighted {
+    background-color: var(--color-black-light);
+    transition: background-color ease-out 0.2s;
   }
 `;
 
@@ -54,7 +56,7 @@ function DisplayScreen({ message, playerInfo }: Props) {
   const timeoutRef = useRef<number | null>(null);
 
   const className = useMemo(() => {
-    return highlighted ? 'winner' : '';
+    return highlighted ? 'highlighted' : '';
   }, [highlighted]);
 
   const setHighlightPlease = useCallback(() => {
@@ -65,7 +67,7 @@ function DisplayScreen({ message, playerInfo }: Props) {
     // @ts-ignore
     timeoutRef.current = setTimeout(() => {
       setHighlighted(false);
-    }, 1000);
+    }, FLASH_DURATION);
   }, [setHighlighted]);
 
   useEffect(() => {

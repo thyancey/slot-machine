@@ -13,8 +13,6 @@ import Rpoison from './reels/reel-poison.gif';
 import Rshield from './reels/reel-shield.gif';
 import Rsnowflake from './reels/reel-snowflake.gif';
 import Rsword from './reels/reel-sword.gif';
-import UI_Token from './ui/token.gif';
-import UI_Token_Empty from './ui/token-empty2.gif';
 import Reel_BG from './reels/reel-bg.gif';
 import UI_IconAttack from './ui/icon-attack.gif';
 import UI_IconDefense from './ui/icon-defense.gif';
@@ -41,8 +39,6 @@ const AssetMap = {
   Rsnowflake,
   Rsword,
   Reel_BG,
-  UI_Token,
-  UI_Token_Empty,
   UI_IconAttack,
   UI_IconDefense,
   UI_IconCoin,

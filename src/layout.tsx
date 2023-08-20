@@ -68,6 +68,7 @@ const ScEnemy = styled.div`
 const ScPlayer = styled.div`
   position: relative;
   padding: 1.75rem;
+  padding-top: 1rem;
   padding-bottom: 2.25rem;
   border-top: 0.25rem solid var(--co-player-bordertop);
 
