@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PlayerInfo } from '../../../store/data';
-import HealthBar from '../../entities/healthbar';
+import { PlayerInfo } from '../../store/data';
+import HealthBar from '../entities/healthbar';
 
 const ScOuter = styled.div`
   width: auto;
@@ -49,7 +49,7 @@ interface Props {
   message: string;
   playerInfo: PlayerInfo;
 }
-function Display({ message, playerInfo }: Props) {
+function DisplayScreen({ message, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -84,4 +84,4 @@ function Display({ message, playerInfo }: Props) {
   );
 }
 
-export default Display;
+export default DisplayScreen;

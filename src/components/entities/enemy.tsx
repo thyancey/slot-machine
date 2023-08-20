@@ -4,7 +4,7 @@ import { AppContext } from '../../store/appcontext';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';
-import DisplayUnit from '../slotmachine/components/display-unit';
+import DisplayPanel from '../display-panel';
 
 const ScCard = styled.div`
   position: relative;
@@ -88,7 +88,7 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       <ScDisplay>
-        <DisplayUnit playerInfo={enemyInfo} playerType="enemy" />
+        <DisplayPanel playerType="enemy" playerInfo={enemyInfo} />
       </ScDisplay>
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>

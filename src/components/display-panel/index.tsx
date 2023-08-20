@@ -1,9 +1,9 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
-import Display from './display';
 import styled from 'styled-components';
-import { PlayerInfo } from '../../../store/data';
-import { MixinBorders } from '../../../utils/styles';
-import { off, on } from '../../../utils/events';
+import { PlayerInfo } from '../../store/data';
+import { MixinBorders } from '../../utils/styles';
+import { off, on } from '../../utils/events';
+import DisplayScreen from './display-screen';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
@@ -17,7 +17,7 @@ interface Props {
   playerInfo: PlayerInfo;
   playerType: string;
 }
-function DisplayUnit({ onClick, playerInfo, playerType }: Props) {
+function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
   const [ message, setMessageState ] = useState('');
   const timeoutRef = useRef<number | null>(null);
   const eventId = playerType === 'player' ? 'playerDisplay' : 'enemyDisplay';
@@ -61,9 +61,9 @@ function DisplayUnit({ onClick, playerInfo, playerType }: Props) {
 
   return (
     <ScDisplay onClick={onClick}>
-      <Display playerInfo={playerInfo} message={message || defaultText} />
+      <DisplayScreen playerInfo={playerInfo} message={message || defaultText} />
     </ScDisplay>
   );
 }
 
-export default DisplayUnit;
+export default DisplayPanel;

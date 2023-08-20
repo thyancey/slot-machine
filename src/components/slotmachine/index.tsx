@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'r
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getEffectDelta, getRandomIdx } from './utils';
-// import { getTileFromDeckIdx } from '../../store/utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
@@ -12,8 +11,8 @@ import ScoreBox from '../scorebox';
 import SideControls from './components/controls-side';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
-import DisplayUnit from './components/display-unit';
 import { trigger } from '../../utils/events';
+import DisplayPanel from '../display-panel';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -61,16 +60,6 @@ const ScReelSegment = styled.div`
     margin-right: 0;
   }
 `;
-
-// const ScReelLabels = styled.div`
-//   height: 3.25rem;
-
-//   > div {
-//     position: absolute;
-//     display: flex;
-//     justify-content: center;
-//   }
-// `;
 
 const ScScoreBoxContainer = styled.div`
   grid-row: 3;
@@ -273,24 +262,10 @@ function SlotMachine() {
     }
   }, [comboLengthRef, activeCombos, attack]);
 
-  // const resultSet = useMemo(() => {
-  //   if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
-  //     // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
-  //     return [];
-  //   }
-  //   return reelResults.map((slotIdx, reelIdx) => {
-  //     // the undefined check avoids a bug when deleting a reel in the editor
-  //     // while reelResults are populated
-  //     if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
-  //     const deckIdx = reelStates[reelIdx][slotIdx];
-  //     return getTileFromDeckIdx(deckIdx, tileDeck);
-  //   });
-  // }, [reelResults, reelStates, tileDeck, spinCount]);
-
   return (
     <ScWrapper>
       <ScDisplay>
-        <DisplayUnit onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo} playerType="player" />
+        <DisplayPanel playerType="player" playerInfo={playerInfo} />
         <Rivets />
       </ScDisplay>
       <ScReelContainer id="reels-container">
