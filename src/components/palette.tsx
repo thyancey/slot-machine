@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { getRandomIdx } from './slotmachine/utils';
 import { MixinBorders } from '../utils/styles';
+import { getRandomIdx } from '../utils';
 
 export const ScWrapper = styled.div`
   position:absolute;
@@ -46,7 +46,6 @@ function Palette() {
   const colors = [ 'purple', 'red', 'blue', 'green', 'yellow', 'grey', 'black', 'white', 'offwhite'];
   const numColors = 200;
 
-  // const randColors = pickRandomFromArray(numColors, colors) as string[];
   const randColors = Array(numColors)
     .fill('')
     .map(() => colors[getRandomIdx(colors)]);

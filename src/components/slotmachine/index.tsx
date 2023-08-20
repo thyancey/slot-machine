@@ -1,18 +1,19 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext } from 'react';
+import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
-import { getBasicScore, getComboScore, getRandomIdx } from './utils';
-// import { getTileFromDeckIdx } from '../../store/utils';
+import { getBasicScore, getComboScore, getEffectDelta } from './utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
-import PlayerDisplay from './components/player-display';
-import ScoreBox from '../scorebox';
+import ScoreBox from './components/scorebox';
 import SideControls from './components/controls-side';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
+import { trigger } from '../../utils/events';
+import DisplayPanel from '../display-panel';
+import { getRandomIdx } from '../../utils';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -61,16 +62,6 @@ const ScReelSegment = styled.div`
   }
 `;
 
-// const ScReelLabels = styled.div`
-//   height: 3.25rem;
-
-//   > div {
-//     position: absolute;
-//     display: flex;
-//     justify-content: center;
-//   }
-// `;
-
 const ScScoreBoxContainer = styled.div`
   grid-row: 3;
   grid-column: 1;
@@ -108,14 +99,6 @@ const ScSideControls = styled.div`
   height: 100%;
 `;
 
-const ScLabel = styled.h1`
-  color: var(--color-grey-light);
-  margin-top: 0.25rem;
-  margin-bottom: -0.25rem;
-  font-size: 1rem;
-  text-align: center;
-`;
-
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinInProgress, setSpinInProgress] = useState(false);
@@ -140,6 +123,7 @@ function SlotMachine() {
     finishSpinTurn,
     playerInfo,
   } = useContext(AppContext);
+  const comboLengthRef = useRef(activeCombos.length);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
     playbackRate: 0.3 + reelResults.filter((r) => r !== -1).length * 0.3,
@@ -257,24 +241,32 @@ function SlotMachine() {
     incrementScore(spinScore);
   }, [spinScore, incrementScore]);
 
-  // const resultSet = useMemo(() => {
-  //   if (spinCount === 0 || reelStates.length === 0 || reelResults.length === 0) {
-  //     // wheel is not done spinning yet. (or hasnt loaded, or hasnt done first spin)
-  //     return [];
-  //   }
-  //   return reelResults.map((slotIdx, reelIdx) => {
-  //     // the undefined check avoids a bug when deleting a reel in the editor
-  //     // while reelResults are populated
-  //     if (slotIdx === -1 || reelStates[reelIdx] === undefined) return undefined;
-  //     const deckIdx = reelStates[reelIdx][slotIdx];
-  //     return getTileFromDeckIdx(deckIdx, tileDeck);
-  //   });
-  // }, [reelResults, reelStates, tileDeck, spinCount]);
+    
+  // TODO, centralize this somewhere else, also better state check on new player move
+  const attack = useMemo(() => {
+    return getEffectDelta('attack', activeTiles, activeCombos);
+  }, [activeTiles, activeCombos]);
+  useEffect(() => {
+    if (activeCombos.length !== comboLengthRef.current) {
+      comboLengthRef.current = activeCombos.length;
+
+      if (activeCombos.length > 0) {
+        const mssgs = [];
+        if (attack !== 0) {
+          mssgs.push(`attack with ${attack} damage`);
+        }
+        if (activeCombos.length > 0) {
+          mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
+        }
+        trigger('playerDisplay', mssgs.join('\n'));
+      }
+    }
+  }, [comboLengthRef, activeCombos, attack]);
 
   return (
     <ScWrapper>
       <ScDisplay>
-        <PlayerDisplay onClick={() => triggerSpin(reelStates)} playerInfo={playerInfo} />
+        <DisplayPanel playerType="player" playerInfo={playerInfo} />
         <Rivets />
       </ScDisplay>
       <ScReelContainer id="reels-container">

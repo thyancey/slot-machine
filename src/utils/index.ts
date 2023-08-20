@@ -1,5 +1,3 @@
-import { BonusGroup, Tile } from '../store/data';
-
 export type MinMaxTouple = [min: number, max: number];
 export const randInRange = (range: MinMaxTouple, isIndexes = false) => {
   const val = Math.random() * (range[1] - range[0]) + range[0];
@@ -31,7 +29,19 @@ export const checkUniqueStrings = (items: string[]) => {
   return unique.length === items.length;
 };
 
-// if a tile has a wildcard AND a bonus accepts wildcards, then you can allow it
-export const checkForWildCards = (bonuses: BonusGroup[], tiles: Tile[]) => {
-  return !!tiles.find(t => t.attributes.includes('*')) && !!bonuses.find(b => b.bonusType === '*');
-}
+// later on, some factors should weight the "random"
+export const getRandomIdx = (array: unknown[]) => Math.floor(Math.random() * array.length);
+export const getRandom2dIdxs = (arrayOfArrays: unknown[][]) => {
+  return arrayOfArrays.map((array) => getRandomIdx(array));
+};
+
+export const pickRandomsFromArray = (numChoices: number, array: unknown[]) => {
+  const idxs = Array.from(Array(array.length).keys());
+  const shuffledIdxs = idxs.sort(() => Math.random() - 0.5);
+
+  return shuffledIdxs.slice(0, numChoices).map((i) => array[i]) as unknown[];
+};
+
+export const pickRandomFromArray = (array: unknown[]) => {
+  return array[getRandomIdx(array)];
+};

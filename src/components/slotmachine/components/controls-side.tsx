@@ -2,8 +2,6 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
 import DisplayButton from '../../display-button';
-import { trigger } from '../../../utils/events';
-// import { UiContext } from '../../../store/uicontext';
 
 const ScWrapper = styled.div`
   color: var(--color-white);
@@ -53,9 +51,10 @@ interface Props {
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
-  // const { setPlayerText } = useContext(UiContext);
 
-  const onHover = (text: string) => {};
+  const onHover = (text: string) => {
+    console.log('onHover', text);
+  };
 
   return (
     <ScWrapper className={spinInProgress || spinTokens <= 0 ? 'spin-disabled' : ''}>

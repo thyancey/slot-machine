@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PlayerInfo } from '../../../store/data';
-import HealthBar from '../../entities/healthbar';
+import { PlayerInfo } from '../../store/data';
+import HealthBar from './healthbar';
 
 const ScOuter = styled.div`
   width: auto;
@@ -48,20 +48,10 @@ const ScHealthBar = styled.div`
 interface Props {
   message: string;
   playerInfo: PlayerInfo;
-  displayType?: 'combo';
 }
-function Display({ message, displayType, playerInfo }: Props) {
+function DisplayScreen({ message, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
-
-  // const className = useMemo(() => {
-  //   return displayType === 'combo' ? 'winner' : '';
-  // }, [displayType]);
-
-  // const className = useMemo(() => {
-  //   if(highlighted) return 'winner';
-  //   return displayType === 'combo' ? 'winner' : '';
-  // }, [ displayType, highlighted]);
 
   const className = useMemo(() => {
     return highlighted ? 'winner' : '';
@@ -94,4 +84,4 @@ function Display({ message, displayType, playerInfo }: Props) {
   );
 }
 
-export default Display;
+export default DisplayScreen;

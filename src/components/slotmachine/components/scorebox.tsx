@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { AppContext } from '../store/appcontext';
+import { AppContext } from '../../../store/appcontext';
 import { useContext, useEffect, useState } from 'react';
 
 const ScScorebox = styled.div`
