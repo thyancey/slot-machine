@@ -1,6 +1,6 @@
 import { useContext, useMemo, useEffect, useCallback, useRef } from 'react';
 import { AppContext } from '../../../store/appcontext';
-import Display from './new-display';
+import Display from './display';
 import styled from 'styled-components';
 import { getEffectDelta } from '../utils';
 import { PlayerInfo } from '../../../store/data';

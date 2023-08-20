@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { AppContext } from '../../store/appcontext';
-import Display from '../slotmachine/components/new-display';
+import Display from '../slotmachine/components/display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';

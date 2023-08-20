@@ -54,6 +54,8 @@ function Display({ message, displayType, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
+  console.log('displayType', displayType);
+
   // const className = useMemo(() => {
   //   return displayType === 'combo' ? 'winner' : '';
   // }, [displayType]);

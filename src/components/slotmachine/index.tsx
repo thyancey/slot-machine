@@ -108,14 +108,6 @@ const ScSideControls = styled.div`
   height: 100%;
 `;
 
-const ScLabel = styled.h1`
-  color: var(--color-grey-light);
-  margin-top: 0.25rem;
-  margin-bottom: -0.25rem;
-  font-size: 1rem;
-  text-align: center;
-`;
-
 function SlotMachine() {
   const [spinCount, setSpinCount] = useState(0);
   const [spinInProgress, setSpinInProgress] = useState(false);
