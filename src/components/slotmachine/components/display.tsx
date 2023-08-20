@@ -48,22 +48,10 @@ const ScHealthBar = styled.div`
 interface Props {
   message: string;
   playerInfo: PlayerInfo;
-  displayType?: 'combo';
 }
-function Display({ message, displayType, playerInfo }: Props) {
+function Display({ message, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
-
-  console.log('displayType', displayType);
-
-  // const className = useMemo(() => {
-  //   return displayType === 'combo' ? 'winner' : '';
-  // }, [displayType]);
-
-  // const className = useMemo(() => {
-  //   if(highlighted) return 'winner';
-  //   return displayType === 'combo' ? 'winner' : '';
-  // }, [ displayType, highlighted]);
 
   const className = useMemo(() => {
     return highlighted ? 'winner' : '';

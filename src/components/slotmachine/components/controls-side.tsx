@@ -51,7 +51,6 @@ interface Props {
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
   const { upgradeTokens, setUiState } = useContext(AppContext);
-  // const { setPlayerText } = useContext(UiContext);
 
   const onHover = (text: string) => {
     console.log('onHover', text);

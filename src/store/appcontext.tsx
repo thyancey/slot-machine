@@ -96,8 +96,9 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const turnRef = useRef(turn);
   const [round, setRound] = useState(-1);
-  const [gameState, setGameState] = useState<GameState>('SPIN');
+  const [gameState, setGameState] = useState<GameState>('');
   const prevGameState = useRef(gameState);
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     label: 'player',
@@ -112,7 +113,6 @@ const AppProvider = ({ children }: Props) => {
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
-  // const [activeCombos, setActiveCombos] = useState<ReelComboResult[]>([]);
   const [reelStates, setReelStatesState] = useState<DeckIdxCollection[]>([]);
 
   // for acting on reelStates in a useEffect, but dont get triggered by them
@@ -126,57 +126,6 @@ const AppProvider = ({ children }: Props) => {
     discard: [],
   });
 
-  const setReelStates = useCallback(
-    (reelStates: DeckIdxCollection[]) => {
-      setReelStatesState(reelStates);
-      numReelsRef.current = reelStates.length;
-    },
-    [setReelStatesState]
-  );
-
-  const incrementScore = useCallback(
-    (increment = 0) => {
-      setScore((prevScore) => Math.floor(prevScore + increment));
-    },
-    [setScore]
-  );
-
-  // TODO - these should probably use useCallback, but it wasnt necessary when i first
-  // put them in here.
-  const insertIntoReel = (reelIdx: number, positionIdx: number) => {
-    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
-  };
-
-  const removeFromReel = (reelIdx: number, positionIdx: number) => {
-    const afterRemove = removeAtPosition(reelIdx, positionIdx, reelStates);
-    console.log('afterRemove', afterRemove);
-    setReelStates(afterRemove);
-  };
-
-  const insertReel = (positionIdx: number) => {
-    if (reelStates.length < MAX_REELS) {
-      console.log('3');
-      setReelStates(insertReelStateIntoReelStates(positionIdx, [selectedTileIdx], reelStates));
-    } else {
-      console.log(`cannot add more than ${MAX_REELS} reels!`);
-    }
-  };
-
-  const drawCards = useCallback(
-    (numToDraw: number) => {
-      const afterState = drawTiles(numToDraw, deckState);
-      setDeckState(afterState);
-    },
-    [deckState]
-  );
-
-  const discardCards = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (_: number) => {
-      setDeckState(discardTiles(deckState.drawn, deckState));
-    },
-    [deckState]
-  );
 
   const activeTiles = useMemo(() => {
     if (reelResults.includes(-1)) return [];
@@ -199,6 +148,9 @@ const AppProvider = ({ children }: Props) => {
   // console.log('Context, activeTiles', activeTiles);
   // console.log('Context, reelCombos', reelCombos);
 
+  useEffect(() => {
+    setGameState('NEW_ROUND');
+  }, [])
   // next round
   useEffect(() => {
     if (round > -1) {
@@ -216,7 +168,7 @@ const AppProvider = ({ children }: Props) => {
 
       setTurn(0);
     } else {
-      setRound(0);
+      // setRound(0);
     }
   }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults]);
 
@@ -230,6 +182,13 @@ const AppProvider = ({ children }: Props) => {
   // const finishRound = useCallback(() => {
   //   setRound((prev) => prev + 1);
   // }, [setRound]);
+
+  useEffect(() => {
+    if(turnRef.current !== turn && enemyInfo){
+      turnRef.current = turn;
+      trigger('enemyDisplay', `${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
+    }
+  }, [ enemyInfo, turn, turnRef ]);
 
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
@@ -301,8 +260,12 @@ const AppProvider = ({ children }: Props) => {
   }, [playerInfo, enemyInfo]);
 
   const newTurn = useCallback(() => {
+    // just in case these don't get re-populated while theres bugs...
+    trigger('playerDisplay', '');
+    trigger('enemyDisplay', '');
+
     setTurn((prev) => prev + 1);
-    // setGameState('SPIN');
+    
     return 'SPIN';
   }, [setTurn]);
 
@@ -310,8 +273,18 @@ const AppProvider = ({ children }: Props) => {
     trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
     setRound((prev) => prev + 1);
     console.log('newRound spin')
-    setGameState('SPIN');
+    setGameState('NEW_TURN');
   }, [setRound, round]);
+
+  // DO SOME FIGHTING
+  const finishTurn = useCallback(() => {
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
+      return;
+    }
+
+    setGameState('PLAYER_ATTACK');
+  }, [setGameState, enemyInfo, setTurn]);
 
   useEffect(() => {
     // the timeouts here are brittle and likely to cause problems later
@@ -346,65 +319,61 @@ const AppProvider = ({ children }: Props) => {
           break;
       }
     }
-  }, [gameState,  playerAttack, enemyAttack, newTurn, newRound]);
+  }, [gameState, playerAttack, enemyAttack, newTurn, newRound]);
 
-  // DO SOME FIGHTING
-  const finishTurn = useCallback(() => {
-    if (!enemyInfo) {
-      setTurn((prev) => prev + 1);
-      return;
-    }
+  
+  const setReelStates = useCallback(
+    (reelStates: DeckIdxCollection[]) => {
+      setReelStatesState(reelStates);
+      numReelsRef.current = reelStates.length;
+    },
+    [setReelStatesState]
+  );
 
-    setGameState('PLAYER_ATTACK');
-  }, [setGameState, enemyInfo, setTurn]);
-  /*
-  const finishTurn = useCallback(() => {
-    if (!enemyInfo) {
-      setTurn((prev) => prev + 1);
-      return;
-    }
+  const incrementScore = useCallback(
+    (increment = 0) => {
+      setScore((prevScore) => Math.floor(prevScore + increment));
+    },
+    [setScore]
+  );
 
-    console.log('----> FINISH TURN', playerInfo, enemyInfo, activeTiles, activeCombos);
-    if (!enemyInfo) setTurn((prev) => prev + 1);
+  const drawCards = useCallback(
+    (numToDraw: number) => {
+      const afterState = drawTiles(numToDraw, deckState);
+      setDeckState(afterState);
+    },
+    [deckState]
+  );
 
-    const roundResult = computeRound(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
-    console.log('roundResult', roundResult);
+  const discardCards = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_: number) => {
+      setDeckState(discardTiles(deckState.drawn, deckState));
+    },
+    [deckState]
+  );
 
-    if (roundResult.player.hp === 0) {
-      window.alert('you died!');
-    } else if (roundResult.enemy.hp === 0) {
-      setPlayerInfo((prev) => ({
-        ...prev,
-        attack: roundResult.player.attack,
-        hp: roundResult.player.hp,
-        defense: roundResult.player.defense,
-      }));
-      setEnemyInfo(null);
+  // TODO - these should probably use useCallback, but it wasnt necessary when i first
+  // put them in here.
+  const insertIntoReel = (reelIdx: number, positionIdx: number) => {
+    setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
+  };
 
-      finishRound();
+  const removeFromReel = (reelIdx: number, positionIdx: number) => {
+    const afterRemove = removeAtPosition(reelIdx, positionIdx, reelStates);
+    console.log('afterRemove', afterRemove);
+    setReelStates(afterRemove);
+  };
+
+  const insertReel = (positionIdx: number) => {
+    if (reelStates.length < MAX_REELS) {
+      console.log('3');
+      setReelStates(insertReelStateIntoReelStates(positionIdx, [selectedTileIdx], reelStates));
     } else {
-      setPlayerInfo((prev) => {
-        return {
-          ...prev,
-          attack: roundResult.player.attack,
-          hp: roundResult.player.hp,
-          defense: roundResult.player.defense,
-        };
-      });
-
-      setEnemyInfo((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          attack: roundResult.enemy.attack,
-          hp: roundResult.enemy.hp,
-          defense: roundResult.enemy.defense,
-        };
-      });
-      setTurn((prev) => prev + 1);
+      console.log(`cannot add more than ${MAX_REELS} reels!`);
     }
-  }, [playerInfo, enemyInfo, setTurn, activeTiles, activeCombos, setPlayerInfo, setEnemyInfo, finishRound]);
-*/
+  };
+
   return (
     <AppContext.Provider
       value={

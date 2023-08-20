@@ -1,12 +1,10 @@
 import styled from 'styled-components';
-import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { useContext, useMemo } from 'react';
 import { AppContext } from '../../store/appcontext';
-import Display from '../slotmachine/components/display';
 import DisplayButton from '../display-button';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from '../slotmachine/components/rivets';
-import { UiContext } from '../../store/uicontext';
-import { off, on } from '../../utils/events';
+import DisplayUnit from '../slotmachine/components/display-unit';
 
 const ScCard = styled.div`
   position: relative;
@@ -36,16 +34,7 @@ const ScEnemy = styled.div`
   text-align: center;
 `;
 
-// const ScEnemyImage = styled.img`
-//   position: absolute;
-//   right: 0;
-//   bottom: calc(100% - 4rem);
-//   width: 8rem;
-//   height: 8rem;
-// `;
-
 const ScLabel = styled.h3`
-  /* font-size: 2rem; */
   text-align: right;
   margin-top: -0.5rem;
   margin-bottom: -0.5rem;
@@ -76,28 +65,7 @@ const ScSideControls = styled.div`
 `;
 
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults, gameState } = useContext(AppContext);
-  const { enemyText, setEnemyText } = useContext(UiContext);
-  const enemyAttackRef = useRef(enemyInfo && enemyInfo.attack);
-
-  const enemyAttackMessage = useMemo(() => {
-    const mssgs = [];
-    if (enemyInfo && enemyInfo.attack !== 0) {
-      mssgs.push(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
-    }
-
-    return mssgs.length > 0 ? mssgs.join('\n') : '';
-  }, [enemyInfo]);
-
-  // TODO, centralize this somewhere else, also better state check on new enemy move
-  useEffect(() => {
-    if (enemyInfo && enemyInfo.attack !== enemyAttackRef.current) {
-      enemyAttackRef.current = enemyInfo.attack;
-      if (enemyInfo && enemyInfo.attack !== 0) {
-        setEnemyText(`${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
-      }
-    }
-  }, [enemyAttackRef, enemyInfo, setEnemyText]);
+  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
     return turn > -1 && !reelResults.includes(-1);
@@ -109,51 +77,23 @@ export const Enemy = () => {
     return classes.join(' ');
   }, [canAttack]);
 
-  const setText = useCallback(
-    (e: CustomEvent) => {
-      // console.log('enemy.setText:', e.detail);
-      setEnemyText(e.detail);
-    },
-    [setEnemyText]
-  );
-
-  useEffect(() => {
-    on('enemyDisplay', setText);
-
-    return () => {
-      off('enemyDisplay', setText);
-    };
-  });
-
-  useEffect(() => {
-    if (gameState === 'NEW_TURN') {
-      setEnemyText();
-    }
-  }, [gameState, setEnemyText]);
-
   const onHover = (text: string) => {
     console.log('onHover ', text);
-    // setEnemyText(text);
   };
 
   if (!enemyInfo) {
     return null;
   }
 
-  const message = enemyText || enemyAttackMessage;
-
   return (
     <ScCard id='enemy' className={className}>
-      {/* <AttackBar attack={enemyInfo.attack} modifiers={[]} /> */}
       <ScDisplay>
-        <Display playerInfo={enemyInfo} message={message} />
+        <DisplayUnit playerInfo={enemyInfo} playerType="enemy" />
       </ScDisplay>
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
-        {/* <ScEnemyImage src={enemyInfo.img} /> */}
       </ScEnemy>
       <ScSideControls>
-        {/* <ScButton> */}
         <DisplayButton
           buttonStyle='special'
           disabled={!canAttack}
@@ -162,7 +102,6 @@ export const Enemy = () => {
         >
           {'A T K'}
         </DisplayButton>
-        {/* </ScButton> */}
       </ScSideControls>
       <Rivets />
     </ScCard>
