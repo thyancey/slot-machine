@@ -16,8 +16,10 @@ import {
   GameState,
   TRANSITION_DELAY,
   TRANSITION_DELAY_TURN_END,
+  EnemyInfo,
+  AttackDef,
 } from './data';
-import { clamp, pickRandomFromArray } from '../utils';
+import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
   computeAttack,
@@ -31,6 +33,9 @@ import { trigger } from '../utils/events';
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   activeTiles: Tile[];
+
+  enemyAttack: AttackDef;
+  setEnemyAttack: (value: SetStateAction<AttackDef>) => void;
 
   reelResults: DeckIdxCollection;
   setReelResults: (values: SetStateAction<DeckIdxCollection>) => void;
@@ -76,8 +81,8 @@ interface AppContextType {
 
   playerInfo: PlayerInfo;
   setPlayerInfo: (value: SetStateAction<PlayerInfo>) => void;
-  enemyInfo: PlayerInfo | null;
-  setEnemyInfo: (value: SetStateAction<PlayerInfo | null>) => void;
+  enemyInfo: EnemyInfo | null;
+  setEnemyInfo: (value: SetStateAction<EnemyInfo | null>) => void;
 
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
@@ -96,6 +101,7 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const [enemyAttack, setEnemyAttack] = useState<AttackDef | undefined>(undefined);
   const turnRef = useRef(turn);
   const [round, setRound] = useState(-1);
   const [gameState, setGameState] = useState<GameState>('NEW_GAME');
@@ -107,7 +113,7 @@ const AppProvider = ({ children }: Props) => {
     attack: 0,
     defense: 0,
   });
-  const [enemyInfo, setEnemyInfo] = useState<PlayerInfo | null>(null);
+  const [enemyInfo, setEnemyInfo] = useState<EnemyInfo | null>(null);
   const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
@@ -125,7 +131,6 @@ const AppProvider = ({ children }: Props) => {
     draw: [],
     discard: [],
   });
-
 
   const activeTiles = useMemo(() => {
     if (reelResults.includes(-1)) return [];
@@ -145,12 +150,21 @@ const AppProvider = ({ children }: Props) => {
     setUpgradeTokensState(clamp(newAmount, 0, MAX_REEL_TOKENS));
   };
 
+  const enemyChooseAttack = useCallback(() => {
+    console.log('enemyChooseAttack')
+    if (enemyInfo) {
+      const attackDef = pickRandomFromArray(enemyInfo.attackDefs) as AttackDef;
+      console.log('>', attackDef.label);
+      setEnemyAttack(() => attackDef);
+    }
+  }, [enemyInfo, setEnemyAttack]);
+
   // console.log('Context, activeTiles', activeTiles);
   // console.log('Context, reelCombos', reelCombos);
 
   useEffect(() => {
     setGameState('NEW_ROUND');
-  }, [])
+  }, []);
   // next round
   useEffect(() => {
     if (round > -1) {
@@ -158,7 +172,7 @@ const AppProvider = ({ children }: Props) => {
         setEnemyInfo(enemies[round]);
       } else {
         // TODO: GAME WON?
-        setEnemyInfo(pickRandomFromArray(enemies) as PlayerInfo);
+        setEnemyInfo(pickRandomFromArray(enemies) as EnemyInfo);
       }
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
@@ -184,11 +198,31 @@ const AppProvider = ({ children }: Props) => {
   // }, [setRound]);
 
   useEffect(() => {
-    if(turnRef.current !== turn && enemyInfo){
+    if (turnRef.current !== turn && enemyInfo && enemyAttack) {
       turnRef.current = turn;
-      trigger('enemyDisplay', `${enemyInfo.label} WILL ATTACK WITH ${enemyInfo.attack} DAMAGE`);
+      console.log('changing ed');
+
+      const mssg = [`${enemyInfo.label} WILL USE *${enemyAttack.label}*`];
+      if (enemyAttack.attack > 0) {
+        mssg.push(`ATTACKS WITH ${enemyAttack.attack} DAMAGE`);
+      }
+      if (enemyAttack.defense > 0) {
+        mssg.push(`ADDS ${enemyAttack.defense} BLOCK`);
+      }
+      if (mssg.length === 1) {
+        mssg.push('(STUMBLED)');
+      }
+      trigger('enemyDisplay', mssg.join('\n'));
     }
-  }, [ enemyInfo, turn, turnRef ]);
+  }, [enemyInfo, turn, turnRef, enemyAttack]);
+
+  
+  useEffect(() => {
+    // fixes initial load bug
+    if (enemyInfo && !enemyAttack){
+      enemyChooseAttack();
+    }
+  }, [ enemyInfo, enemyAttack, enemyChooseAttack ]);
 
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
@@ -207,7 +241,12 @@ const AppProvider = ({ children }: Props) => {
 
   const playerAttack = useCallback(() => {
     if (enemyInfo) {
-      const attackResult = computeAttack(playerInfo, enemyInfo);
+      console.log('...player attack');
+      const attackResult = computeAttack(enemyInfo, {
+        label: '',
+        attack: playerInfo.attack,
+        defense: playerInfo.defense,
+      });
       trigger('playerDisplay', '');
 
       if (attackResult.defender.hp <= 0) {
@@ -219,7 +258,7 @@ const AppProvider = ({ children }: Props) => {
         const mssg = [];
         if (attackResult.defender.defenseDelta > 0) mssg.push(`BLOCKED ${attackResult.defender.defenseDelta}`);
         if (attackResult.defender.hpDelta > 0) mssg.push(`TOOK ${attackResult.defender.hpDelta} DAMAGE`);
-        const combinedMssg = (mssg.length === 0) ? 'PLAYER STUMBLED!' : [ 'ENEMY WAS ATTACKED!' ].concat(mssg).join('\n');
+        const combinedMssg = mssg.length === 0 ? 'PLAYER STUMBLED!' : ['ENEMY WAS ATTACKED!'].concat(mssg).join('\n');
 
         trigger('enemyDisplay', combinedMssg);
         setEnemyInfo((prev) => {
@@ -238,10 +277,11 @@ const AppProvider = ({ children }: Props) => {
     }
   }, [playerInfo, enemyInfo]);
 
-  const enemyAttack = useCallback(() => {
-    if (enemyInfo) {
-      console.log('>>> ENEMY ATTACKS!');
-      const attackResult = computeAttack(enemyInfo, playerInfo);
+  const triggerEnemyAttack = useCallback(() => {
+    console.log('checking ', enemyInfo, enemyAttack)
+    if (enemyInfo && enemyAttack) {
+      console.log('>>> ENEMY ATTACKS!', enemyInfo, enemyAttack);
+      const attackResult = computeAttack(playerInfo, enemyAttack);
 
       if (attackResult.defender.hp <= 0) {
         trigger('playerDisplay', `PLAYER DIED!`);
@@ -252,10 +292,17 @@ const AppProvider = ({ children }: Props) => {
         const mssg = [];
         if (attackResult.defender.defenseDelta > 0) mssg.push(`BLOCKED ${attackResult.defender.defenseDelta}`);
         if (attackResult.defender.hpDelta > 0) mssg.push(`TOOK ${attackResult.defender.hpDelta} DAMAGE`);
-        const combinedMssg = (mssg.length === 0) ? 'ENEMY STUMBLED!' : [ 'PLAYER WAS ATTACKED!' ].concat(mssg).join('\n');
+        const combinedMssg = mssg.length === 0 ? 'ENEMY STUMBLED!' : ['PLAYER WAS ATTACKED!'].concat(mssg).join('\n');
 
         trigger('playerDisplay', combinedMssg);
-        console.log(attackResult.defender)
+        console.log(attackResult.defender);
+        setEnemyInfo((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            defense: prev.defense + attackResult.attacker.defenseDelta,
+          };
+        });
         setPlayerInfo((prev) => {
           return {
             ...prev,
@@ -269,7 +316,7 @@ const AppProvider = ({ children }: Props) => {
     } else {
       return 'NEW_ROUND';
     }
-  }, [playerInfo, enemyInfo]);
+  }, [playerInfo, enemyInfo, enemyAttack]);
 
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
@@ -277,14 +324,17 @@ const AppProvider = ({ children }: Props) => {
     trigger('enemyDisplay', '');
 
     setTurn((prev) => prev + 1);
+    enemyChooseAttack();
     
+    // enemyChooseAttack();
+
     return 'SPIN';
-  }, [setTurn]);
+  }, [setTurn, enemyChooseAttack]);
 
   const newRound = useCallback(() => {
     trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
     setRound((prev) => prev + 1);
-    console.log('newRound spin')
+    console.log('newRound spin');
     setGameState('NEW_TURN');
   }, [setRound, round]);
 
@@ -300,40 +350,40 @@ const AppProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // the timeouts here are brittle and likely to cause problems later
-    if(prevGameState.current !== gameState){
+    if (prevGameState.current !== gameState) {
       console.log(`gameState: ${prevGameState.current} > ${gameState}`);
       prevGameState.current = gameState;
       switch (gameState) {
         case 'PLAYER_ATTACK': {
           const next = playerAttack();
-          next && setTimeout(() => {
-            setGameState(next);
-          }, TRANSITION_DELAY);
+          next &&
+            setTimeout(() => {
+              setGameState(next);
+            }, TRANSITION_DELAY);
           break;
         }
-        case 'ENEMY_ATTACK':{
-          const next = enemyAttack();
-          next && setTimeout(() => {
-            setGameState(next);
-          }, TRANSITION_DELAY_TURN_END);
+        case 'ENEMY_ATTACK': {
+          const next = triggerEnemyAttack();
+          next &&
+            setTimeout(() => {
+              setGameState(next);
+            }, TRANSITION_DELAY_TURN_END);
           break;
         }
-        case 'NEW_TURN':
+        case 'NEW_TURN': {
           // is this state necessary? it just triggers "SPIN" state next
-          {
-            const next = newTurn();
-            next && setGameState(next);
-            break;
-          }
+          const next = newTurn();
+          next && setGameState(next);
+          break;
+        }
         case 'NEW_ROUND':
-            // eventually, might wanna delay this a bit
-            newRound();
+          // eventually, might wanna delay this a bit
+          newRound();
           break;
       }
     }
-  }, [gameState, playerAttack, enemyAttack, newTurn, newRound]);
+  }, [gameState, playerAttack, triggerEnemyAttack, newTurn, newRound]);
 
-  
   const setReelStates = useCallback(
     (reelStates: DeckIdxCollection[]) => {
       setReelStatesState(reelStates);

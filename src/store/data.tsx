@@ -304,12 +304,23 @@ export const defaultReelState: DeckIdxCollection[] = [
 // for the player and enemies, will need to be expanded in the future
 export type PlayerInfo = {
   label: string;
-  img?: string;
   hp: number;
   hpMax: number;
   attack: number;
   defense: number;
 };
+
+export type AttackDef = {
+  label: string;
+  attack: number;
+  defense: number;
+}
+
+export type EnemyInfo = PlayerInfo & {
+  img?: string;
+  attackIdx: number;
+  attackDefs: AttackDef[];
+} 
 
 export type PlayerInfoDelta = {
   hp: number;
@@ -322,7 +333,7 @@ export type AttackDelta = {
   enemy: PlayerInfoDelta;
 };
 
-export const enemies: PlayerInfo[] = [
+export const enemies: EnemyInfo[] = [
   {
     label: 'SQUIRREL',
     hp: 6,
@@ -330,6 +341,24 @@ export const enemies: PlayerInfo[] = [
     attack: 3,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
+    attackIdx: 0,
+    attackDefs: [
+      {
+        label: "nut blast",
+        attack: 3,
+        defense: 0
+      },
+      {
+        label: "acorn shield",
+        attack: 0,
+        defense: 5
+      },
+      // {
+      //   label: "stashing nuts",
+      //   attack: 0,
+      //   defense: 0
+      // }
+    ]
   },
   {
     label: 'TORT',
@@ -338,29 +367,18 @@ export const enemies: PlayerInfo[] = [
     attack: 8,
     defense: 10,
     img: AssetMap.Enemy_Tortoise,
-  },
-  {
-    label: 'OPOSSUM',
-    hp: 10,
-    hpMax: 10,
-    attack: 1,
-    defense: 0,
-    img: AssetMap.Enemy_Squirrel,
-  },
-  {
-    label: 'SNEK',
-    hp: 4,
-    hpMax: 4,
-    attack: 6,
-    defense: 0,
-    img: AssetMap.Enemy_Squirrel,
-  },
-  {
-    label: 'TROLL',
-    hp: 20,
-    hpMax: 20,
-    attack: 3,
-    defense: 10,
-    img: AssetMap.Enemy_Squirrel,
-  },
+    attackIdx: 0,
+    attackDefs: [
+      {
+        label: "bite",
+        attack: 3,
+        defense: 0
+      },
+      {
+        label: "shell up",
+        attack: 0,
+        defense: 10
+      }
+    ]
+  }
 ];

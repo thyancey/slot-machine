@@ -8,6 +8,7 @@ import {
   PlayerInfo,
   EffectType,
   DeckState,
+  AttackDef,
 } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
@@ -158,115 +159,65 @@ export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], acti
     return val;
   }, 0);
 
-// dang, this needs to get reworked it could be way simpler
-export const predictAttack = (
-  attacker: PlayerInfo,
-  defender: PlayerInfo
-) => {
-  // console.log('predictAttack', attacker, defender);
-
-  // const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
-  // console.log('player ATTACK POWER', attackPower);
-  const shieldedDamage = defender.defense - attacker.attack;
-  const hpDelta = shieldedDamage < 0 ? shieldedDamage : 0;
-
-  // const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
-  // console.log('hpDelta:', hpDelta);
-  // console.log('defenseDelta:', defenseDelta);
-
-  return {
-    // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: clamp(defender.hp + hpDelta, 0, defender.hpMax),
-    defense: clamp(defender.defense - attacker.attack, 0, 100)
-  };
-};
-
 export const calcAttackAndBlock = (
-  attacker: PlayerInfo,
-  defender: PlayerInfo
+  defender: PlayerInfo,
+  attackDef: AttackDef
 ) => {
-  if (attacker.attack >= defender.defense) {
+  if (attackDef.attack >= defender.defense) {
     // busted through shield
     return {
       defense: defender.defense,
-      hp: attacker.attack - defender.defense
+      hp: attackDef.attack - defender.defense
     }
   } else {
     // blocked!
     return {
-      defense: defender.defense - attacker.attack,
+      defense: defender.defense - attackDef.attack,
       hp: 0
     }
   }
 }
 
-export const predictAttack2 = (
-  attacker: PlayerInfo,
-  defender: PlayerInfo
+export const predictAttack = (
+  defender: PlayerInfo,
+  attackDef: AttackDef,
 ) => {
-  const deltas = calcAttackAndBlock(attacker, defender);
-  console.log('deltas', deltas)
+  const deltas = calcAttackAndBlock(defender, attackDef);
+  console.log('deltas', deltas, attackDef)
 
   return {
-    hp: clamp(defender.hp - deltas.hp, 0, defender.hpMax),
-    hpDelta: deltas.hp,
-    defense: defender.defense - deltas.defense,
-    defenseDelta: deltas.defense
-  }
-};
-
-
-export const getEnemyAttackDelta = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo,
-  activeCombos: ReelComboResult[],
-  activeTiles: Tile[]
-) => {
-  console.log('getEnemyAttackDelta', playerInfo, enemyInfo, activeCombos, activeTiles);
-  const attackPower = enemyInfo.attack;
-  console.log('enemy ATTACK POWER', attackPower);
-
-  const damage = attackPower - playerInfo.defense;
-
-  const playerResult = {
-    // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: damage > 0 ? 0 - damage : 0,
-    attack: playerInfo.attack, // todo - stun player?
-    defense: 0 - attackPower, // todo - break player block?
-  };
-
-  return {
-    enemy: {
-      hp: 0, // todo, apply thorns to enemy
-      attack: attackPower,
-      defense: 0, // todo, apply thorns to enemy
+    attacker:{
+      hpDelta: 0,
+      defenseDelta: attackDef.defense
     },
-    player: playerResult,
-  };
+    defender: {
+      hp: clamp(defender.hp - deltas.hp, 0, defender.hpMax),
+      hpDelta: deltas.hp,
+      defense: defender.defense - deltas.defense,
+      defenseDelta: deltas.defense
+    }
+  }
 };
 
 // eventually, thorns, poison, flame stuff
 export const computeAttack = (
-  attacker: PlayerInfo,
-  defender: PlayerInfo
+  defender: PlayerInfo,
+  attackDef: AttackDef
 ) => {
-  const attackResult = predictAttack2(attacker as PlayerInfo, defender as PlayerInfo);
+  const attackResult = predictAttack(defender as PlayerInfo, attackDef as AttackDef);
   console.log('attackResult:', defender, attackResult);
 
   return {
-    attacker: { 
-      attack: attacker.attack,
-      hp: attacker.hp,
-      defense: attacker.defense,
-      hpDelta: 0,
-      defenseDelta: 0
+    attacker: {
+      hpDelta: attackResult.attacker.hpDelta,
+      defenseDelta: attackResult.attacker.defenseDelta
     },
     defender: {
       attack: defender.attack,
-      hp: attackResult.hp,
-      defense: attackResult.defense,
-      hpDelta: attackResult.hpDelta,
-      defenseDelta: attackResult.defenseDelta
+      hp: attackResult.defender.hp,
+      defense: attackResult.defender.defense,
+      hpDelta: attackResult.defender.hpDelta,
+      defenseDelta: attackResult.defender.defenseDelta
     }
   }
 };
