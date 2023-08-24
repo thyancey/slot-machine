@@ -71,7 +71,10 @@ function DisplayScreen({ message, playerInfo }: Props) {
   }, [setHighlighted]);
 
   useEffect(() => {
-    setHighlightPlease();
+    // no need to flash when clearing a message
+    if(message !== '') {
+      setHighlightPlease();
+    }
   }, [message, setHighlightPlease]);
 
   return (

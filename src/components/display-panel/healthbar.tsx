@@ -4,22 +4,11 @@ import { useMemo } from 'react';
 
 const ScWrapper = styled.div`
   position: absolute;
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
   width: calc(100% - 2rem);
 
   top: -1.5rem;
   padding: 0 0rem;
   z-index: 1;
-  /* min-width: 25rem; */
-`;
-
-const ScStatLabels = styled.ul`
-  > li {
-    display: inline-block;
-    vertical-align: bottom;
-    width: 3rem;
-  }
 `;
 
 const ScHealthBar = styled.div`
@@ -110,41 +99,14 @@ interface PropsEntityStats {
   buffs: EffectGroup[];
 }
 const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
-  // const [prevDefense, setPrevDefense] = useState<number>(0);
-  // const [notifications, setNotifications] = useState<number[]>([]);
-  // const notificationRef = useRef(0);
 
   const healthPerc = useMemo(() => {
     return Math.floor((hp / hpMax) * 100);
   }, [hp, hpMax]);
 
-  // useEffect(() => {
-  //   if (defense !== prevDefense) {
-  //     console.log(`defense ${prevDefense} > ${defense}`);
-  //     setPrevDefense(defense);
-
-  //     if (defense !== 0) {
-  //       console.log(`new: ${defense - prevDefense}`);
-  //       setNotifications([...notifications].concat([defense - prevDefense]));
-  //     }
-  //   }
-  // }, [defense, prevDefense, setNotifications, notifications]);
-
-
-  // console.log(`current ${notificationRef.current} / ${defense}`, notifications);
-
   return (
     <ScWrapper className={defense !== 0 ? 'defended' : ''}>
-      <ScStatLabels>
-        {/* {(defense && <StatLabel type='defense' size={'lg'} value={defense}></StatLabel>) || null} */}
-        {/* <StatLabel type={'hp'} size={'lg'} value={`${hp} / ${hpMax}`}></StatLabel> */}
-      </ScStatLabels>
       <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
-      {/* {notifications.map((n, nIdx) => (
-        <ScNotification key={nIdx} className={notificationRef.current !== defense ? 'outro' : 'intro'}>
-          <p>{n}</p>
-        </ScNotification>
-      ))} */}
       <ScHealthBar>
         <p>{`${hp} / ${hpMax}`}</p>
         <ScHealthBarBg style={{ width: `${healthPerc}%` }} />

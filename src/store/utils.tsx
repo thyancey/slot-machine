@@ -43,7 +43,6 @@ export const insertAfterPosition = (
 
 export const removeAtPosition = (reelIdx: number, positionIdx: number, reelStates: DeckIdxCollection[]) => {
   if (reelStates.length === 1 && reelStates[0].length === 1) {
-    console.log('ARE YOU CRAZY?!?! YOU CANT HAVE NOTHING!!!!!');
     return reelStates;
   }
 

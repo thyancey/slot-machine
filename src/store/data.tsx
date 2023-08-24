@@ -12,6 +12,12 @@ export const TRANSITION_DELAY_TURN_END = 2000; // how long to see round results 
 
 export const ENEMY_HEIGHT = 290;
 
+export const EMPTY_ATTACK = {
+  label: '',
+  attack: 0,
+  defense: 0
+}
+
 export type UiState = 'game' | 'editor';
 
 export type GameState =
@@ -306,7 +312,6 @@ export type PlayerInfo = {
   label: string;
   hp: number;
   hpMax: number;
-  attack: number;
   defense: number;
 };
 
@@ -322,23 +327,11 @@ export type EnemyInfo = PlayerInfo & {
   attackDefs: AttackDef[];
 } 
 
-export type PlayerInfoDelta = {
-  hp: number;
-  attack: number;
-  defense: number;
-};
-
-export type AttackDelta = {
-  player: PlayerInfoDelta;
-  enemy: PlayerInfoDelta;
-};
-
 export const enemies: EnemyInfo[] = [
   {
     label: 'SQUIRREL',
     hp: 6,
     hpMax: 6,
-    attack: 3,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
     attackIdx: 0,
@@ -364,7 +357,6 @@ export const enemies: EnemyInfo[] = [
     label: 'TORT',
     hp: 10,
     hpMax: 10,
-    attack: 8,
     defense: 10,
     img: AssetMap.Enemy_Tortoise,
     attackIdx: 0,

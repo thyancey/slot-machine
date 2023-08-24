@@ -26,7 +26,6 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
   const setMessage = useCallback(
     (text: string | undefined = '', timeout: number | undefined = 0) => {
       setMessageState(text);
-      // console.log('setMessage', text, timeout);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -45,7 +44,6 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
 
   const onMessageEvent = useCallback(
     (e: CustomEvent) => {
-      // console.log('player.setText:', e.detail);
       setMessage(e.detail);
     },
     [setMessage]
