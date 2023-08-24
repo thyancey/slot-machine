@@ -9,11 +9,14 @@ import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import ScoreBox from './components/scorebox';
 import SideControls from './components/controls-side';
-import { MixinBorders } from '../../utils/styles';
+import { MixinBorders, MixinBordersSm } from '../../utils/styles';
 import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
 import { getRandomIdx } from '../../utils';
+import DisplayButton from '../display-button';
+
+const SPIN_COST = 5000;
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -24,9 +27,30 @@ const ScWrapper = styled.div`
   grid-gap: 1rem;
 `;
 
+const ScSpinButton = styled.div`
+  background-color: var(--color-black);
+  ${MixinBordersSm('--co-player-bordertop', '--co-player-borderside')}
+  border-left: 0;
+  border-top: 0;
+
+  width: 5rem;
+  margin-left: 1.5rem;
+
+  button {
+    line-height: 3.85rem;
+    border-left:0 !important;
+    border-top:0 !important;
+
+    &:hover{
+    }
+  }
+`
+
 const ScReelContainer = styled.div`
   grid-row: 2;
   grid-column: 1;
+
+  /* z-index: 1; */
 
   height: 100%;
   display: flex;
@@ -71,6 +95,74 @@ const ScScoreBoxContainer = styled.div`
   padding: 1rem 1.75rem;
   background-color: var(--co-player-door);
   border-radius: 0.75rem;
+
+  display: flex;
+  gap: 1rem;
+`;
+
+
+const ScScoreBoxRight = styled.div`
+  background-color: var(--color-black);
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-left: 0;
+  border-top: 0;
+  display: flex;
+  width: 5rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  line-height: 2rem;
+  /* padding-right: 0.5rem; */
+  padding-bottom: 0.5rem;
+`;
+
+const ScScoreBoxButton = styled.div`
+  background-color: var(--color-black);
+  /* color: var(--color-green-light); */
+  color: var(--color-white-dark);
+
+  padding: 1rem;
+
+  transition: all 0.3s;
+
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-left: 0;
+  border-top: 0;
+  
+  font-size: 1.5rem;
+  line-height: 1.25rem;
+  white-space: pre-wrap; /* interpret /n as line breaks */
+  /* max-width: 10rem; */
+  text-align: right;
+
+  padding-top: 0.75rem;
+  padding-left: 1.25rem;
+
+  p{
+    opacity: 0.5;
+  }
+
+  &.active{
+    background-color: var(--color-black-light);
+    color: var(--color-yellow-light);
+    p{
+      opacity: 1;
+    }
+    cursor: pointer;
+
+    &:hover{
+      background-color: var(--color-grey-dark);
+      color: var(--color-green-dark);
+    }
+  }
+
+
+  >p:last-child{
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--color-red-light);
+    margin-bottom: -1rem;
+  }
 `;
 
 const ScScoreBox = styled.div`
@@ -78,6 +170,7 @@ const ScScoreBox = styled.div`
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
   border-top: 0;
+  flex: 1;
 `;
 
 const ScDisplay = styled.div`
@@ -127,8 +220,10 @@ function SlotMachine() {
     incrementScore,
     spinTokens,
     setSpinTokens,
+    gameState,
     finishSpinTurn,
     playerInfo,
+    score
   } = useContext(AppContext);
   const comboLengthRef = useRef(activeCombos.length);
 
@@ -270,6 +365,11 @@ function SlotMachine() {
     }
   }, [comboLengthRef, activeCombos, attack]);
 
+  const onBuySpin = () => {
+    setSpinTokens(prev => prev + 1);
+    incrementScore(-SPIN_COST);
+  }
+
   return (
     <ScWrapper>
       <ScDisplay>
@@ -298,6 +398,16 @@ function SlotMachine() {
             </ScReelSegment>
           ))}
         </ul>
+        <ScSpinButton>
+          <DisplayButton
+            buttonStyle='white'
+            disabled={gameState !== 'SPIN' || spinInProgress || spinTokens <= 0}
+            onClick={() => triggerSpin(reelStates)}
+            // onMouseEnter={() => onHover(`SPIN TO WIN ! ${spinTokens} TOKENS LEFT`)}
+          >
+            {'S P I N'}
+          </DisplayButton>
+        </ScSpinButton>
         <Rivets />
       </ScReelContainer>
       <ScSideControls>
@@ -307,12 +417,21 @@ function SlotMachine() {
           triggerSpin={() => triggerSpin(reelStates)}
         />
       </ScSideControls>
+
       <ScScoreBoxContainer>
         <ScScoreBox>
           <ScoreBox />
         </ScScoreBox>
+        <ScScoreBoxButton className={score >= SPIN_COST ? 'active' : 'disabled'} onClick={() => score > SPIN_COST ? onBuySpin() : {}}>
+          <p>{`BUY SPIN >`}</p>
+          <p>{`-$${SPIN_COST}`}</p>
+        </ScScoreBoxButton>
+        <ScScoreBoxRight>
+          <p>{spinTokens}</p>
+        </ScScoreBoxRight>
         <Rivets />
       </ScScoreBoxContainer>
+      
     </ScWrapper>
   );
 }

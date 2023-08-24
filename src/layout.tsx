@@ -39,6 +39,7 @@ const ScShadowDiv = styled.div`
   position: absolute;
   inset: 0;
   border-radius: 1rem;
+  z-index: -1;
 `;
 const ScEnemy = styled.div`
   position: absolute;
