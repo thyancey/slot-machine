@@ -52,15 +52,15 @@ const ScDisplay = styled.div`
 const ScSideControls = styled.div`
   position: absolute;
   left: calc(100% + 3.5rem);
-  top: 0;
+  top: 3rem;
   width: 6rem;
   height: 100%;
 
-  background-color: var(--color-black);
+  /* background-color: var(--color-black); */
 
   > button {
     font-size: 3rem;
-    line-height: 5.2rem;
+    line-height: 3rem;
   }
 `;
 

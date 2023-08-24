@@ -4,7 +4,7 @@ import Bg from './components/bg';
 import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
-import MetalGlint from './components/metal-glint';
+import MetalGlint, { ScGlintWrapper } from './components/metal-glint';
 import SlotMachine from './components/slotmachine';
 import { ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
@@ -28,7 +28,6 @@ const ScComboContainer = styled.div`
 const ScCombo = styled.div`
   position: relative;
 
-  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
   border-radius: 1rem 1rem 0.25rem 0.25rem;
 
   display: flex;
@@ -38,18 +37,20 @@ const ScCombo = styled.div`
 
 const ScShadowDiv = styled.div`
   position: absolute;
-  z-index: -1;
   inset: 0;
   border-radius: 1rem;
 `;
 const ScEnemy = styled.div`
   position: absolute;
-  width:100%;
+  /* width:100%; */
+  left: 3rem;
+  right: 3rem;
   height: ${ENEMY_HEIGHT}px;
   
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
   padding: 1.5rem 2rem 1rem 2rem;
+  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
 
 
   ${ScShadowDiv} {
@@ -70,11 +71,17 @@ const ScPlayer = styled.div`
   padding: 1.75rem;
   padding-top: 1rem;
   padding-bottom: 2.25rem;
-  border-top: 0.25rem solid var(--co-player-bordertop);
+  z-index: 0;
 
   margin-top: ${ENEMY_HEIGHT}px;
 
-  border-radius: 0 0 1rem 1rem;
+  /* refactor this shadow hack w/glint */
+  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
+  border-radius: 1.5rem 1.5rem 1rem 1rem;
+
+  ${ScGlintWrapper}{
+    border-radius: 1.5rem 1.5rem 1rem 1rem;
+  }
   background-color: transparent;
 
   ${ScShadowDiv} {

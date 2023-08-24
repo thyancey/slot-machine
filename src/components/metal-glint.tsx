@@ -54,7 +54,7 @@ const getMetalColors = (theme?: GlintTheme) => {
 interface ScWrapperProps {
   $glintTheme?: GlintTheme;
 }
-const ScWrapper = styled.div<ScWrapperProps>`
+export const ScGlintWrapper = styled.div<ScWrapperProps>`
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -114,7 +114,7 @@ interface Props {
   glintTheme?: GlintTheme;
 }
 export const MetalGlint = ({ glintTheme }: Props) => {
-  return <ScWrapper $glintTheme={glintTheme} />;
+  return <ScGlintWrapper $glintTheme={glintTheme} />;
 };
 
 export default MetalGlint;
