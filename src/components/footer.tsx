@@ -13,7 +13,8 @@ const ScWrapper = styled.div`
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  justify-content: space-around;
   z-index: 1;
 
   /* position:relative; */
@@ -22,7 +23,7 @@ const ScWrapper = styled.div`
     overflow: hidden;
     position: relative;
     color: var(--color-purple-dark);
-    font-size: 7rem;
+    font-size: 6rem;
     /* line-height: 2rem; */
     margin: 2rem;
     padding: 2rem 3rem 1rem 3rem;
@@ -38,7 +39,7 @@ const ScWrapper = styled.div`
     font-family: var(--font-cursive);
 
     &:not(.disabled):hover {
-      font-size: 9rem;
+      font-size: 8rem;
       color: var(--color-yellow-dark);
       box-shadow: 0.35rem 0.35rem 2.25rem 0.25rem var(--color-black);
       bottom: 3.5rem;
@@ -71,7 +72,7 @@ function Footer() {
       </Button>
       <Button onClick={() => finishTurn()} disabled={attackDisabled}>
         <>
-          {'ATTACK'}
+          {'FIGHT'}
           <MetalGlint glintTheme={attackDisabled ? 'silver' : 'gold'} />
         </>
       </Button>

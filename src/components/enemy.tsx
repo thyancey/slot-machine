@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../store/appcontext';
-import DisplayButton from './display-button';
 import { MixinBorders } from '../utils/styles';
 import Rivets from './slotmachine/components/rivets';
 import DisplayPanel from './display-panel';
@@ -49,23 +48,8 @@ const ScDisplay = styled.div`
   border-bottom: 0;
 `;
 
-const ScSideControls = styled.div`
-  position: absolute;
-  left: calc(100% + 3.5rem);
-  top: 3rem;
-  width: 6rem;
-  height: 100%;
-
-  /* background-color: var(--color-black); */
-
-  > button {
-    font-size: 3rem;
-    line-height: 3rem;
-  }
-`;
-
 export const Enemy = () => {
-  const { enemyInfo, finishTurn, reelResults, gameState } = useContext(AppContext);
+  const { enemyInfo, reelResults, gameState } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
     return gameState === 'SPIN' && !reelResults.includes(-1);
@@ -76,10 +60,6 @@ export const Enemy = () => {
     if (canAttack) classes.push('active');
     return classes.join(' ');
   }, [canAttack]);
-
-  const onHover = (text: string) => {
-    console.log('onHover ', text);
-  };
 
   if (!enemyInfo) {
     return null;
@@ -93,16 +73,6 @@ export const Enemy = () => {
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
       </ScEnemy>
-      <ScSideControls>
-        <DisplayButton
-          buttonStyle='special'
-          disabled={!canAttack}
-          onClick={() => finishTurn()}
-          onMouseEnter={() => onHover(`end turn`)}
-        >
-          {'A T K'}
-        </DisplayButton>
-      </ScSideControls>
       <Rivets />
     </ScCard>
   );

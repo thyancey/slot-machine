@@ -28,7 +28,7 @@ const ScMessages = styled.div`
   padding: 1rem;
   font-family: var(--font-8bit2);
 
-  overflow-y:auto; /* hopefully this will never be needed... */
+  overflow-y: auto; /* hopefully this will never be needed... */
 
   p {
     margin: 0;
@@ -37,6 +37,9 @@ const ScMessages = styled.div`
     font-size: 1.5rem;
     line-height: 1.5rem;
     white-space: pre-wrap; /* interpret /n as line breaks */
+    &.special{
+      color: var(--color-yellow);
+    }
   }
 `;
 
@@ -48,10 +51,10 @@ const ScHealthBar = styled.div`
 `;
 
 interface Props {
-  message: string;
+  messages: string[];
   playerInfo: PlayerInfo;
 }
-function DisplayScreen({ message, playerInfo }: Props) {
+function DisplayScreen({ messages, playerInfo }: Props) {
   const [highlighted, setHighlighted] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -72,15 +75,18 @@ function DisplayScreen({ message, playerInfo }: Props) {
 
   useEffect(() => {
     // no need to flash when clearing a message
-    if(message !== '') {
+    if (messages.length !== 0) {
+      // if this gets noisy, compare ref of messages
       setHighlightPlease();
     }
-  }, [message, setHighlightPlease]);
+  }, [messages, setHighlightPlease]);
 
   return (
     <ScOuter className={className}>
       <ScMessages>
-        <p>{message}</p>
+        {messages.map((m, i) => (
+          <p key={i} className={m[0] === '*' && m[m.length - 1] === '*' ? 'special' : ''}>{m}</p>
+        ))}
       </ScMessages>
       <ScHealthBar>
         <HealthBar hp={playerInfo.hp} hpMax={playerInfo.hpMax} defense={playerInfo.defense} buffs={[]} />

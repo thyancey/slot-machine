@@ -1,4 +1,4 @@
-import { AttackDef, DeckIdxCollection, EMPTY_ATTACK, TileKeyCollection, tileGlossary } from './data';
+import { DeckIdxCollection, TileKeyCollection, tileGlossary } from './data';
 
 export const insertReelStateIntoReelStates = (
   positionIdx: number,
@@ -68,33 +68,3 @@ export const getReelTileStateFromReelState = (reelState: DeckIdxCollection, tile
 export const getTileFromDeckIdx = (deckIdx: number, tileDeck: TileKeyCollection) => {
   return tileGlossary[tileDeck[deckIdx]];
 };
-
-/*
-  Player attacking!
-  +5 DAMAGE
-  +5 BLOCK
-
-  Enemy used *NUT SHIELD*
-*/
-export const computerPlayerAttackLabel = (attackDef: AttackDef = EMPTY_ATTACK) => {
-  if(attackDef.attack > 0 && attackDef.defense > 0){
-    return [
-      'PLAYER ATTACKING & BUFFING',
-      `ATTACK WITH ${attackDef.attack} DAMAGE`,
-      `BUFF WITH ${attackDef.defense} DEFENSE`
-    ].join('\n');
-  }
-  if(attackDef.attack > 0){
-    return [
-      'PLAYER ATTACKING',
-      `ATTACK WITH ${attackDef.attack} DAMAGE`
-    ].join('\n');
-  }
-  if(attackDef.defense > 0){
-    return [
-      'PLAYER BUFFING',
-      `BUFF WITH ${attackDef.defense} DEFENSE`
-    ].join('\n');
-  }
-  return 'PLAYER STUMBLED!';
-}

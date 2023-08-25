@@ -277,7 +277,7 @@ function SlotMachine() {
         if (activeCombos.length > 0) {
           mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
         }
-        trigger('playerDisplay', mssgs.join('\n'));
+        trigger('playerDisplay', mssgs);
       }
     }
   }, [comboLengthRef, activeCombos, attack]);

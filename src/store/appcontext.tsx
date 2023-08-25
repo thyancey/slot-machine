@@ -23,7 +23,6 @@ import {
 } from './data';
 import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
 import {
-  computerPlayerAttackLabel,
   getTileFromDeckIdx,
   insertAfterPosition,
   insertReelStateIntoReelStates,
@@ -223,7 +222,7 @@ const AppProvider = ({ children }: Props) => {
       if (mssg.length === 1) {
         mssg.push('(STUMBLED)');
       }
-      trigger('enemyDisplay', mssg.join('\n'));
+      trigger('enemyDisplay', mssg);
     }
   }, [enemyInfo, turn, turnRef, enemyAttack]);
 
@@ -248,7 +247,7 @@ const AppProvider = ({ children }: Props) => {
   // handles states during round and turn transitions
   const triggerPlayerBuff = useCallback(() => {
     if (playerAttack?.defense && playerAttack.defense > 0) {
-      trigger('playerDisplay', ['PLAYER BUFFED', `+${playerAttack.defense} DEFENSE`].join('\n'));
+      trigger('playerDisplay', ['PLAYER BUFFED', `+${playerAttack.defense} DEFENSE`]);
 
       setPlayerInfo((prev) => ({
         ...prev,
@@ -267,7 +266,7 @@ const AppProvider = ({ children }: Props) => {
       // trigger('playerDisplay', '');
 
       if (attackResult.hp <= 0) {
-        trigger('playerDisplay', `${enemyInfo.label} WAS DESTROYED!`);
+        trigger('playerDisplay', [`${enemyInfo.label} WAS DESTROYED!`]);
         // enemy dead
         setEnemyInfo(null);
         return 'NEW_ROUND';
@@ -277,10 +276,10 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.hpDelta < 0) mssg.push(`${attackResult.hpDelta} HP`);
 
         if (mssg.length > 0) {
-          trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg).join('\n'));
+          trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
         } else {
           // trigger('enemyDisplay', '');
-          trigger('playerDisplay', 'PLAYER STUMBLED!');
+          trigger('playerDisplay', ['PLAYER STUMBLED!']);
         }
 
         setEnemyInfo((prev) => {
@@ -300,7 +299,7 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerEnemyBuff = useCallback(() => {
     if (enemyAttack?.defense && enemyAttack.defense > 0) {
-      trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`, `+${enemyAttack.defense} DEFENSE`].join('\n'));
+      trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`, `+${enemyAttack.defense} DEFENSE`]);
 
       setEnemyInfo((prev) => {
         if (!prev) return prev;
@@ -319,11 +318,11 @@ const AppProvider = ({ children }: Props) => {
     if (enemyInfo) {
       const attackResult = computeAttack(playerInfo, enemyAttack);
       if(enemyAttack?.label && enemyAttack.attack > 0){
-        trigger('enemyDisplay', `ENEMY USES *${enemyAttack?.label}*`);
+        trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`]);
       }
 
       if (attackResult.hp <= 0) {
-        trigger('playerDisplay', `PLAYER DIED!`);
+        trigger('playerDisplay', [`PLAYER DIED!`]);
         // player dead
         window.alert('you died!');
         return null;
@@ -332,8 +331,7 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.defenseDelta < 0) playerMssg.push(`${attackResult.defenseDelta} DEFENSE`);
         if (attackResult.hpDelta < 0) playerMssg.push(`${attackResult.hpDelta} HP`);
 
-        const combinedPlayerMssg =
-          playerMssg.length === 0 ? '...' : ['PLAYER WAS ATTACKED!'].concat(playerMssg).join('\n');
+        const combinedPlayerMssg = playerMssg.length === 0 ? ['...'] : ['PLAYER WAS ATTACKED!'].concat(playerMssg);
 
         trigger('playerDisplay', combinedPlayerMssg);
 
@@ -360,8 +358,8 @@ const AppProvider = ({ children }: Props) => {
 
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
-    trigger('playerDisplay', '! SPIN TO WIN !');
-    trigger('enemyDisplay', '');
+    trigger('playerDisplay', ['! SPIN TO WIN !']);
+    trigger('enemyDisplay', []);
 
     setTurn((prev) => prev + 1);
     enemyChooseAttack();
@@ -372,7 +370,7 @@ const AppProvider = ({ children }: Props) => {
   }, [setTurn, enemyChooseAttack, incrementScore]);
 
   const newRound = useCallback(() => {
-    trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
+    trigger('playerDisplay', [`ROUND ${round + 1} COMPLETE!`]);
     setRound((prev) => prev + 1);
     setGameState('NEW_TURN');
   }, [setRound, round]);
@@ -465,7 +463,7 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerSpin = useCallback(
     (onlyThisReelIdx?: number) => {
-      trigger('playerDisplay', `LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`);
+      trigger('playerDisplay', [`LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`]);
 
       if (onlyThisReelIdx !== undefined) {
         setTargetSlotIdxs(

@@ -19,13 +19,13 @@ interface Props {
   playerType: string;
 }
 function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
-  const [ message, setMessageState ] = useState('');
+  const [ messageStates, setMessageStates ] = useState<string[]>([]);
   const timeoutRef = useRef<number | null>(null);
   const eventId = playerType === 'player' ? 'playerDisplay' : 'enemyDisplay';
 
   const setMessage = useCallback(
-    (text: string | undefined = '', timeout: number | undefined = 0) => {
-      setMessageState(text);
+    (messages: string[] | undefined = [], timeout: number | undefined = 0) => {
+      setMessageStates(messages || []);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -34,14 +34,13 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
       if (timeout > 0) {
         // @ts-ignore
         timeoutRef.current = setTimeout(() => {
-          setMessageState('');
+          setMessageStates([]);
         }, timeout);
       }
     },
-    [setMessageState]
+    [setMessageStates]
   );
   
-
   const onMessageEvent = useCallback(
     (e: CustomEvent) => {
       setMessage(e.detail);
@@ -59,7 +58,7 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
 
   return (
     <ScDisplay onClick={onClick}>
-      <DisplayScreen playerInfo={playerInfo} message={message} />
+      <DisplayScreen playerInfo={playerInfo} messages={messageStates} />
     </ScDisplay>
   );
 }
