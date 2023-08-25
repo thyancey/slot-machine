@@ -127,9 +127,9 @@ function Layout() {
           </ScPlayer>
         </ScCombo>
       </ScComboContainer>
+      <Footer />
       <Bg />
       <MachineEditor />
-      <Footer />
     </ScWrapper>
   );
 }

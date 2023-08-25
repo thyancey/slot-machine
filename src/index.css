@@ -2,7 +2,6 @@
 :root {
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
   /* font-family: 'Press Start 2P', cursive; */
-  line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -145,6 +144,7 @@
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
+  --font-cursive: 'Bubblegum Sans', cursive;
   --font-base: var(--font-8bit2);
 
   --border-width: 0.75rem;
