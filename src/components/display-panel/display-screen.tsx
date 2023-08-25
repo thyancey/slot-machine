@@ -7,7 +7,7 @@ const FLASH_DURATION = 200;
 
 const ScOuter = styled.div`
   width: auto;
-  height: 10rem;
+  min-height: 10rem;
   position: relative;
 
   display: flex;

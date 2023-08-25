@@ -22,7 +22,13 @@ import {
   INITIAL_SCORE,
 } from './data';
 import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
-import { computerPlayerAttackLabel, getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import {
+  computerPlayerAttackLabel,
+  getTileFromDeckIdx,
+  insertAfterPosition,
+  insertReelStateIntoReelStates,
+  removeAtPosition,
+} from './utils';
 import {
   computeAttack,
   discardTiles,
@@ -207,7 +213,7 @@ const AppProvider = ({ children }: Props) => {
     if (turnRef.current !== turn && enemyInfo && enemyAttack) {
       turnRef.current = turn;
 
-      const mssg = [`${enemyInfo.label} WILL USE *${enemyAttack.label}*`];
+      const mssg = [`${enemyInfo.label} WILL USE`, `*${enemyAttack.label}*`];
       if (enemyAttack.attack > 0) {
         mssg.push(`ATTACKS WITH ${enemyAttack.attack} DAMAGE`);
       }
@@ -241,16 +247,15 @@ const AppProvider = ({ children }: Props) => {
 
   // handles states during round and turn transitions
   const triggerPlayerBuff = useCallback(() => {
-    if(playerAttack?.defense && playerAttack.defense > 0){
-      trigger('playerDisplay', [
-        'PLAYER BUFFED',
-        `+${playerAttack.defense} DEFENSE`
-      ].join('\n'));
+    if (playerAttack?.defense && playerAttack.defense > 0) {
+      trigger('playerDisplay', ['PLAYER BUFFED', `+${playerAttack.defense} DEFENSE`].join('\n'));
 
-      setPlayerInfo(prev => ({
+      setPlayerInfo((prev) => ({
         ...prev,
-        defense: playerAttack.defense
+        defense: prev.defense + playerAttack.defense,
       }));
+    } else {
+      trigger('playerDisplay', ['PLAYER PREPARING ATTACK...']);
     }
     return 'PLAYER_ATTACK';
   }, [playerAttack]);
@@ -259,22 +264,22 @@ const AppProvider = ({ children }: Props) => {
     if (enemyInfo) {
       // TODO playerAttack
       const attackResult = computeAttack(enemyInfo, playerAttack);
-      trigger('playerDisplay', '');
+      // trigger('playerDisplay', '');
 
-      if (attackResult.defender.hp <= 0) {
+      if (attackResult.hp <= 0) {
         trigger('playerDisplay', `${enemyInfo.label} WAS DESTROYED!`);
         // enemy dead
         setEnemyInfo(null);
         return 'NEW_ROUND';
       } else {
         const mssg = [];
-        if (attackResult.defender.defenseDelta < 0) mssg.push(`${attackResult.defender.defenseDelta} BLOCK`);
-        if (attackResult.defender.hpDelta < 0) mssg.push(`${attackResult.defender.hpDelta} HP`);
+        if (attackResult.defenseDelta < 0) mssg.push(`${attackResult.defenseDelta} BLOCK`);
+        if (attackResult.hpDelta < 0) mssg.push(`${attackResult.hpDelta} HP`);
 
         if (mssg.length > 0) {
           trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg).join('\n'));
         } else {
-          trigger('enemyDisplay', '');
+          // trigger('enemyDisplay', '');
           trigger('playerDisplay', 'PLAYER STUMBLED!');
         }
 
@@ -282,56 +287,61 @@ const AppProvider = ({ children }: Props) => {
           if (!prev) return null;
           return {
             ...prev,
-            hp: attackResult.defender.hp,
-            defense: attackResult.defender.defense,
+            hp: attackResult.hp,
+            defense: attackResult.defense,
           };
         });
-        return 'ENEMY_ATTACK';
+        return 'ENEMY_BUFF';
       }
     } else {
       return 'NEW_ROUND';
     }
   }, [enemyInfo, playerAttack]);
 
+  const triggerEnemyBuff = useCallback(() => {
+    if (enemyAttack?.defense && enemyAttack.defense > 0) {
+      trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`, `+${enemyAttack.defense} DEFENSE`].join('\n'));
+
+      setEnemyInfo((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          defense: prev.defense + enemyAttack.defense,
+        };
+      });
+    } else {
+      trigger('enemyDisplay', ['ENEMY PREPARING ATTACK...']);
+    }
+    return 'ENEMY_ATTACK';
+  }, [enemyAttack]);
+
   const triggerEnemyAttack = useCallback(() => {
     if (enemyInfo) {
       const attackResult = computeAttack(playerInfo, enemyAttack);
+      if(enemyAttack?.label && enemyAttack.attack > 0){
+        trigger('enemyDisplay', `ENEMY USES *${enemyAttack?.label}*`);
+      }
 
-      if (attackResult.defender.hp <= 0) {
+      if (attackResult.hp <= 0) {
         trigger('playerDisplay', `PLAYER DIED!`);
         // player dead
         window.alert('you died!');
         return null;
       } else {
         const playerMssg = [];
-        const enemyMssg = [];
-        if (attackResult.defender.defenseDelta < 0) playerMssg.push(`${attackResult.defender.defenseDelta} BLOCK`);
-        if (attackResult.defender.hpDelta < 0) playerMssg.push(`${attackResult.defender.hpDelta} HP`);
-        if (attackResult.attacker.hpDelta > 0) {
-          enemyMssg.push(`+${attackResult.attacker.hpDelta} HP`);
-        }
-        if (attackResult.attacker.defenseDelta > 0) {
-          enemyMssg.push(`+${attackResult.attacker.defenseDelta} BLOCK`);
-        }
+        if (attackResult.defenseDelta < 0) playerMssg.push(`${attackResult.defenseDelta} DEFENSE`);
+        if (attackResult.hpDelta < 0) playerMssg.push(`${attackResult.hpDelta} HP`);
 
-        const combinedPlayerMssg = playerMssg.length === 0 ? '' : ['PLAYER WAS ATTACKED!'].concat(playerMssg).join('\n');
-        const combinedEnemyMssg = enemyMssg.length === 0 ? '' : ['ENEMY BUFFED!'].concat(enemyMssg).join('\n');
+        const combinedPlayerMssg =
+          playerMssg.length === 0 ? '...' : ['PLAYER WAS ATTACKED!'].concat(playerMssg).join('\n');
 
         trigger('playerDisplay', combinedPlayerMssg);
-        trigger('enemyDisplay', combinedEnemyMssg);
 
-        setEnemyInfo((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            defense: prev.defense + attackResult.attacker.defenseDelta,
-          };
-        });
         setPlayerInfo((prev) => {
           return {
             ...prev,
-            hp: attackResult.defender.hp,
-            defense: attackResult.defender.defense,
+            hp: attackResult.hp,
+            defense: attackResult.defense,
           };
         });
         return 'NEW_TURN';
@@ -399,6 +409,14 @@ const AppProvider = ({ children }: Props) => {
             }, TRANSITION_DELAY);
           break;
         }
+        case 'ENEMY_BUFF': {
+          const next = triggerEnemyBuff();
+          next &&
+            setTimeout(() => {
+              setGameState(next);
+            }, TRANSITION_DELAY_TURN_END);
+          break;
+        }
         case 'ENEMY_ATTACK': {
           const next = triggerEnemyAttack();
           next &&
@@ -419,7 +437,7 @@ const AppProvider = ({ children }: Props) => {
           break;
       }
     }
-  }, [gameState, triggerPlayerAttack, triggerEnemyAttack, newTurn, newRound]);
+  }, [gameState, triggerPlayerBuff, triggerPlayerAttack, triggerEnemyBuff, triggerEnemyAttack, newTurn, newRound]);
 
   const setReelStates = useCallback(
     (reelStates: DeckIdxCollection[]) => {
@@ -428,7 +446,6 @@ const AppProvider = ({ children }: Props) => {
     },
     [setReelStatesState]
   );
-
 
   const drawCards = useCallback(
     (numToDraw: number) => {
@@ -446,7 +463,8 @@ const AppProvider = ({ children }: Props) => {
     [deckState]
   );
 
-  const triggerSpin = useCallback((onlyThisReelIdx?: number) => {
+  const triggerSpin = useCallback(
+    (onlyThisReelIdx?: number) => {
       trigger('playerDisplay', `LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`);
 
       if (onlyThisReelIdx !== undefined) {
@@ -458,7 +476,7 @@ const AppProvider = ({ children }: Props) => {
       } else {
         setTargetSlotIdxs(reelStates.map((reelState) => getRandomIdx(reelState)));
       }
-      setSpinCount(prev => prev + 1);
+      setSpinCount((prev) => prev + 1);
       incrementScore(-COST_SPIN);
 
       if (onlyThisReelIdx !== undefined) {
@@ -471,7 +489,9 @@ const AppProvider = ({ children }: Props) => {
       }
 
       setSpinInProgress(true);
-  }, [ reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore ]);
+    },
+    [reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore]
+  );
 
   // TODO - these should probably use useCallback, but it wasnt necessary when i first
   // put them in here.
@@ -518,7 +538,7 @@ const AppProvider = ({ children }: Props) => {
 
           reelResults,
           setReelResults,
-          
+
           activeCombos,
 
           reelCombos,
@@ -552,7 +572,6 @@ const AppProvider = ({ children }: Props) => {
 
           round,
           setRound,
-
 
           playerInfo,
           setPlayerInfo,

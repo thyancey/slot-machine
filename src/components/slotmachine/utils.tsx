@@ -186,16 +186,10 @@ export const computeAttack = (
   const deltas = calcAttackAndBlock(defender, attackDef);
 
   return {
-    attacker: {
-      hpDelta: 0,
-      defenseDelta: attackDef.defense
-    },
-    defender: {
-      hp: clamp(defender.hp + deltas.hp, 0, defender.hpMax),
-      defense: clamp(defender.defense + deltas.defense, 0, 1000),
-      hpDelta: deltas.hp,
-      defenseDelta: deltas.defense
-    }
+    hp: clamp(defender.hp + deltas.hp, 0, defender.hpMax),
+    defense: clamp(defender.defense + deltas.defense, 0, 1000),
+    hpDelta: deltas.hp,
+    defenseDelta: deltas.defense
   }
 };
 
