@@ -22,7 +22,7 @@ import {
   INITIAL_SCORE,
 } from './data';
 import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
-import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import { computerPlayerAttackLabel, getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
   computeAttack,
   discardTiles,
@@ -240,6 +240,20 @@ const AppProvider = ({ children }: Props) => {
   }, [activeTiles, activeCombos]);
 
   // handles states during round and turn transitions
+  const triggerPlayerBuff = useCallback(() => {
+    if(playerAttack?.defense && playerAttack.defense > 0){
+      trigger('playerDisplay', [
+        'PLAYER BUFFED',
+        `+${playerAttack.defense} DEFENSE`
+      ].join('\n'));
+
+      setPlayerInfo(prev => ({
+        ...prev,
+        defense: playerAttack.defense
+      }));
+    }
+    return 'PLAYER_ATTACK';
+  }, [playerAttack]);
 
   const triggerPlayerAttack = useCallback(() => {
     if (enemyInfo) {
@@ -360,7 +374,7 @@ const AppProvider = ({ children }: Props) => {
       return;
     }
 
-    setGameState('PLAYER_ATTACK');
+    setGameState('PLAYER_BUFF');
   }, [setGameState, enemyInfo, setTurn]);
 
   useEffect(() => {
@@ -369,6 +383,14 @@ const AppProvider = ({ children }: Props) => {
       console.log(`gameState: ${prevGameState.current} > ${gameState}`);
       prevGameState.current = gameState;
       switch (gameState) {
+        case 'PLAYER_BUFF': {
+          const next = triggerPlayerBuff();
+          next &&
+            setTimeout(() => {
+              setGameState(next);
+            }, TRANSITION_DELAY);
+          break;
+        }
         case 'PLAYER_ATTACK': {
           const next = triggerPlayerAttack();
           next &&
