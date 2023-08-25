@@ -1,19 +1,18 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react';
-import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
+import { useCallback, useEffect, useState, useContext } from 'react';
+import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
-import { getBasicScore, getComboScore, getEffectDelta } from './utils';
+import { getBasicScore, getComboScore } from './utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import ScoreBox from './components/scorebox';
-import SideControls from './components/controls-side';
 import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
-import { getRandomIdx } from '../../utils';
+import { convertToDollaridoos } from '../../utils';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -51,6 +50,7 @@ const ScReelSegment = styled.div`
   margin: 0rem 0.75rem;
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-top: 0;
 
   &:first-child {
     border-right: 0;
@@ -70,13 +70,69 @@ const ScScoreBoxContainer = styled.div`
   padding: 1rem 1.75rem;
   background-color: var(--co-player-door);
   border-radius: 0.75rem;
+
+  display: flex;
+  gap: 1rem;
+`;
+
+const ScScoreBoxButton = styled.div`
+  transition: all 0.3s;
+
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  border-left: 0;
+  border-top: 0;
+
+  font-size: 1.5rem;
+  line-height: 1.25rem;
+  white-space: pre-wrap; /* interpret /n as line breaks */
+  /* max-width: 10rem; */
+  text-align: right;
+
+
+
+  color: var(--color-white-dark);
+
+  >div {
+    background-color: var(--color-black);
+    width: 100%;
+    height: 100%;
+    padding: 0.75rem 1rem 1rem 1.25rem;
+    
+    > p:last-child {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--color-red-light);
+      margin-bottom: -1rem;
+    }
+  }
+
+  p {
+    opacity: 0.5;
+  }
+
+  &.active {
+    >div {
+      background-color: var(--color-black-light);
+    }
+
+    color: var(--color-yellow-light);
+    p {
+      opacity: 1;
+    }
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-grey-dark);
+      color: var(--color-green-dark);
+    }
+  }
+
 `;
 
 const ScScoreBox = styled.div`
-  background-color: var(--color-black);
-
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
   border-top: 0;
+  flex: 1;
 `;
 
 const ScDisplay = styled.div`
@@ -91,21 +147,13 @@ const ScDisplay = styled.div`
   max-width: var(--var-reels-width, 100%);
 `;
 
-const ScSideControls = styled.div`
-  position: absolute;
-  left: calc(100% + 1rem);
-  top: 0;
-  width: 7rem;
-  height: 100%;
+const ScDisplayWrapper = styled.div`
+  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
 `;
 
 function SlotMachine() {
-  const [spinCount, setSpinCount] = useState(0);
-  const [spinInProgress, setSpinInProgress] = useState(false);
   // is each reel locked? if not, they are allowed to spin when their targetIdx is updated
-  const [reelLock, setReelLock] = useState<boolean[]>([]);
   const [spinScore, setSpinScore] = useState(0);
-  const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const {
     setReelCombos,
     activeTiles,
@@ -118,12 +166,18 @@ function SlotMachine() {
     setDeckState,
     tileDeck,
     incrementScore,
-    spinTokens,
-    setSpinTokens,
     finishSpinTurn,
     playerInfo,
+    setUiState,
+    setSpinInProgress,
+    targetSlotIdxs,
+    reelLock,
+    setReelLock,
+    triggerSpin,
+    spinCount,
+    playerAttack,
+    score,
   } = useContext(AppContext);
-  const comboLengthRef = useRef(activeCombos.length);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
     playbackRate: 0.3 + reelResults.filter((r) => r !== -1).length * 0.3,
@@ -154,36 +208,6 @@ function SlotMachine() {
       document.documentElement.style.setProperty('--var-reels-width', middleRowWidth + 'px');
     }
   }, [reelStates, setReelResults]);
-
-  const triggerSpin = useCallback(
-    (reelStates: DeckIdxCollection[], onlyThisReelIdx?: number) => {
-      if (!spinInProgress && spinTokens > 0) {
-        // determine what the next line of slots will be, someday make this weighted
-        if (onlyThisReelIdx !== undefined) {
-          setTargetSlotIdxs(
-            reelStates.map((reelState, reelIdx) =>
-              reelIdx === onlyThisReelIdx ? getRandomIdx(reelState) : targetSlotIdxs[reelIdx]
-            )
-          );
-        } else {
-          setTargetSlotIdxs(reelStates.map((reelState) => getRandomIdx(reelState)));
-        }
-
-        setSpinTokens((prev) => prev - 1);
-        setSpinCount(spinCount + 1);
-        if (onlyThisReelIdx !== undefined) {
-          // all should be locked/true EXCEPT the one that we are spinnin
-          setReelResults((prev) => prev.map((rR, reelIdx) => (reelIdx === onlyThisReelIdx ? -1 : rR)));
-          setReelLock(reelStates.map((_, reelIdx) => reelIdx !== onlyThisReelIdx));
-        } else {
-          setReelResults(Array(reelStates.length).fill(-1));
-          setReelLock(reelStates.map(() => false));
-        }
-        setSpinInProgress(true);
-      }
-    },
-    [spinCount, spinInProgress, spinTokens, setSpinTokens, setReelResults, targetSlotIdxs]
-  );
 
   const onSpinComplete = useCallback(
     (reelIdx: number, slotIdx: number) => {
@@ -220,7 +244,7 @@ function SlotMachine() {
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, spinCount, sound_reelComplete, finishSpinTurn]);
+  }, [reelResults, reelStates, spinCount, sound_reelComplete, setReelLock, finishSpinTurn, setSpinInProgress]);
 
   useEffect(() => {
     if (activeCombos.length > 0) {
@@ -241,35 +265,50 @@ function SlotMachine() {
     incrementScore(spinScore);
   }, [spinScore, incrementScore]);
 
-    
-  // TODO, centralize this somewhere else, also better state check on new player move
-  const attack = useMemo(() => {
-    return getEffectDelta('attack', activeTiles, activeCombos);
-  }, [activeTiles, activeCombos]);
   useEffect(() => {
-    if (activeCombos.length !== comboLengthRef.current) {
-      comboLengthRef.current = activeCombos.length;
+    if(playerAttack && (playerAttack.attack > 0 || playerAttack.defense > 0)) {
+      const mssgs = [];
 
-      if (activeCombos.length > 0) {
-        const mssgs = [];
-        if (attack !== 0) {
-          mssgs.push(`attack with ${attack} damage`);
-        }
-        if (activeCombos.length > 0) {
-          mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
-        }
-        trigger('playerDisplay', mssgs.join('\n'));
+      // first get the title, this should be refactored
+      if (playerAttack.label){
+        mssgs.push(`*${playerAttack.label}* READY`);
+      } else if (playerAttack.attack > 0 && playerAttack.defense > 0) {
+        mssgs.push('*ATTACK + BUFF READY*');
+      } else if (playerAttack.attack > 0) {
+        mssgs.push('*ATTACK READY*');
+      } else {
+        mssgs.push('*BUFF READY*');
       }
+
+      if (playerAttack.attack > 0) {
+        mssgs.push(`+${playerAttack.attack} DAMAGE`);
+      }
+      if (playerAttack.defense > 0) {
+        mssgs.push(`+${playerAttack.defense} DEFENSE`);
+      }
+
+      // if (activeCombos.length > 0) {
+      //   mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
+      // }
+      trigger('playerDisplay', mssgs);
     }
-  }, [comboLengthRef, activeCombos, attack]);
+
+  }, [playerAttack]);
+
+  const onBuyUpgrade = () => {
+    setUiState('editor');
+    incrementScore(-COST_UPGRADE);
+  };
 
   return (
     <ScWrapper>
       <ScDisplay>
-        <DisplayPanel playerType="player" playerInfo={playerInfo} />
+        <ScDisplayWrapper>
+          <DisplayPanel playerType='player' playerInfo={playerInfo} />
+        </ScDisplayWrapper>
         <Rivets />
       </ScDisplay>
-      <ScReelContainer id="reels-container">
+      <ScReelContainer id='reels-container'>
         <ul>
           {reelStates.map((reelState, reelIdx) => (
             <ScReelSegment key={reelIdx}>
@@ -281,27 +320,30 @@ function SlotMachine() {
                 spinCount={spinCount}
                 reelLock={reelLock[reelIdx]}
                 // can only single-spin this reel if there are spins left, and all reels have been spun at least once
-                isEnabled={spinTokens > 0 && !reelResults.includes(-1)}
+                isEnabled={!reelResults.includes(-1)}
                 targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
                 onSpinComplete={onSpinComplete}
-                triggerSpin={(reelIdx) => triggerSpin(reelStates, reelIdx)}
+                triggerSpin={(reelIdx) => triggerSpin(reelIdx)}
               />
             </ScReelSegment>
           ))}
         </ul>
         <Rivets />
       </ScReelContainer>
-      <ScSideControls>
-        <SideControls
-          spinInProgress={spinInProgress}
-          spinTokens={spinTokens}
-          triggerSpin={() => triggerSpin(reelStates)}
-        />
-      </ScSideControls>
+
       <ScScoreBoxContainer>
         <ScScoreBox>
           <ScoreBox />
         </ScScoreBox>
+        <ScScoreBoxButton
+          className={score >= COST_UPGRADE ? 'active' : 'disabled'}
+          onClick={() => (score > COST_UPGRADE ? onBuyUpgrade() : {})}
+        >
+          <div>
+            <p>{`UPGRADE`}</p>
+            <p>{`-${convertToDollaridoos(COST_UPGRADE)}`}</p>
+          </div>
+        </ScScoreBoxButton>
         <Rivets />
       </ScScoreBoxContainer>
     </ScWrapper>

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../store/appcontext';
-import DisplayButton from './display-button';
 import { MixinBorders } from '../utils/styles';
 import Rivets from './slotmachine/components/rivets';
 import DisplayPanel from './display-panel';
@@ -49,37 +48,18 @@ const ScDisplay = styled.div`
   border-bottom: 0;
 `;
 
-const ScSideControls = styled.div`
-  position: absolute;
-  left: calc(100% + 3.5rem);
-  top: 0;
-  width: 6rem;
-  height: 100%;
-
-  background-color: var(--color-black);
-
-  > button {
-    font-size: 3rem;
-    line-height: 5.2rem;
-  }
-`;
-
 export const Enemy = () => {
-  const { enemyInfo, turn, finishTurn, reelResults } = useContext(AppContext);
+  const { enemyInfo, reelResults, gameState } = useContext(AppContext);
 
   const canAttack = useMemo(() => {
-    return turn > -1 && !reelResults.includes(-1);
-  }, [reelResults, turn]);
+    return gameState === 'SPIN' && !reelResults.includes(-1);
+  }, [reelResults, gameState]);
 
   const className = useMemo(() => {
     const classes = [];
     if (canAttack) classes.push('active');
     return classes.join(' ');
   }, [canAttack]);
-
-  const onHover = (text: string) => {
-    console.log('onHover ', text);
-  };
 
   if (!enemyInfo) {
     return null;
@@ -88,21 +68,11 @@ export const Enemy = () => {
   return (
     <ScCard id='enemy' className={className}>
       <ScDisplay>
-        <DisplayPanel playerType="enemy" playerInfo={enemyInfo} />
+        <DisplayPanel playerType='enemy' playerInfo={enemyInfo} />
       </ScDisplay>
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
       </ScEnemy>
-      <ScSideControls>
-        <DisplayButton
-          buttonStyle='special'
-          disabled={!canAttack}
-          onClick={() => finishTurn()}
-          onMouseEnter={() => onHover(`end turn`)}
-        >
-          {'A T K'}
-        </DisplayButton>
-      </ScSideControls>
       <Rivets />
     </ScCard>
   );

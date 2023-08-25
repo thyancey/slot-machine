@@ -26,7 +26,8 @@ if (debug) {
 const ScWrapper = styled.div`
   /* border: 0.5rem solid var(--color-white); */
   width: var(--val-reel-width);
-  height: var(--val-reel-height);
+  height: calc(var(--val-reel-height) + var(--val-reel-peek));
+  /* height: 16rem; */
   position: relative;
 
   /* makes a cutout */
@@ -175,7 +176,7 @@ function Reel({
 
   const onHover = () => {
     if(isEnabled){
-      console.log(`spin reel #${reelIdx + 1}`);
+      // console.log(`spin reel #${reelIdx + 1}`);
     }
   };
 

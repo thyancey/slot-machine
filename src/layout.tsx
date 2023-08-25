@@ -4,10 +4,11 @@ import Bg from './components/bg';
 import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
-import MetalGlint from './components/metal-glint';
+import MetalGlint, { ScGlintWrapper } from './components/metal-glint';
 import SlotMachine from './components/slotmachine';
 import { ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
+import Footer from './components/footer';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -21,36 +22,44 @@ const ScComboContainer = styled.div`
   height: 100%;
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  /* justify-content: start; */
   align-items: center;
 `;
 
+const ScFooter = styled.div`
+  min-height: 12rem;
+  /* allows buttons to grow a lil and not push up slotmachine */
+`
+
 const ScCombo = styled.div`
   position: relative;
+  flex: 1;
 
-  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
   border-radius: 1rem 1rem 0.25rem 0.25rem;
 
   display: flex;
   flex-direction: column;
-  gap: 0rem;
+  justify-content: center;
 `;
 
 const ScShadowDiv = styled.div`
   position: absolute;
-  z-index: -1;
   inset: 0;
   border-radius: 1rem;
+  z-index: -1;
 `;
 const ScEnemy = styled.div`
   position: absolute;
-  width:100%;
+  /* width:100%; */
+  left: 3rem;
+  right: 3rem;
   height: ${ENEMY_HEIGHT}px;
-  
+
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
   padding: 1.5rem 2rem 1rem 2rem;
-
+  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
 
   ${ScShadowDiv} {
     /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
@@ -65,15 +74,26 @@ const ScEnemy = styled.div`
   */
 `;
 
+const ScEnemyPlaceholder = styled.div`
+  height: ${ENEMY_HEIGHT}px;
+`
+
 const ScPlayer = styled.div`
   position: relative;
   padding: 1.75rem;
+  padding-top: 1rem;
   padding-bottom: 2.25rem;
-  border-top: 0.25rem solid var(--co-player-bordertop);
+  z-index: 0;
 
-  margin-top: ${ENEMY_HEIGHT}px;
+  /* margin-top: ${ENEMY_HEIGHT}px; */
 
-  border-radius: 0 0 1rem 1rem;
+  /* refactor this shadow hack w/glint */
+  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
+  border-radius: 1.5rem 1.5rem 1rem 1rem;
+
+  ${ScGlintWrapper} {
+    border-radius: 1.5rem 1.5rem 1rem 1rem;
+  }
   background-color: transparent;
 
   ${ScShadowDiv} {
@@ -95,27 +115,32 @@ function Layout() {
   const { activeCombos } = useContext(AppContext);
   const litUp = useMemo(() => {
     return activeCombos.length > 0;
-  }, [ activeCombos.length ]);
+  }, [activeCombos.length]);
 
   useEffect(() => {
-    paletteActive = window.location.search.indexOf('palette') > -1; 
-  })
-  
+    paletteActive = window.location.search.indexOf('palette') > -1;
+  });
+
   return (
     <ScWrapper className={litUp ? 'lit-up' : ''}>
-      {paletteActive && <Palette /> }
+      {paletteActive && <Palette />}
       <ScComboContainer>
         <ScCombo id='player'>
-          <ScEnemy>
-            <Enemy />
-            <ScShadowDiv />
-          </ScEnemy>
+          <ScEnemyPlaceholder>
+            <ScEnemy>
+              <Enemy />
+              <ScShadowDiv />
+            </ScEnemy>
+          </ScEnemyPlaceholder>
           <ScPlayer>
             <SlotMachine />
-            <MetalGlint glintTheme="player"/>
+            <MetalGlint glintTheme='player' />
             <ScShadowDiv />
           </ScPlayer>
         </ScCombo>
+        <ScFooter>
+          <Footer />
+        </ScFooter>
       </ScComboContainer>
       <Bg />
       <MachineEditor />

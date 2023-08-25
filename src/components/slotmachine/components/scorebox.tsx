@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { AppContext } from '../../../store/appcontext';
 import { useContext, useEffect, useState } from 'react';
+import { convertToDollaridoos } from '../../../utils';
 
 const ScScorebox = styled.div`
   border: var(--border-width-small) solid var(--color-black);
@@ -39,7 +40,7 @@ function ScoreBox() {
 
   return (
     <ScScorebox className={highlighted ? 'highlighted' : ''}>
-      <p>{`$${score}`}</p>
+      <p>{convertToDollaridoos(score)}</p>
     </ScScorebox>
   );
 }

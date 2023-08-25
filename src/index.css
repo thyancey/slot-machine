@@ -2,7 +2,6 @@
 :root {
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
   /* font-family: 'Press Start 2P', cursive; */
-  line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -12,6 +11,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  font-size: 70%;
 
   /*
   --hsl-zzzz-h: 359;
@@ -114,16 +114,16 @@
 
 
 
-  --co-enemy: var(--color-green);
-  --co-enemy-borderside: var(--color-green-light);
-  --co-enemy-bordertop: var(--color-green-dark);
-  --co-enemy-highlight: var(--color-green-light);
-  --co-enemy-door: var(--color-green-dark);
+  --co-enemy: var(--color-red);
+  --co-enemy-borderside: var(--color-red-light);
+  --co-enemy-bordertop: var(--color-red-dark);
+  --co-enemy-highlight: var(--color-red-light);
+  --co-enemy-door: var(--color-red-dark);
 
-  --co-player: var(--color-offwhite);
-  --co-player-bordertop: var(--color-offwhite-dark);
-  --co-player-borderside: var(--color-offwhite-light);
-  --co-player-border: var(--color-offwhite-dark);
+  --co-player: var(--color-white);
+  --co-player-bordertop: var(--color-white-dark);
+  --co-player-borderside: var(--color-white-light);
+  --co-player-border: var(--color-white-dark);
   --co-player-highlight: var(--color-white);
   --co-player-door: var(--color-white-dark);
 
@@ -138,13 +138,14 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-green-dark);
-  --co-bg-primary: var(--color-green-light);
-  --co-bg-secondary-lit: var(--color-green-dark);
-  --co-bg-primary-lit: var(--color-green);
+  --co-bg-secondary: var(--color-black-dark);
+  --co-bg-primary: var(--color-black-light);
+  --co-bg-secondary-lit: var(--color-black-dark);
+  --co-bg-primary-lit: var(--color-black);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
+  --font-cursive: 'Bubblegum Sans', cursive;
   --font-base: var(--font-8bit2);
 
   --border-width: 0.75rem;
@@ -153,10 +154,12 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 12rem;
-  --val-reel-height: 15rem; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-width: 120px;
+  --val-reel-height: 100px; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-peek: 60px; /* how much you can see adjacent items */
 
   --val-depth: 1.25rem;
+  --val-depth-sm: 0.5rem;
 
   font-family: var(--font-base);
 

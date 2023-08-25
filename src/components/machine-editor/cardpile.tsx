@@ -71,7 +71,6 @@ function CardPile({ cards, type, disabled }: Props) {
 
   const onDraw = useCallback(() => {
     if (deckState.drawn.length === 0) {
-      console.log('onDraw');
       drawCards(3);
     }
   }, [drawCards, deckState.drawn.length]);

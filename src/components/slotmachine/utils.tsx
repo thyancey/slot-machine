@@ -8,6 +8,8 @@ import {
   PlayerInfo,
   EffectType,
   DeckState,
+  AttackDef,
+  EMPTY_ATTACK,
 } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
@@ -66,7 +68,6 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   // gather groups of matching attributes
   // check labels for same or unique bonus
   // rank combos
-  // console.log('gac', tiles, reelCombos, activeCombos);
 
   return activeCombos;
 };
@@ -158,144 +159,37 @@ export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], acti
     return val;
   }, 0);
 
-export const predictAttack = (
-  attacker: PlayerInfo,
-  defender: PlayerInfo
+export const calcAttackAndBlock = (
+  defender: PlayerInfo,
+  attackDef: AttackDef
 ) => {
-  // console.log('predictAttack', attacker, defender);
-
-  // const attackPower = getEffectDelta('attack', activeTiles, activeCombos);
-  // console.log('player ATTACK POWER', attackPower);
-  const shieldedDamage = defender.defense - attacker.attack;
-  const hpDelta = shieldedDamage < 0 ? shieldedDamage : 0;
-
-  // const defenseDelta = shieldedDamage < 0 ? -defender.defense : defender.defense - shieldedDamage;
-  // console.log('hpDelta:', hpDelta);
-  // console.log('defenseDelta:', defenseDelta);
-
-  return {
-    // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: clamp(defender.hp + hpDelta, 0, defender.hpMax),
-    defense: clamp(defender.defense - attacker.attack, 0, 100)
-  };
-};
-
-export const getEnemyAttackDelta = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo,
-  activeCombos: ReelComboResult[],
-  activeTiles: Tile[]
-) => {
-  console.log('getEnemyAttackDelta', playerInfo, enemyInfo, activeCombos, activeTiles);
-  const attackPower = enemyInfo.attack;
-  console.log('enemy ATTACK POWER', attackPower);
-
-  const damage = attackPower - playerInfo.defense;
-
-  const playerResult = {
-    // do other wacky checking here in the future about flame/poison weakness, etc
-    hp: damage > 0 ? 0 - damage : 0,
-    attack: playerInfo.attack, // todo - stun player?
-    defense: 0 - attackPower, // todo - break player block?
-  };
-
-  return {
-    enemy: {
-      hp: 0, // todo, apply thorns to enemy
-      attack: attackPower,
-      defense: 0, // todo, apply thorns to enemy
-    },
-    player: playerResult,
-  };
-};
-
-export const computeRound = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
-) => {
-  const curPlayer = { ...playerInfo };
-  const curEnemy = { ...enemyInfo };
-
-  const compute = (reason: string) => {
+  if (attackDef.attack >= defender.defense) {
+    // busted through shield
     return {
-      result: reason,
-      // player: { attack: 0, hp: curPlayer.hp, defense: curPlayer.defense },
-      player: { attack: 0, hp: curPlayer.hp, defense: 0 }, // player has attack and defense reset each turn regardless
-      enemy: { attack: curEnemy.attack, hp: curEnemy.hp, defense: curEnemy.defense }, // TODO: when enemies pick moves, replace attack w/0
-    };
-  } 
-
-  // 1. player attempt to attack enemy
-  const predictedPlayerAttack = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
-  console.log('predictedPlayerAttack:', curEnemy, predictedPlayerAttack);
-
-  // apply attack to enemy
-  curEnemy.defense = predictedPlayerAttack.defense;
-  curEnemy.hp = predictedPlayerAttack.hp;
-  if (curEnemy.hp <= 0) {
-    // 2b. enemy dead
-    return compute('enemy died');
-  }
-
-  // todo, player check for thorns, burning, poison?
-
-  // 3. enemy attempt to attack player
-  const predictedEnemyAttack = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
-
-  console.log('predictedEnemyAttack:', predictedEnemyAttack);
-
-  // apply attack to player
-  curPlayer.defense = predictedEnemyAttack.defense;
-  curPlayer.hp = predictedEnemyAttack.hp;
-  if (curPlayer.hp <= 0) {
-    // 3a. player dead
-    return compute('player died');
-  }
-
-  // enemy check for thorns, burning, poison?
-
-  return compute('');
-};
-
-
-export const computePlayerAttack = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
-) => {
-  const attackResult = predictAttack(playerInfo as PlayerInfo, enemyInfo as PlayerInfo);
-  console.log('attackResult:', enemyInfo, attackResult);
-
-  return {
-    player: { 
-      attack: playerInfo.attack,
-      hp: playerInfo.hp,
-      defense: playerInfo.defense
-    },
-    enemy: {
-      attack: enemyInfo.attack,
-      hp: attackResult.hp,
-      defense: attackResult.defense
+      defense: 0 - defender.defense,
+      hp: 0 - (attackDef.attack - defender.defense)
+    }
+  } else {
+    // blocked!
+    return {
+      defense: 0 - attackDef.attack,
+      hp: 0
     }
   }
-};
+}
 
-export const computeEnemyAttack = (
-  playerInfo: PlayerInfo,
-  enemyInfo: PlayerInfo
+// eventually, thorns, poison, flame stuff
+export const computeAttack = (
+  defender: PlayerInfo,
+  attackDef: AttackDef = EMPTY_ATTACK
 ) => {
-  const attackResult = predictAttack(enemyInfo as PlayerInfo, playerInfo as PlayerInfo);
+  const deltas = calcAttackAndBlock(defender, attackDef);
 
   return {
-    player: { 
-      attack: playerInfo.attack,
-      hp: attackResult.hp,
-      defense: attackResult.defense
-    },
-    enemy: {
-      attack: enemyInfo.attack,
-      hp: enemyInfo.hp,
-      defense: enemyInfo.defense
-    }
+    hp: clamp(defender.hp + deltas.hp, 0, defender.hpMax),
+    defense: clamp(defender.defense + deltas.defense, 0, 1000),
+    hpDelta: deltas.hp,
+    defenseDelta: deltas.defense
   }
 };
 

@@ -35,7 +35,7 @@ const getMetalColors = (theme?: GlintTheme) => {
       `;
     case 'enemy':
       return css`
-        --co-metal: var(--co-enemy);
+        --co-metal: var(--co-enemy-bordertop);
         --co-glint: var(--co-enemy-highlight);
       `;
     case 'ui':
@@ -53,8 +53,9 @@ const getMetalColors = (theme?: GlintTheme) => {
 
 interface ScWrapperProps {
   $glintTheme?: GlintTheme;
+  $activated?: boolean;
 }
-const ScWrapper = styled.div<ScWrapperProps>`
+export const ScGlintWrapper = styled.div<ScWrapperProps>`
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -81,6 +82,7 @@ const ScWrapper = styled.div<ScWrapperProps>`
 
   background-size: 100% 200%;
   background-repeat: repeat;
+  transition: background-size .5s ease-in-out;
 
   @keyframes gradient-intermittent {
     0% {
@@ -112,9 +114,10 @@ const ScWrapper = styled.div<ScWrapperProps>`
 
 interface Props {
   glintTheme?: GlintTheme;
+  activated?: boolean;
 }
-export const MetalGlint = ({ glintTheme }: Props) => {
-  return <ScWrapper $glintTheme={glintTheme} />;
+export const MetalGlint = ({ glintTheme, activated = false }: Props) => {
+  return <ScGlintWrapper $glintTheme={glintTheme} $activated={activated}/>;
 };
 
 export default MetalGlint;

@@ -8,8 +8,9 @@ import DisplayScreen from './display-screen';
 const ScDisplay = styled.div`
   background-color: var(--color-black);
 
-  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
+  /* ${MixinBorders('--co-player-bordertop', '--co-player-borderside')} */
   border-top: 0;
+  text-align:center;
 `;
 
 interface Props {
@@ -18,15 +19,13 @@ interface Props {
   playerType: string;
 }
 function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
-  const [ message, setMessageState ] = useState('');
+  const [ messageStates, setMessageStates ] = useState<string[]>([]);
   const timeoutRef = useRef<number | null>(null);
   const eventId = playerType === 'player' ? 'playerDisplay' : 'enemyDisplay';
-  const defaultText = playerType === 'player' ? 'SPIN TO WIN!' : 'DEFAULT ENEMY TEXT';
 
   const setMessage = useCallback(
-    (text: string | undefined = '', timeout: number | undefined = 0) => {
-      setMessageState(text);
-      // console.log('setMessage', text, timeout);
+    (messages: string[] | undefined = [], timeout: number | undefined = 0) => {
+      setMessageStates(messages || []);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -35,17 +34,15 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
       if (timeout > 0) {
         // @ts-ignore
         timeoutRef.current = setTimeout(() => {
-          setMessageState('');
+          setMessageStates([]);
         }, timeout);
       }
     },
-    [setMessageState]
+    [setMessageStates]
   );
   
-
   const onMessageEvent = useCallback(
     (e: CustomEvent) => {
-      // console.log('player.setText:', e.detail);
       setMessage(e.detail);
     },
     [setMessage]
@@ -61,7 +58,7 @@ function DisplayPanel({ onClick, playerInfo, playerType }: Props) {
 
   return (
     <ScDisplay onClick={onClick}>
-      <DisplayScreen playerInfo={playerInfo} message={message || defaultText} />
+      <DisplayScreen playerInfo={playerInfo} messages={messageStates} />
     </ScDisplay>
   );
 }

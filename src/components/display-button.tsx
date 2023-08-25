@@ -29,9 +29,14 @@ export const StyledButton = styled.button`
     border: 0.3rem dashed var(--color-grey-dark);
     color: var(--color-grey-dark);
   }
+
+  &.bs-white {
+    background-color: var(--color-white);
+    color: var(--color-grey);
+  }
 `;
 
-type ButtonStyle = 'normal' | 'special' | 'disabled';
+type ButtonStyle = 'normal' | 'special' | 'disabled' | 'white';
 
 interface Props {
   children: string | JSX.Element | JSX.Element[];

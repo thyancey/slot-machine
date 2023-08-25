@@ -6,12 +6,11 @@ export const StyledButton = styled.button`
   font-family: var(--font-base);
   border-radius: 0.75rem;
   font-size: 1.5rem;
-  line-height: 2rem;
   padding: 0.5rem;
 
   cursor: pointer;
   color: var(--color-button-primary);
-  &:hover{
+  /* &:hover{
     background-color: var(--color-button-primary);
   }
 
@@ -22,7 +21,7 @@ export const StyledButton = styled.button`
     &:hover{
       background-color: var(--co-button-disabled-secondary);
     }
-  }
+  } */
 
   &.bs-special{
     background-color: var(--co-button-secondary);

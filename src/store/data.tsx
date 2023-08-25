@@ -1,15 +1,25 @@
 import AssetMap from '../assets';
 
-export const REEL_HEIGHT = 150; // height of each reel cell, should match --val-reel-height rem value
+export const REEL_HEIGHT = 100; // height of each reel cell, should match --val-reel-height rem value
 export const REEL_OVERLAP = 2; // # of looparound cells to add to edge of reel so that it can transition nicely
 export const MAX_REELS = 6;
 export const INITIAL_UPGRADE_TOKENS = 1;
-export const INITIAL_SPIN_TOKENS = 3;
+export const INITIAL_SCORE = 30000;
 export const MAX_REEL_TOKENS = 1;
 export const MAX_HAND_SIZE = 3;
-export const TRANSITION_DELAY = 3000;
+export const TRANSITION_DELAY = 1500; // how long to wait between player/enemy attack messages during battle
+export const TRANSITION_DELAY_TURN_END = 2000; // how long to see round results before next turn
 
-export const ENEMY_HEIGHT = 304;
+export const ENEMY_HEIGHT = 200;
+
+export const COST_SPIN = 10000;
+export const COST_UPGRADE = 10000;
+
+export const EMPTY_ATTACK = {
+  label: '',
+  attack: 0,
+  defense: 0
+}
 
 export type UiState = 'game' | 'editor';
 
@@ -19,7 +29,9 @@ export type GameState =
   | 'NEW_ROUND'
   | 'NEW_TURN'
   | 'SPIN'
+  | 'PLAYER_BUFF'
   | 'PLAYER_ATTACK'
+  | 'ENEMY_BUFF'
   | 'ENEMY_ATTACK'
   | 'ROUND_WIN'
   | 'ROUND_OVER'
@@ -303,63 +315,62 @@ export const defaultReelState: DeckIdxCollection[] = [
 // for the player and enemies, will need to be expanded in the future
 export type PlayerInfo = {
   label: string;
-  img?: string;
   hp: number;
   hpMax: number;
-  attack: number;
   defense: number;
 };
 
-export type PlayerInfoDelta = {
-  hp: number;
+export type AttackDef = {
+  label: string;
   attack: number;
   defense: number;
-};
+}
 
-export type AttackDelta = {
-  player: PlayerInfoDelta;
-  enemy: PlayerInfoDelta;
-};
+export type EnemyInfo = PlayerInfo & {
+  img?: string;
+  attackIdx: number;
+  attackDefs: AttackDef[];
+} 
 
-export const enemies: PlayerInfo[] = [
+export const enemies: EnemyInfo[] = [
   {
     label: 'SQUIRREL',
     hp: 6,
     hpMax: 6,
-    attack: 3,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
+    attackIdx: 0,
+    attackDefs: [
+      {
+        label: "tail whip",
+        attack: 3,
+        defense: 0
+      },
+      {
+        label: "acorn shield",
+        attack: 0,
+        defense: 5
+      },
+    ]
   },
   {
     label: 'TORT',
     hp: 10,
     hpMax: 10,
-    attack: 8,
     defense: 10,
     img: AssetMap.Enemy_Tortoise,
-  },
-  {
-    label: 'OPOSSUM',
-    hp: 10,
-    hpMax: 10,
-    attack: 1,
-    defense: 0,
-    img: AssetMap.Enemy_Squirrel,
-  },
-  {
-    label: 'SNEK',
-    hp: 4,
-    hpMax: 4,
-    attack: 6,
-    defense: 0,
-    img: AssetMap.Enemy_Squirrel,
-  },
-  {
-    label: 'TROLL',
-    hp: 20,
-    hpMax: 20,
-    attack: 3,
-    defense: 10,
-    img: AssetMap.Enemy_Squirrel,
-  },
+    attackIdx: 0,
+    attackDefs: [
+      {
+        label: "bite",
+        attack: 3,
+        defense: 0
+      },
+      {
+        label: "shell up",
+        attack: 0,
+        defense: 10
+      }
+    ]
+  }
 ];
