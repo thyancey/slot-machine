@@ -8,6 +8,7 @@ import MetalGlint, { ScGlintWrapper } from './components/metal-glint';
 import SlotMachine from './components/slotmachine';
 import { ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
+import Footer from './components/footer';
 
 const ScWrapper = styled.main`
   position: absolute;
@@ -128,6 +129,7 @@ function Layout() {
       </ScComboContainer>
       <Bg />
       <MachineEditor />
+      <Footer />
     </ScWrapper>
   );
 }

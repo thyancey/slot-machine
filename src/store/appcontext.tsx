@@ -3,7 +3,6 @@ import {
   DeckState,
   MAX_REELS,
   INITIAL_UPGRADE_TOKENS,
-  INITIAL_SPIN_TOKENS,
   MAX_REEL_TOKENS,
   UiState,
   TileKeyCollection,
@@ -19,8 +18,10 @@ import {
   EnemyInfo,
   AttackDef,
   EMPTY_ATTACK,
+  COST_SPIN,
+  INITIAL_SCORE,
 } from './data';
-import { clamp, pickRandomFromArray } from '../utils';
+import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
   computeAttack,
@@ -34,6 +35,18 @@ import { trigger } from '../utils/events';
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   activeTiles: Tile[];
+
+  spinCount: number;
+  triggerSpin: (onlyThisReelIdx?: number) => void;
+
+  spinInProgress: boolean;
+  setSpinInProgress: (value: SetStateAction<boolean>) => void;
+
+  reelLock: boolean[];
+  setReelLock: (value: SetStateAction<boolean[]>) => void;
+
+  targetSlotIdxs: number[];
+  setTargetSlotIdxs: (value: SetStateAction<number[]>) => void;
 
   enemyAttack: AttackDef;
   setEnemyAttack: (value: SetStateAction<AttackDef>) => void;
@@ -69,15 +82,9 @@ interface AppContextType {
   upgradeTokens: number;
   incrementUpgradeTokens: (value: number) => void;
 
-  spinTokens: number;
-  setSpinTokens: (value: SetStateAction<number>) => void;
-
   turn: number;
   setTurn: (value: SetStateAction<number>) => void;
   finishTurn: () => void;
-
-  spinTurn: number;
-  setSpinTurn: (value: SetStateAction<number>) => void;
   finishSpinTurn: () => void;
 
   round: number;
@@ -105,8 +112,12 @@ interface Props {
 const AppProvider = ({ children }: Props) => {
   const [score, setScore] = useState(0);
   const [turn, setTurn] = useState(-1);
+  const [spinCount, setSpinCount] = useState<number>(0);
+  const [reelLock, setReelLock] = useState<boolean[]>([]);
+  const [spinInProgress, setSpinInProgress] = useState<boolean>(false);
   const [enemyAttack, setEnemyAttack] = useState<AttackDef | undefined>(undefined);
   const [playerAttack, setPlayerAttack] = useState<AttackDef | undefined>(undefined);
+  const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const turnRef = useRef(turn);
   const [round, setRound] = useState(-1);
   const [gameState, setGameState] = useState<GameState>('NEW_GAME');
@@ -118,7 +129,6 @@ const AppProvider = ({ children }: Props) => {
     defense: 0,
   });
   const [enemyInfo, setEnemyInfo] = useState<EnemyInfo | null>(null);
-  const [spinTokens, setSpinTokens] = useState(INITIAL_SPIN_TOKENS);
   const [uiState, setUiState] = useState<UiState>('game');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
@@ -174,7 +184,6 @@ const AppProvider = ({ children }: Props) => {
       }
       // ideally, next turn effect does this, but when turn is already 0, it doesnt see
       // a change
-      setSpinTokens(INITIAL_SPIN_TOKENS);
       setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
       setReelResults(Array(numReelsRef.current).fill(-1));
 
@@ -182,14 +191,13 @@ const AppProvider = ({ children }: Props) => {
     } else {
       // setRound(0);
     }
-  }, [round, setEnemyInfo, setTurn, setRound, setSpinTokens, setUpgradeTokensState, setReelResults]);
+  }, [round, setEnemyInfo, setTurn, setRound, setUpgradeTokensState, setReelResults]);
 
   // next turn, reset stuff
   useEffect(() => {
-    setSpinTokens(INITIAL_SPIN_TOKENS);
     setUpgradeTokensState(INITIAL_UPGRADE_TOKENS);
     setReelResults(Array(numReelsRef.current).fill(-1));
-  }, [turn, setSpinTokens, setUpgradeTokensState, setReelResults]);
+  }, [turn, setUpgradeTokensState, setReelResults]);
 
   // const finishRound = useCallback(() => {
   //   setRound((prev) => prev + 1);
@@ -281,7 +289,6 @@ const AppProvider = ({ children }: Props) => {
         window.alert('you died!');
         return null;
       } else {
-        console.log('computed enemyAttack', attackResult);
         const playerMssg = [];
         const enemyMssg = [];
         if (attackResult.defender.defenseDelta < 0) playerMssg.push(`${attackResult.defender.defenseDelta} BLOCK`);
@@ -299,7 +306,6 @@ const AppProvider = ({ children }: Props) => {
         trigger('playerDisplay', combinedPlayerMssg);
         trigger('enemyDisplay', combinedEnemyMssg);
 
-        console.log('after enemyAttack, attackResult:', attackResult);
         setEnemyInfo((prev) => {
           if (!prev) return prev;
           return {
@@ -321,6 +327,13 @@ const AppProvider = ({ children }: Props) => {
     }
   }, [playerInfo, enemyInfo, enemyAttack]);
 
+  const incrementScore = useCallback(
+    (increment = 0) => {
+      setScore((prevScore) => Math.floor(prevScore + increment));
+    },
+    [setScore]
+  );
+
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
     trigger('playerDisplay', '! SPIN TO WIN !');
@@ -329,9 +342,10 @@ const AppProvider = ({ children }: Props) => {
     setTurn((prev) => prev + 1);
     enemyChooseAttack();
     setPlayerAttack(EMPTY_ATTACK);
+    incrementScore(INITIAL_SCORE);
 
     return 'SPIN';
-  }, [setTurn, enemyChooseAttack]);
+  }, [setTurn, enemyChooseAttack, incrementScore]);
 
   const newRound = useCallback(() => {
     trigger('playerDisplay', `ROUND ${round + 1} COMPLETE!`);
@@ -393,12 +407,6 @@ const AppProvider = ({ children }: Props) => {
     [setReelStatesState]
   );
 
-  const incrementScore = useCallback(
-    (increment = 0) => {
-      setScore((prevScore) => Math.floor(prevScore + increment));
-    },
-    [setScore]
-  );
 
   const drawCards = useCallback(
     (numToDraw: number) => {
@@ -415,6 +423,33 @@ const AppProvider = ({ children }: Props) => {
     },
     [deckState]
   );
+
+  const triggerSpin = useCallback((onlyThisReelIdx?: number) => {
+      trigger('playerDisplay', `LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`);
+
+      if (onlyThisReelIdx !== undefined) {
+        setTargetSlotIdxs(
+          reelStates.map((reelState, reelIdx) =>
+            reelIdx === onlyThisReelIdx ? getRandomIdx(reelState) : targetSlotIdxs[reelIdx]
+          )
+        );
+      } else {
+        setTargetSlotIdxs(reelStates.map((reelState) => getRandomIdx(reelState)));
+      }
+      setSpinCount(prev => prev + 1);
+      incrementScore(-COST_SPIN);
+
+      if (onlyThisReelIdx !== undefined) {
+        // all should be locked/true EXCEPT the one that we are spinnin
+        setReelResults((prev) => prev.map((rR, reelIdx) => (reelIdx === onlyThisReelIdx ? -1 : rR)));
+        setReelLock(reelStates.map((_, reelIdx) => reelIdx !== onlyThisReelIdx));
+      } else {
+        setReelResults(Array(reelStates.length).fill(-1));
+        setReelLock(reelStates.map(() => false));
+      }
+
+      setSpinInProgress(true);
+  }, [ reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore ]);
 
   // TODO - these should probably use useCallback, but it wasnt necessary when i first
   // put them in here.
@@ -435,67 +470,79 @@ const AppProvider = ({ children }: Props) => {
     }
   };
 
-  // console.log('-------------------');
-  // console.log('enemyAttack', enemyAttack);
-  // console.log('playerAttack', playerAttack);
-
   return (
     <AppContext.Provider
       value={
         {
-          gameState,
-
           activeTiles,
-          finishSpinTurn,
+
+          spinCount,
+          triggerSpin,
+
+          spinInProgress,
+          setSpinInProgress,
+
+          reelLock,
+          setReelLock,
+
+          targetSlotIdxs,
+          setTargetSlotIdxs,
+
+          enemyAttack,
+          setEnemyAttack,
+
+          playerAttack,
+          setPlayerAttack,
+
+          reelResults,
+          setReelResults,
+          
+          activeCombos,
 
           reelCombos,
           setReelCombos,
 
-          activeCombos,
-
           score,
           incrementScore,
 
+          gameState,
+
           selectedTileIdx,
           setSelectedTileIdx,
-
-          reelStates,
-          setReelStates,
-
-          reelResults,
-          setReelResults,
-
-          upgradeTokens,
-          incrementUpgradeTokens,
-
-          spinTokens,
-          setSpinTokens,
-
-          turn,
-          setTurn,
-          finishTurn,
-
-          round,
-          setRound,
-
-          uiState,
-          setUiState,
-
-          playerInfo,
-          setPlayerInfo,
-
-          enemyInfo,
-          setEnemyInfo,
-
-          insertIntoReel,
-          removeFromReel,
-          insertReel,
 
           tileDeck,
           setTileDeck,
 
           deckState,
           setDeckState,
+
+          reelStates,
+          setReelStates,
+
+          upgradeTokens,
+          incrementUpgradeTokens,
+
+          turn,
+          setTurn,
+          finishTurn,
+
+          finishSpinTurn,
+
+          round,
+          setRound,
+
+
+          playerInfo,
+          setPlayerInfo,
+          enemyInfo,
+          setEnemyInfo,
+
+          uiState,
+          setUiState,
+
+          insertIntoReel,
+          removeFromReel,
+          insertReel,
 
           drawCards,
           discardCards,

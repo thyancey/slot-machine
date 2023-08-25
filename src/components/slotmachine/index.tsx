@@ -1,22 +1,17 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react';
-import { defaultReelState, reelComboDef, defaultTileDeck, DeckIdxCollection } from '../../store/data';
+import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore, getEffectDelta } from './utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import ScoreBox from './components/scorebox';
-import SideControls from './components/controls-side';
-import { MixinBorders, MixinBordersSm } from '../../utils/styles';
+import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
-import { getRandomIdx } from '../../utils';
-import DisplayButton from '../display-button';
-
-const SPIN_COST = 5000;
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -27,30 +22,9 @@ const ScWrapper = styled.div`
   grid-gap: 1rem;
 `;
 
-const ScSpinButton = styled.div`
-  background-color: var(--color-black);
-  ${MixinBordersSm('--co-player-bordertop', '--co-player-borderside')}
-  border-left: 0;
-  border-top: 0;
-
-  width: 5rem;
-  margin-left: 1.5rem;
-
-  button {
-    line-height: 3.85rem;
-    border-left:0 !important;
-    border-top:0 !important;
-
-    &:hover{
-    }
-  }
-`
-
 const ScReelContainer = styled.div`
   grid-row: 2;
   grid-column: 1;
-
-  /* z-index: 1; */
 
   height: 100%;
   display: flex;
@@ -98,22 +72,6 @@ const ScScoreBoxContainer = styled.div`
 
   display: flex;
   gap: 1rem;
-`;
-
-
-const ScScoreBoxRight = styled.div`
-  background-color: var(--color-black);
-  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  border-left: 0;
-  border-top: 0;
-  display: flex;
-  width: 5rem;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  line-height: 2rem;
-  /* padding-right: 0.5rem; */
-  padding-bottom: 0.5rem;
 `;
 
 const ScScoreBoxButton = styled.div`
@@ -187,25 +145,11 @@ const ScDisplay = styled.div`
 
 const ScDisplayWrapper = styled.div`
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  /* border-top: 0; */
-  /* border-bottom: 0; */
-`;
-
-const ScSideControls = styled.div`
-  position: absolute;
-  left: calc(100% + 1rem);
-  top: 0;
-  width: 7rem;
-  height: 100%;
 `;
 
 function SlotMachine() {
-  const [spinCount, setSpinCount] = useState(0);
-  const [spinInProgress, setSpinInProgress] = useState(false);
   // is each reel locked? if not, they are allowed to spin when their targetIdx is updated
-  const [reelLock, setReelLock] = useState<boolean[]>([]);
   const [spinScore, setSpinScore] = useState(0);
-  const [targetSlotIdxs, setTargetSlotIdxs] = useState<number[]>([]);
   const {
     setReelCombos,
     activeTiles,
@@ -218,11 +162,15 @@ function SlotMachine() {
     setDeckState,
     tileDeck,
     incrementScore,
-    spinTokens,
-    setSpinTokens,
-    gameState,
     finishSpinTurn,
     playerInfo,
+    setUiState,
+    setSpinInProgress,
+    targetSlotIdxs,
+    reelLock,
+    setReelLock,
+    triggerSpin,
+    spinCount,
     score
   } = useContext(AppContext);
   const comboLengthRef = useRef(activeCombos.length);
@@ -256,37 +204,6 @@ function SlotMachine() {
       document.documentElement.style.setProperty('--var-reels-width', middleRowWidth + 'px');
     }
   }, [reelStates, setReelResults]);
-
-  const triggerSpin = useCallback(
-    (reelStates: DeckIdxCollection[], onlyThisReelIdx?: number) => {
-      if (!spinInProgress && spinTokens > 0) {
-        trigger('playerDisplay', `LETS GOOOO \n ${spinTokens - 1} SPINS LEFT \n YOU CAN SPIN INDIVIDUAL REELS TOO!`);
-        // determine what the next line of slots will be, someday make this weighted
-        if (onlyThisReelIdx !== undefined) {
-          setTargetSlotIdxs(
-            reelStates.map((reelState, reelIdx) =>
-              reelIdx === onlyThisReelIdx ? getRandomIdx(reelState) : targetSlotIdxs[reelIdx]
-            )
-          );
-        } else {
-          setTargetSlotIdxs(reelStates.map((reelState) => getRandomIdx(reelState)));
-        }
-
-        setSpinTokens((prev) => prev - 1);
-        setSpinCount(spinCount + 1);
-        if (onlyThisReelIdx !== undefined) {
-          // all should be locked/true EXCEPT the one that we are spinnin
-          setReelResults((prev) => prev.map((rR, reelIdx) => (reelIdx === onlyThisReelIdx ? -1 : rR)));
-          setReelLock(reelStates.map((_, reelIdx) => reelIdx !== onlyThisReelIdx));
-        } else {
-          setReelResults(Array(reelStates.length).fill(-1));
-          setReelLock(reelStates.map(() => false));
-        }
-        setSpinInProgress(true);
-      }
-    },
-    [spinCount, spinInProgress, spinTokens, setSpinTokens, setReelResults, targetSlotIdxs]
-  );
 
   const onSpinComplete = useCallback(
     (reelIdx: number, slotIdx: number) => {
@@ -323,7 +240,7 @@ function SlotMachine() {
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, spinCount, sound_reelComplete, finishSpinTurn]);
+  }, [reelResults, reelStates, spinCount, sound_reelComplete, setReelLock, finishSpinTurn, setSpinInProgress]);
 
   useEffect(() => {
     if (activeCombos.length > 0) {
@@ -365,9 +282,9 @@ function SlotMachine() {
     }
   }, [comboLengthRef, activeCombos, attack]);
 
-  const onBuySpin = () => {
-    setSpinTokens(prev => prev + 1);
-    incrementScore(-SPIN_COST);
+  const onBuyUpgrade = () => {
+    setUiState('editor');
+    incrementScore(-COST_UPGRADE);
   }
 
   return (
@@ -390,45 +307,25 @@ function SlotMachine() {
                 spinCount={spinCount}
                 reelLock={reelLock[reelIdx]}
                 // can only single-spin this reel if there are spins left, and all reels have been spun at least once
-                isEnabled={spinTokens > 0 && !reelResults.includes(-1)}
+                isEnabled={!reelResults.includes(-1)}
                 targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
                 onSpinComplete={onSpinComplete}
-                triggerSpin={(reelIdx) => triggerSpin(reelStates, reelIdx)}
+                triggerSpin={(reelIdx) => triggerSpin(reelIdx)}
               />
             </ScReelSegment>
           ))}
         </ul>
-        <ScSpinButton>
-          <DisplayButton
-            buttonStyle='white'
-            disabled={gameState !== 'SPIN' || spinInProgress || spinTokens <= 0}
-            onClick={() => triggerSpin(reelStates)}
-            // onMouseEnter={() => onHover(`SPIN TO WIN ! ${spinTokens} TOKENS LEFT`)}
-          >
-            {'S P I N'}
-          </DisplayButton>
-        </ScSpinButton>
         <Rivets />
       </ScReelContainer>
-      <ScSideControls>
-        <SideControls
-          spinInProgress={spinInProgress}
-          spinTokens={spinTokens}
-          triggerSpin={() => triggerSpin(reelStates)}
-        />
-      </ScSideControls>
 
       <ScScoreBoxContainer>
         <ScScoreBox>
           <ScoreBox />
         </ScScoreBox>
-        <ScScoreBoxButton className={score >= SPIN_COST ? 'active' : 'disabled'} onClick={() => score > SPIN_COST ? onBuySpin() : {}}>
-          <p>{`BUY SPIN >`}</p>
-          <p>{`-$${SPIN_COST}`}</p>
+        <ScScoreBoxButton className={score >= COST_UPGRADE ? 'active' : 'disabled'} onClick={() => score > COST_UPGRADE ? onBuyUpgrade() : {}}>
+          <p>{`UPGRADE`}</p>
+          <p>{`-$${COST_UPGRADE}`}</p>
         </ScScoreBoxButton>
-        <ScScoreBoxRight>
-          <p>{spinTokens}</p>
-        </ScScoreBoxRight>
         <Rivets />
       </ScScoreBoxContainer>
       
