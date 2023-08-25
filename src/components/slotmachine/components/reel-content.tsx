@@ -3,11 +3,11 @@ import { Tile } from '../../../store/data';
 import StatLabel from './stat-label';
 
 interface ScProps {
-  height: number;
+  $height: number;
 }
 const ScWrapper = styled.div<ScProps>`
   width: 100%;
-  height: ${(p) => p.height}px;
+  height: ${(p) => p.$height}px;
   color: var(--color-black);
   text-align: center;
   border-bottom: 0.25rem dashed var(--co-reel-divider);
@@ -18,7 +18,7 @@ const ScWrapper = styled.div<ScProps>`
 
   font-weight: bold;
 
-  padding: 0.25rem;
+  padding: 1rem;
   position: relative;
 
   p {
@@ -34,7 +34,7 @@ const ScWrapper = styled.div<ScProps>`
   }
 
   >img {
-    height: 100%;
+    width: 100%;
     filter: var(--filter-shadow1);
   }
 `;
@@ -66,7 +66,7 @@ type Props = {
 
 function ReelContent({ tile, height, isActive }: Props) {
   return (
-    <ScWrapper height={height}>
+    <ScWrapper $height={height}>
       <img src={tile.img || ''} />
       {isActive && (
         <ScStatLabels>

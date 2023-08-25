@@ -6,29 +6,18 @@ import { COST_SPIN } from '../store/data';
 import MetalGlint, { ScGlintWrapper } from './metal-glint';
 
 const ScWrapper = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* background-color: var(--color-black); */
-
-  display: flex;
-  align-items: center;
-  /* justify-content: space-between; */
-  justify-content: space-around;
-  z-index: 1;
-
-  /* position:relative; */
+  /* z-index: 1; */
+  margin-top: 1rem;
 
   ${StyledButton} {
     overflow: hidden;
     position: relative;
-    color: var(--color-purple-dark);
-    font-size: 6rem;
-    /* line-height: 2rem; */
-    margin: 2rem;
+    /* color: var(--color-black); */
+    color: var(--color-black-light);
+    font-size: 5rem;
+    margin: .5rem 2rem 1rem 2rem;
     padding: 2rem 3rem 1rem 3rem;
-    /* position: absolute; */
-    bottom: 1.5rem;
+    height: 100%;
 
     border-radius: 3rem;
     box-shadow: 0.25rem 0.25rem 1rem 0.25rem var(--color-black);
@@ -39,10 +28,9 @@ const ScWrapper = styled.div`
     font-family: var(--font-cursive);
 
     &:not(.disabled):hover {
-      font-size: 8rem;
-      color: var(--color-yellow-dark);
+      font-size: 5.5rem;
+      color: var(--color-black);
       box-shadow: 0.35rem 0.35rem 2.25rem 0.25rem var(--color-black);
-      bottom: 3.5rem;
 
       ${ScGlintWrapper} {
         background-size: 200% 400%;
@@ -50,7 +38,7 @@ const ScWrapper = styled.div`
     }
 
     &.disabled {
-      font-size: 5rem;
+      font-size: 4.5rem;
       color: var(--color-grey);
     }
   }
@@ -59,8 +47,8 @@ const ScWrapper = styled.div`
 function Footer() {
   const { triggerSpin, spinInProgress, score, gameState, finishTurn } = useContext(AppContext);
 
-  const spinDisabled = spinInProgress || score < COST_SPIN;
-  const attackDisabled = !(gameState === 'SPIN');
+  const spinDisabled = gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
+  const attackDisabled = gameState !== 'SPIN' || spinInProgress;
 
   return (
     <ScWrapper>
@@ -73,7 +61,7 @@ function Footer() {
       <Button onClick={() => finishTurn()} disabled={attackDisabled}>
         <>
           {'FIGHT'}
-          <MetalGlint glintTheme={attackDisabled ? 'silver' : 'gold'} />
+          <MetalGlint glintTheme={attackDisabled ? 'silver' : 'enemy'} />
         </>
       </Button>
     </ScWrapper>

@@ -35,7 +35,7 @@ const getMetalColors = (theme?: GlintTheme) => {
       `;
     case 'enemy':
       return css`
-        --co-metal: var(--co-enemy);
+        --co-metal: var(--co-enemy-bordertop);
         --co-glint: var(--co-enemy-highlight);
       `;
     case 'ui':

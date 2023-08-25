@@ -11,6 +11,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  font-size: 70%;
 
   /*
   --hsl-zzzz-h: 359;
@@ -119,10 +120,10 @@
   --co-enemy-highlight: var(--color-red-light);
   --co-enemy-door: var(--color-red-dark);
 
-  --co-player: var(--color-offwhite);
-  --co-player-bordertop: var(--color-offwhite-dark);
-  --co-player-borderside: var(--color-offwhite-light);
-  --co-player-border: var(--color-offwhite-dark);
+  --co-player: var(--color-white);
+  --co-player-bordertop: var(--color-white-dark);
+  --co-player-borderside: var(--color-white-light);
+  --co-player-border: var(--color-white-dark);
   --co-player-highlight: var(--color-white);
   --co-player-door: var(--color-white-dark);
 
@@ -153,8 +154,9 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 11rem;
-  --val-reel-height: 16rem; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-width: 120px;
+  --val-reel-height: 100px; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-peek: 60px; /* how much you can see adjacent items */
 
   --val-depth: 1.25rem;
   --val-depth-sm: 0.5rem;

@@ -75,12 +75,6 @@ const ScScoreBoxContainer = styled.div`
 `;
 
 const ScScoreBoxButton = styled.div`
-  background-color: var(--color-black);
-  /* color: var(--color-green-light); */
-  color: var(--color-white-dark);
-
-  padding: 1rem;
-
   transition: all 0.3s;
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
@@ -93,15 +87,33 @@ const ScScoreBoxButton = styled.div`
   /* max-width: 10rem; */
   text-align: right;
 
-  padding-top: 0.75rem;
-  padding-left: 1.25rem;
+
+
+  color: var(--color-white-dark);
+
+  >div {
+    background-color: var(--color-black);
+    width: 100%;
+    height: 100%;
+    padding: 0.75rem 1rem 1rem 1.25rem;
+    
+    > p:last-child {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--color-red-light);
+      margin-bottom: -1rem;
+    }
+  }
 
   p {
     opacity: 0.5;
   }
 
   &.active {
-    background-color: var(--color-black-light);
+    >div {
+      background-color: var(--color-black-light);
+    }
+
     color: var(--color-yellow-light);
     p {
       opacity: 1;
@@ -114,17 +126,9 @@ const ScScoreBoxButton = styled.div`
     }
   }
 
-  > p:last-child {
-    font-size: 1rem;
-    font-style: italic;
-    color: var(--color-red-light);
-    margin-bottom: -1rem;
-  }
 `;
 
 const ScScoreBox = styled.div`
-  background-color: var(--color-black);
-
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
   border-top: 0;
   flex: 1;
@@ -322,8 +326,10 @@ function SlotMachine() {
           className={score >= COST_UPGRADE ? 'active' : 'disabled'}
           onClick={() => (score > COST_UPGRADE ? onBuyUpgrade() : {})}
         >
-          <p>{`UPGRADE`}</p>
-          <p>{`-$${COST_UPGRADE}`}</p>
+          <div>
+            <p>{`UPGRADE`}</p>
+            <p>{`-$${COST_UPGRADE}`}</p>
+          </div>
         </ScScoreBoxButton>
         <Rivets />
       </ScScoreBoxContainer>

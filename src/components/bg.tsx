@@ -5,14 +5,18 @@ const ScBg = styled.div`
   background-color: var(--co-bg-secondary);
   color: var(--co-bg-primary);
 
-  inset: calc(-1 * var(--val-reel-height));
+  width: 200%;
+  height: 200%;
+  left: -50%;
+  top: -50%;
+
   font-size: var(--val-reel-height);
   font-family: var(--font-8bit2);
   line-height: 10rem;
   z-index: -2;
   letter-spacing: -3rem;
   transform: rotate(-20deg);
-  top: -50%;
+  transform-origin: center;
   opacity: .5;
   filter: blur(8px);
 
@@ -25,7 +29,7 @@ const ScBg = styled.div`
 `;
 
 function Layout() {
-  const bgText = Array(100).fill('S L O T S');
+  const bgText = Array(200).fill('S L O T S');
   return (
     <ScBg>
       <p>{bgText.join(' ! ')}</p>
