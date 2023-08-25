@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
-import { useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
-import { getBasicScore, getComboScore, getEffectDelta } from './utils';
+import { getBasicScore, getComboScore } from './utils';
 // @ts-ignore
 import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
@@ -86,7 +86,7 @@ const ScScoreBoxButton = styled.div`
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
   border-left: 0;
   border-top: 0;
-  
+
   font-size: 1.5rem;
   line-height: 1.25rem;
   white-space: pre-wrap; /* interpret /n as line breaks */
@@ -96,26 +96,25 @@ const ScScoreBoxButton = styled.div`
   padding-top: 0.75rem;
   padding-left: 1.25rem;
 
-  p{
+  p {
     opacity: 0.5;
   }
 
-  &.active{
+  &.active {
     background-color: var(--color-black-light);
     color: var(--color-yellow-light);
-    p{
+    p {
       opacity: 1;
     }
     cursor: pointer;
 
-    &:hover{
+    &:hover {
       background-color: var(--color-grey-dark);
       color: var(--color-green-dark);
     }
   }
 
-
-  >p:last-child{
+  > p:last-child {
     font-size: 1rem;
     font-style: italic;
     color: var(--color-red-light);
@@ -171,9 +170,9 @@ function SlotMachine() {
     setReelLock,
     triggerSpin,
     spinCount,
-    score
+    playerAttack,
+    score,
   } = useContext(AppContext);
-  const comboLengthRef = useRef(activeCombos.length);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
     playbackRate: 0.3 + reelResults.filter((r) => r !== -1).length * 0.3,
@@ -261,31 +260,28 @@ function SlotMachine() {
     incrementScore(spinScore);
   }, [spinScore, incrementScore]);
 
-  // TODO, centralize this somewhere else, also better state check on new player move
-  const attack = useMemo(() => {
-    return getEffectDelta('attack', activeTiles, activeCombos);
-  }, [activeTiles, activeCombos]);
   useEffect(() => {
-    if (activeCombos.length !== comboLengthRef.current) {
-      comboLengthRef.current = activeCombos.length;
+    if (playerAttack && playerAttack.attack > 0 && playerAttack.defense > 0) {
+      const mssgs = ['*ATTACK READY*'];
 
-      if (activeCombos.length > 0) {
-        const mssgs = [];
-        if (attack !== 0) {
-          mssgs.push(`attack with ${attack} damage`);
-        }
-        if (activeCombos.length > 0) {
-          mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
-        }
-        trigger('playerDisplay', mssgs);
+      if (playerAttack.attack > 0) {
+        mssgs.push(`+${playerAttack.attack} DAMAGE`);
       }
+      if (playerAttack.defense > 0) {
+        mssgs.push(`+${playerAttack.defense} DEFENSE`);
+      }
+
+      // if (activeCombos.length > 0) {
+      //   mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
+      // }
+      trigger('playerDisplay', mssgs);
     }
-  }, [comboLengthRef, activeCombos, attack]);
+  }, [playerAttack]);
 
   const onBuyUpgrade = () => {
     setUiState('editor');
     incrementScore(-COST_UPGRADE);
-  }
+  };
 
   return (
     <ScWrapper>
@@ -322,13 +318,15 @@ function SlotMachine() {
         <ScScoreBox>
           <ScoreBox />
         </ScScoreBox>
-        <ScScoreBoxButton className={score >= COST_UPGRADE ? 'active' : 'disabled'} onClick={() => score > COST_UPGRADE ? onBuyUpgrade() : {}}>
+        <ScScoreBoxButton
+          className={score >= COST_UPGRADE ? 'active' : 'disabled'}
+          onClick={() => (score > COST_UPGRADE ? onBuyUpgrade() : {})}
+        >
           <p>{`UPGRADE`}</p>
           <p>{`-$${COST_UPGRADE}`}</p>
         </ScScoreBoxButton>
         <Rivets />
       </ScScoreBoxContainer>
-      
     </ScWrapper>
   );
 }

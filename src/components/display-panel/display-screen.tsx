@@ -37,7 +37,7 @@ const ScMessages = styled.div`
     font-size: 1.5rem;
     line-height: 1.5rem;
     white-space: pre-wrap; /* interpret /n as line breaks */
-    &.special{
+    &.special {
       color: var(--color-yellow);
     }
   }
@@ -49,6 +49,22 @@ const ScHealthBar = styled.div`
 
   position: relative;
 `;
+
+const isSpecial = (string: string) => {
+  const regex = /\*[^*]+\*/g;
+  return regex.test(string);
+};
+
+const betweenAsterisks = (string: string) =>  {
+  const regex = /^\*(.*?)\*$/;
+  const match = string.match(regex);
+  
+  if (match) {
+    return match[1]; // Extracted text is captured in the first group
+  } else {
+    return string; // No text between asterisks found
+  }
+}
 
 interface Props {
   messages: string[];
@@ -81,11 +97,23 @@ function DisplayScreen({ messages, playerInfo }: Props) {
     }
   }, [messages, setHighlightPlease]);
 
+  const fancyMessages = useMemo(() => {
+    return messages.map((m) => {
+      if (isSpecial(m)) {
+        return [betweenAsterisks(m), 'special'];
+      } else {
+        return [m, ''];
+      }
+    });
+  }, [messages]);
+
   return (
     <ScOuter className={className}>
       <ScMessages>
-        {messages.map((m, i) => (
-          <p key={i} className={m[0] === '*' && m[m.length - 1] === '*' ? 'special' : ''}>{m}</p>
+        {fancyMessages.map((m, i) => (
+          <p key={i} className={m[1]}>
+            {m[0]}
+          </p>
         ))}
       </ScMessages>
       <ScHealthBar>

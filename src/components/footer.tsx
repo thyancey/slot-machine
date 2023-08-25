@@ -57,10 +57,10 @@ const ScWrapper = styled.div`
 `;
 
 function Footer() {
-  const { triggerSpin, spinInProgress, score, gameState, reelResults, finishTurn } = useContext(AppContext);
+  const { triggerSpin, spinInProgress, score, gameState, finishTurn } = useContext(AppContext);
 
   const spinDisabled = spinInProgress || score < COST_SPIN;
-  const attackDisabled = !(gameState === 'SPIN' && !reelResults.includes(-1));
+  const attackDisabled = !(gameState === 'SPIN');
 
   return (
     <ScWrapper>
