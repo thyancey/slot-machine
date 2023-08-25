@@ -12,6 +12,7 @@ import { MixinBorders } from '../../utils/styles';
 import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
+import { convertToDollaridoos } from '../../utils';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -265,8 +266,19 @@ function SlotMachine() {
   }, [spinScore, incrementScore]);
 
   useEffect(() => {
-    if (playerAttack && playerAttack.attack > 0 && playerAttack.defense > 0) {
-      const mssgs = ['*ATTACK READY*'];
+    if(playerAttack && (playerAttack.attack > 0 || playerAttack.defense > 0)) {
+      const mssgs = [];
+
+      // first get the title, this should be refactored
+      if (playerAttack.label){
+        mssgs.push(`*${playerAttack.label}* READY`);
+      } else if (playerAttack.attack > 0 && playerAttack.defense > 0) {
+        mssgs.push('*ATTACK + BUFF READY*');
+      } else if (playerAttack.attack > 0) {
+        mssgs.push('*ATTACK READY*');
+      } else {
+        mssgs.push('*BUFF READY*');
+      }
 
       if (playerAttack.attack > 0) {
         mssgs.push(`+${playerAttack.attack} DAMAGE`);
@@ -280,6 +292,7 @@ function SlotMachine() {
       // }
       trigger('playerDisplay', mssgs);
     }
+
   }, [playerAttack]);
 
   const onBuyUpgrade = () => {
@@ -328,7 +341,7 @@ function SlotMachine() {
         >
           <div>
             <p>{`UPGRADE`}</p>
-            <p>{`-$${COST_UPGRADE}`}</p>
+            <p>{`-${convertToDollaridoos(COST_UPGRADE)}`}</p>
           </div>
         </ScScoreBoxButton>
         <Rivets />

@@ -45,3 +45,7 @@ export const pickRandomsFromArray = (numChoices: number, array: unknown[]) => {
 export const pickRandomFromArray = (array: unknown[]) => {
   return array[getRandomIdx(array)];
 };
+
+export const convertToDollaridoos = (amount: number) => {
+  return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+}

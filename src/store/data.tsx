@@ -342,7 +342,7 @@ export const enemies: EnemyInfo[] = [
     attackIdx: 0,
     attackDefs: [
       {
-        label: "nut blast",
+        label: "tail whip",
         attack: 3,
         defense: 0
       },
@@ -351,11 +351,6 @@ export const enemies: EnemyInfo[] = [
         attack: 0,
         defense: 5
       },
-      // {
-      //   label: "stashing nuts",
-      //   attack: 0,
-      //   defense: 0
-      // }
     ]
   },
   {

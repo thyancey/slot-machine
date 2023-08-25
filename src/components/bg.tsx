@@ -17,10 +17,14 @@ const ScBg = styled.div`
   letter-spacing: -3rem;
   transform: rotate(-20deg);
   transform-origin: center;
-  opacity: .5;
-  filter: blur(8px);
+  opacity: 0.75;
+  filter: blur(4px);
 
   transition: background-color .5s ease-out, color .3s linear;
+
+  p {
+    word-spacing: 2rem;
+  }
 
   .lit-up & {
     background-color: var(--co-bg-secondary-lit);

@@ -21,7 +21,7 @@ import {
   COST_SPIN,
   INITIAL_SCORE,
 } from './data';
-import { clamp, getRandomIdx, pickRandomFromArray } from '../utils';
+import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
 import {
   getTileFromDeckIdx,
   insertAfterPosition,
@@ -331,9 +331,10 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.defenseDelta < 0) playerMssg.push(`${attackResult.defenseDelta} DEFENSE`);
         if (attackResult.hpDelta < 0) playerMssg.push(`${attackResult.hpDelta} HP`);
 
-        const combinedPlayerMssg = playerMssg.length === 0 ? ['...'] : ['PLAYER WAS ATTACKED!'].concat(playerMssg);
-
-        trigger('playerDisplay', combinedPlayerMssg);
+        if(playerMssg.length > 0){
+          const combinedPlayerMssg = ['PLAYER WAS ATTACKED!'].concat(playerMssg);
+          trigger('playerDisplay', combinedPlayerMssg);
+        }
 
         setPlayerInfo((prev) => {
           return {
@@ -355,10 +356,10 @@ const AppProvider = ({ children }: Props) => {
     },
     [setScore]
   );
-
+  
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
-    trigger('playerDisplay', ['! SPIN TO WIN !']);
+    trigger('playerDisplay', ['! SPIN TO WIN !', `SPINS COST ${convertToDollaridoos(COST_SPIN)}`, `FIGHTING PAYS ${convertToDollaridoos(INITIAL_SCORE)}`]);
     trigger('enemyDisplay', []);
 
     setTurn((prev) => prev + 1);
