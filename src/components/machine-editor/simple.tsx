@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../store/appcontext';
 import { MachineEditorMode } from '.';
@@ -14,7 +14,7 @@ const ScWrapper = styled.aside`
   gap: 0.5rem;
 
   background-color: var(--color-black);
-  border: 0.25rem solid var(--color-yellow);
+  border: 0.25rem solid var(--co-editor-primary);
 `;
 
 const ScSelectedInfo = styled.div`
@@ -85,11 +85,11 @@ const ScCard = styled.li`
   transition: background-color 0.2s;
 
   &.chosen {
-    background-color: var(--color-yellow);
+    background-color: var(--co-editor-primary);
   }
 
   &:hover {
-    background-color: var(--color-yellow-light);
+    background-color: var(--co-editor-secondary);
 
     &.chosen {
     }
@@ -109,8 +109,7 @@ interface HandTile {
 }
 
 function SimpleEditor() {
-  const { uiState, setUiState, discardCards, deckState, tileDeck } = useContext(AppContext);
-  const [editorMode] = useState<MachineEditorMode>('hand');
+  const { uiState, setUiState, editorState, setEditorState, discardCards, deckState, tileDeck } = useContext(AppContext);
   const [selectedIdx, setSelectedIdx] = useState(-1);
 
   const tiles: HandTile[] = useMemo(() => {
@@ -127,15 +126,17 @@ function SimpleEditor() {
   const chooseTileIdx = (idx: number) => {
     if (idx === selectedIdx) {
       setSelectedIdx(-1);
+      setEditorState('hand');
     } else {
       setSelectedIdx(idx);
+      setEditorState('reel');
     }
   };
 
-  console.log(`selectedIdx: ${selectedIdx}, uiState: ${uiState}, editorMode: ${editorMode}`);
+  console.log(`selectedIdx: ${selectedIdx}, uiState: ${uiState}, editorState: ${editorState}`);
 
   return (
-    <ScWrapper className={uiState === 'editor' ? 'panel-open' : ''}>
+    <ScWrapper className={uiState.indexOf('editor') > -1 ? 'panel-open' : ''}>
       <ScInstructions>{selectedHandTile ? '2: Select a reel' : '1: Select a tile'}</ScInstructions>
       <ScHand>
         <ScCards>

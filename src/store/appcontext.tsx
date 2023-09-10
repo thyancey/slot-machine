@@ -20,6 +20,7 @@ import {
   EMPTY_ATTACK,
   COST_SPIN,
   INITIAL_SCORE,
+  EditorState,
 } from './data';
 import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
 import {
@@ -103,6 +104,9 @@ interface AppContextType {
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
 
+  editorState: EditorState;
+  setEditorState: (value: SetStateAction<EditorState>) => void;
+
   insertIntoReel: (reelIdx: number, positionIdx: number) => void;
   removeFromReel: (reelIdx: number, positionIdx: number) => void;
   insertReel: (positionIdx: number) => void;
@@ -135,6 +139,7 @@ const AppProvider = ({ children }: Props) => {
   });
   const [enemyInfo, setEnemyInfo] = useState<EnemyInfo | null>(null);
   const [uiState, setUiState] = useState<UiState>('game');
+  const [editorState, setEditorState] = useState<EditorState>('hand');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
@@ -579,6 +584,9 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
+          
+          editorState,
+          setEditorState,
 
           insertIntoReel,
           removeFromReel,

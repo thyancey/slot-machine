@@ -1,19 +1,29 @@
 import styled from 'styled-components';
-import MachineEditor from './components/machine-editor';
 import Bg from './components/bg';
 import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
 import MetalGlint, { ScGlintWrapper } from './components/metal-glint';
-import SlotMachine from './components/slotmachine';
+import SlotMachine, { ScReelContainer } from './components/slotmachine';
 import { ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
 import Footer from './components/footer';
+import { ScReelBg } from './components/slotmachine/components/reel';
 
 const ScWrapper = styled.main`
   position: absolute;
   inset: 0;
   overflow: hidden;
+
+  &.mode-editor {
+    --opacity-editorfade: 0.2;
+  }
+
+  &.editor-reel {
+    ${ScReelContainer}{
+      opacity: 1;
+    }
+  }
 `;
 
 // TODO: get rid of this extra div, make machine more responsive
@@ -33,20 +43,20 @@ const ScComboContainer = styled.div`
 
 const ScSpacing = styled.div`
   min-height: 7rem;
-`
+`;
 
 const ScFooter = styled.div`
   position: absolute;
   width: 100%;
   bottom: 0;
   z-index: 1;
-`
+`;
 
 const ScCombo = styled.div`
   position: relative;
   flex: 1;
 
-  overflow-y:auto;
+  overflow-y: auto;
 
   box-shadow: 0px 0px 5px var(--co-enemy);
   padding: 3rem;
@@ -88,7 +98,7 @@ const ScEnemy = styled.div`
 const ScEnemyPlaceholder = styled.div`
   height: ${ENEMY_HEIGHT}px;
   position: relative;
-`
+`;
 
 const ScPlayer = styled.div`
   position: relative;
@@ -124,7 +134,7 @@ const ScPlayer = styled.div`
 let paletteActive = false;
 
 function Layout() {
-  const { activeCombos } = useContext(AppContext);
+  const { activeCombos, uiState, editorState } = useContext(AppContext);
   const litUp = useMemo(() => {
     return activeCombos.length > 0;
   }, [activeCombos.length]);
@@ -133,8 +143,12 @@ function Layout() {
     paletteActive = window.location.search.indexOf('palette') > -1;
   });
 
+  const classNames = [`mode-${uiState}`];
+  editorState === 'reel' && classNames.push('editor-reel');
+  litUp && classNames.push('lit-up');
+
   return (
-    <ScWrapper className={litUp ? 'lit-up' : ''}>
+    <ScWrapper className={classNames.join(' ')}>
       {paletteActive && <Palette />}
       <ScComboContainer>
         <ScCombo id='player'>
@@ -150,7 +164,7 @@ function Layout() {
             <ScShadowDiv />
           </ScPlayer>
         </ScCombo>
-        <ScSpacing/>
+        <ScSpacing />
         <ScFooter>
           <Footer />
         </ScFooter>

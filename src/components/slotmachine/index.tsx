@@ -23,7 +23,7 @@ const ScWrapper = styled.div`
   grid-gap: 1rem;
 `;
 
-const ScReelContainer = styled.div`
+export const ScReelContainer = styled.div`
   grid-row: 2;
   grid-column: 1;
 
@@ -43,6 +43,14 @@ const ScReelContainer = styled.div`
   > ul {
     display: flex;
   }
+  
+  opacity: var(--opacity-editorfade);
+  /* forces this to stay lit when others are faded */
+  &.editor-reel {
+    opacity: 1;
+  }
+
+  transition: opacity .3s;
 `;
 
 const ScReelSegment = styled.div`
@@ -73,6 +81,9 @@ const ScScoreBoxContainer = styled.div`
 
   display: flex;
   gap: 1rem;
+
+  opacity: var(--opacity-editorfade);
+  transition: opacity .3s;
 `;
 
 const ScScoreBoxButton = styled.div`
@@ -145,6 +156,9 @@ const ScDisplay = styled.div`
   border-radius: 0.75rem;
 
   max-width: var(--var-reels-width, 100%);
+  
+  opacity: var(--opacity-editorfade);
+  transition: opacity .3s;
 `;
 
 const ScDisplayWrapper = styled.div`
@@ -169,6 +183,7 @@ function SlotMachine() {
     finishSpinTurn,
     playerInfo,
     setUiState,
+    setEditorState,
     setSpinInProgress,
     targetSlotIdxs,
     reelLock,
@@ -298,6 +313,7 @@ function SlotMachine() {
 
   const onBuyUpgrade = () => {
     setUiState('editor');
+    setEditorState('hand');
     drawCards(4);
     incrementScore(-COST_UPGRADE);
   };

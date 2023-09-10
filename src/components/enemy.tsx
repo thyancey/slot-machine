@@ -21,6 +21,8 @@ const ScCard = styled.div`
   padding: 1rem 1.75rem;
   background-color: var(--co-enemy-door);
   border-radius: 0.75rem;
+
+  opacity: var(--opacity-editorfade);
 `;
 
 const ScEnemy = styled.div`

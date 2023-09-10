@@ -127,10 +127,13 @@
   --co-player-highlight: var(--color-white);
   --co-player-door: var(--color-white-dark);
 
+
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);
 
   --co-reel-divider: var(--color-offwhite-light);
+  --co-editor-primary: var(--color-purple);
+  --co-editor-secondary: var(--color-purple-light);
 
 
   --co-button-primary: var(--color-white);
@@ -160,6 +163,8 @@
 
   --val-depth: 1.25rem;
   --val-depth-sm: 0.5rem;
+  
+  --opacity-editorfade: 1;
 
   font-family: var(--font-base);
 

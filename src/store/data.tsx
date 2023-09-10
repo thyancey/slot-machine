@@ -22,6 +22,7 @@ export const EMPTY_ATTACK = {
 };
 
 export type UiState = 'game' | 'editor';
+export type EditorState = 'hand' | 'reel';
 
 export type GameState =
   | 'MENU'
