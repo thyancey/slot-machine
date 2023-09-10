@@ -20,27 +20,37 @@ const ScWrapper = styled.main`
 const ScComboContainer = styled.div`
   width: 100%;
   height: 100%;
+  height: calc(100% - 2rem);
+  margin-top: 2rem;
 
   display: flex;
   flex-direction: column;
+
+  /* overflow-y:auto; */
   /* justify-content: start; */
   align-items: center;
 `;
 
+const ScSpacing = styled.div`
+  min-height: 7rem;
+`
+
 const ScFooter = styled.div`
-  min-height: 12rem;
-  /* allows buttons to grow a lil and not push up slotmachine */
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
 `
 
 const ScCombo = styled.div`
   position: relative;
   flex: 1;
 
-  border-radius: 1rem 1rem 0.25rem 0.25rem;
+  overflow-y:auto;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  box-shadow: 0px 0px 5px var(--co-enemy);
+  padding: 3rem;
+
+  border-radius: 1rem;
 `;
 
 const ScShadowDiv = styled.div`
@@ -76,6 +86,7 @@ const ScEnemy = styled.div`
 
 const ScEnemyPlaceholder = styled.div`
   height: ${ENEMY_HEIGHT}px;
+  position: relative;
 `
 
 const ScPlayer = styled.div`
@@ -138,12 +149,13 @@ function Layout() {
             <ScShadowDiv />
           </ScPlayer>
         </ScCombo>
+        <ScSpacing/>
         <ScFooter>
           <Footer />
         </ScFooter>
       </ScComboContainer>
       <Bg />
-      <MachineEditor />
+      {/* <MachineEditor /> */}
     </ScWrapper>
   );
 }

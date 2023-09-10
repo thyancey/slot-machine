@@ -4,18 +4,16 @@ import { useContext } from 'react';
 import { AppContext } from '../store/appcontext';
 import { COST_SPIN } from '../store/data';
 import MetalGlint, { ScGlintWrapper } from './metal-glint';
+import SimpleEditor from './machine-editor/simple';
 
 const ScWrapper = styled.div`
-  /* z-index: 1; */
-  margin-top: 1rem;
-
   ${StyledButton} {
     overflow: hidden;
     position: relative;
     /* color: var(--color-black); */
     color: var(--color-black-light);
-    font-size: 5rem;
-    margin: .5rem 2rem 1rem 2rem;
+    font-size: 4rem;
+    margin: 0.5rem 2rem 1rem 2rem;
     padding: 2rem 3rem 1rem 3rem;
     height: 100%;
 
@@ -45,25 +43,31 @@ const ScWrapper = styled.div`
 `;
 
 function Footer() {
-  const { triggerSpin, spinInProgress, score, gameState, finishTurn } = useContext(AppContext);
+  const { triggerSpin, spinInProgress, score, gameState, finishTurn, uiState } = useContext(AppContext);
 
   const spinDisabled = gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
   const attackDisabled = gameState !== 'SPIN' || spinInProgress;
 
   return (
     <ScWrapper>
-      <Button onClick={() => triggerSpin()} disabled={spinDisabled}>
+      {uiState === 'editor' ? (
+        <SimpleEditor />
+      ) : (
         <>
-          {'SPIN'}
-          <MetalGlint glintTheme={spinDisabled ? 'silver' : 'gold'} />
+          <Button onClick={() => triggerSpin()} disabled={spinDisabled}>
+            <>
+              {'SPIN'}
+              <MetalGlint glintTheme={spinDisabled ? 'silver' : 'gold'} />
+            </>
+          </Button>
+          <Button onClick={() => finishTurn()} disabled={attackDisabled}>
+            <>
+              {'FIGHT'}
+              <MetalGlint glintTheme={attackDisabled ? 'silver' : 'enemy'} />
+            </>
+          </Button>
         </>
-      </Button>
-      <Button onClick={() => finishTurn()} disabled={attackDisabled}>
-        <>
-          {'FIGHT'}
-          <MetalGlint glintTheme={attackDisabled ? 'silver' : 'enemy'} />
-        </>
-      </Button>
+      )}
     </ScWrapper>
   );
 }

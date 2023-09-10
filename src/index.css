@@ -11,7 +11,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  font-size: 70%;
+  font-size: 60%;
 
   /*
   --hsl-zzzz-h: 359;
@@ -154,8 +154,8 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 120px;
-  --val-reel-height: 100px; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-width: 100px;
+  --val-reel-height: 80px; /* SHOULD MATCH REEL_HEIGHT */
   --val-reel-peek: 60px; /* how much you can see adjacent items */
 
   --val-depth: 1.25rem;
