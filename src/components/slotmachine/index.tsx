@@ -188,11 +188,14 @@ function SlotMachine() {
     targetSlotIdxs,
     reelLock,
     setReelLock,
-    triggerSpin,
     spinCount,
     drawCards,
     playerAttack,
+    insertIntoReel,
     score,
+    uiState,
+    editorState,
+    triggerSpin
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -311,6 +314,16 @@ function SlotMachine() {
 
   }, [playerAttack]);
 
+  // gamemode: spin, editormode: insert into reel
+  const onReelClick = (reelIdx: number) => {
+    if(uiState === 'editor' && editorState === 'reel'){
+      insertIntoReel(reelIdx, -1);
+      
+    } else if (uiState === 'game' && !reelResults.includes(-1)) {
+      triggerSpin(reelIdx);
+    }
+  }
+
   const onBuyUpgrade = () => {
     setUiState('editor');
     setEditorState('hand');
@@ -341,7 +354,7 @@ function SlotMachine() {
                 isEnabled={!reelResults.includes(-1)}
                 targetSlotIdx={targetSlotIdxs[reelIdx] !== undefined ? targetSlotIdxs[reelIdx] : -1}
                 onSpinComplete={onSpinComplete}
-                triggerSpin={(reelIdx) => triggerSpin(reelIdx)}
+                onClick={() => onReelClick(reelIdx)}
               />
             </ScReelSegment>
           ))}

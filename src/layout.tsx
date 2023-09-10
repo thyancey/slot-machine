@@ -8,7 +8,6 @@ import SlotMachine, { ScReelContainer } from './components/slotmachine';
 import { ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
 import Footer from './components/footer';
-import { ScReelBg } from './components/slotmachine/components/reel';
 
 const ScWrapper = styled.main`
   position: absolute;

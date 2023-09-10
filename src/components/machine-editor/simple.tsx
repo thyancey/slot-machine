@@ -1,7 +1,6 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../store/appcontext';
-import { MachineEditorMode } from '.';
 import { Tile, tileGlossary } from '../../store/data';
 
 const ScWrapper = styled.aside`
@@ -109,8 +108,17 @@ interface HandTile {
 }
 
 function SimpleEditor() {
-  const { uiState, setUiState, editorState, setEditorState, discardCards, deckState, tileDeck } = useContext(AppContext);
-  const [selectedIdx, setSelectedIdx] = useState(-1);
+  const {
+    uiState,
+    setUiState,
+    selectedTileIdx,
+    setSelectedTileIdx,
+    editorState,
+    setEditorState,
+    discardCards,
+    deckState,
+    tileDeck,
+  } = useContext(AppContext);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
@@ -120,20 +128,20 @@ function SimpleEditor() {
   }, [deckState, tileDeck]);
 
   const selectedHandTile = useMemo(() => {
-    return tiles.find((tile) => tile.deckIdx === selectedIdx) || null;
-  }, [selectedIdx, tiles]);
+    return tiles.find((tile) => tile.deckIdx === selectedTileIdx) || null;
+  }, [selectedTileIdx, tiles]);
 
   const chooseTileIdx = (idx: number) => {
-    if (idx === selectedIdx) {
-      setSelectedIdx(-1);
+    if (idx === selectedTileIdx) {
+      setSelectedTileIdx(-1);
       setEditorState('hand');
     } else {
-      setSelectedIdx(idx);
+      setSelectedTileIdx(idx);
       setEditorState('reel');
     }
   };
 
-  console.log(`selectedIdx: ${selectedIdx}, uiState: ${uiState}, editorState: ${editorState}`);
+  console.log(`selectedTileIdx: ${selectedTileIdx}, uiState: ${uiState}, editorState: ${editorState}`);
 
   return (
     <ScWrapper className={uiState.indexOf('editor') > -1 ? 'panel-open' : ''}>
@@ -142,7 +150,7 @@ function SimpleEditor() {
         <ScCards>
           {tiles.map((handTile) => (
             <ScCard
-              className={handTile.deckIdx === selectedIdx ? 'chosen' : ''}
+              className={handTile.deckIdx === selectedTileIdx ? 'chosen' : ''}
               key={handTile.deckIdx}
               onClick={() => chooseTileIdx(handTile.deckIdx)}
             >

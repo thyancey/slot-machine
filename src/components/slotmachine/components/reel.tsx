@@ -152,7 +152,8 @@ type Props = {
   reelLock: boolean;
   isEnabled: boolean; // can click to spin this weel
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
-  triggerSpin: (reelIdx: number) => void;
+  onClick: () => void;
+  // triggerSpin: (reelIdx: number) => void;
 };
 function Reel({
   reelIdx,
@@ -162,7 +163,8 @@ function Reel({
   reelLock,
   spinCount,
   onSpinComplete,
-  triggerSpin,
+  // triggerSpin,
+  onClick,
   isEnabled,
 }: Props) {
   // (looped) idx of current item, number grows to infinity
@@ -233,12 +235,16 @@ function Reel({
     }
   };
 
+  console.log()
+
   return (
     <ScReelWrapper
-      onClick={() => isEnabled && triggerSpin(reelIdx)}
+      // onClick={() => isEnabled && triggerSpin(reelIdx)}
+      onClick={() => onClick()}
       className={isEnabled ? 'enabled' : ''}
       onMouseEnter={onHover}
     >
+      {/* <ScReelEditorHover onClick={() => insertIntoReel(reelIdx, -1)}> */}
       <ScReelEditorHover>
         <span>{'ADD ITEM'}</span>
         <div />

@@ -139,7 +139,7 @@ const AppProvider = ({ children }: Props) => {
   });
   const [enemyInfo, setEnemyInfo] = useState<EnemyInfo | null>(null);
   const [uiState, setUiState] = useState<UiState>('game');
-  const [editorState, setEditorState] = useState<EditorState>('hand');
+  const [editorState, setEditorState] = useState<EditorState>('');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
@@ -501,6 +501,13 @@ const AppProvider = ({ children }: Props) => {
   // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
+    discardCards(positionIdx);
+
+    // TODO: move this somewhere else
+    setSelectedTileIdx(-1);
+    setDeckState(discardTiles(deckState.drawn, deckState));
+    setUiState('game');
+    setEditorState('');
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
@@ -584,7 +591,7 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
-          
+
           editorState,
           setEditorState,
 
