@@ -37,6 +37,7 @@ const ScSpacing = styled.div`
 
 const ScFooter = styled.div`
   position: absolute;
+  width: 100%;
   bottom: 0;
   z-index: 1;
 `

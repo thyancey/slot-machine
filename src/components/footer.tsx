@@ -7,6 +7,9 @@ import MetalGlint, { ScGlintWrapper } from './metal-glint';
 import SimpleEditor from './machine-editor/simple';
 
 const ScWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
   ${StyledButton} {
     overflow: hidden;
     position: relative;

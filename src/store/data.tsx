@@ -18,8 +18,8 @@ export const COST_UPGRADE = 10000;
 export const EMPTY_ATTACK = {
   label: '',
   attack: 0,
-  defense: 0
-}
+  defense: 0,
+};
 
 export type UiState = 'game' | 'editor';
 
@@ -53,6 +53,7 @@ export type GameState =
  */
 export type Tile = {
   label: string;
+  debugLabel?: string;
   img?: string;
   attributes: string[];
   score?: number;
@@ -73,22 +74,32 @@ export interface TileGlossary {
 }
 export const tileGlossary: TileGlossary = {
   bat: {
-    label: 'Bat - attack +1, steal 3hp',
+    label: 'Bat',
+    debugLabel: 'attack +1, steal 3hp',
     img: AssetMap.Rbat,
     attributes: ['attack', 'creature'],
     score: 250,
     effects: [{ type: 'attack', value: 1 }],
   },
-  coins: { label: 'Coins - 1000 points', img: AssetMap.Rcoins, attributes: ['money'], score: 1000, effects: [] },
+  coins: {
+    label: 'Coins',
+    debugLabel: '1000 points',
+    img: AssetMap.Rcoins,
+    attributes: ['money'],
+    score: 1000,
+    effects: [],
+  },
   crazy: {
-    label: 'Confusion - add 1 disoriented to enemy',
+    label: 'Confusion',
+    debugLabel: 'add 1 disoriented to enemy',
     img: AssetMap.Rcrazy,
     attributes: ['buff'],
     score: 0,
     effects: [],
   },
   flame: {
-    label: 'Flame - attack +1, hurt self -1',
+    label: 'Flame',
+    debugLabel: 'attack +1, hurt self -1',
     img: AssetMap.Rflame,
     attributes: ['attack'],
     score: 250,
@@ -98,21 +109,24 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   halo: {
-    label: 'Halo - heal self +10',
+    label: 'Halo',
+    debugLabel: 'heal self +10',
     img: AssetMap.Rhalo,
     attributes: ['buff'],
     score: 1000,
     effects: [{ type: 'health', value: 10 }],
   },
   heart: {
-    label: 'Heart - heal self +2',
+    label: 'Heart',
+    debugLabel: 'heal self +2',
     img: AssetMap.Rheart,
     attributes: ['buff'],
     score: 50,
     effects: [{ type: 'health', value: 2 }],
   },
   lightning: {
-    label: 'Lightning - attack +3, hurt self -1',
+    label: 'Lightning',
+    debugLabel: 'attack +3, hurt self -1',
     img: AssetMap.Rlightning,
     attributes: ['attack'],
     score: 500,
@@ -122,7 +136,8 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   poison: {
-    label: 'Poison - apply 2 poison, hurt self -1',
+    label: 'Poison',
+    debugLabel: 'apply 2 poison, hurt self -1',
     img: AssetMap.Rpoison,
     attributes: ['attack'],
     score: 200,
@@ -132,36 +147,48 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   shield: {
-    label: 'Shield - attack +1, defend self +1',
+    label: 'Shield',
+    debugLabel: 'attack +1, defend self +1',
     img: AssetMap.Rshield,
     attributes: ['buff'],
     score: 100,
     effects: [{ type: 'defense', value: 1 }],
   },
-  slot_seven: { label: 'seven', img: AssetMap.R7, attributes: [], score: 700, effects: [] },
+  slot_seven: {
+    label: 'seven',
+    debugLabel: 'just a regular old 7, whatever that means',
+    img: AssetMap.R7,
+    attributes: [],
+    score: 700,
+    effects: [],
+  },
   slot_bar1: {
-    label: 'BAR I - wildcard, defend self +1',
+    label: 'BAR',
+    debugLabel: 'wildcard, defend self +1',
     img: AssetMap.Rbar1,
     attributes: ['bar', '*'],
     score: 100,
     effects: [{ type: 'defense', value: 1 }],
   },
   slot_bar2: {
-    label: 'BAR II - wildcard, defend self +2',
+    label: 'BAR II',
+    debugLabel: 'wildcard, defend self +2',
     img: AssetMap.Rbar2,
     attributes: ['bar', '*'],
     score: 200,
     effects: [{ type: 'defense', value: 2 }],
   },
   slot_bar3: {
-    label: 'BAR III - wildcard, defend self +3',
+    label: 'BAR III',
+    debugLabel: 'wildcard, defend self +3',
     img: AssetMap.Rbar3,
     attributes: ['bar', '*'],
     score: 300,
     effects: [{ type: 'defense', value: 3 }],
   },
   snowflake: {
-    label: 'Freeze - attack +2, ice shield +1',
+    label: 'Freeze',
+    debugLabel: 'attack +2, ice shield +1',
     img: AssetMap.Rsnowflake,
     attributes: ['attack'],
     score: 120,
@@ -171,7 +198,8 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   sword: {
-    label: 'Attack Boost - attack x2',
+    label: 'Attack Boost',
+    debugLabel: 'attack x2',
     img: AssetMap.Rsword,
     attributes: ['attack'],
     score: 0,
@@ -324,13 +352,13 @@ export type AttackDef = {
   label: string;
   attack: number;
   defense: number;
-}
+};
 
 export type EnemyInfo = PlayerInfo & {
   img?: string;
   attackIdx: number;
   attackDefs: AttackDef[];
-} 
+};
 
 export const enemies: EnemyInfo[] = [
   {
@@ -342,16 +370,16 @@ export const enemies: EnemyInfo[] = [
     attackIdx: 0,
     attackDefs: [
       {
-        label: "tail whip",
+        label: 'tail whip',
         attack: 3,
-        defense: 0
+        defense: 0,
       },
       {
-        label: "acorn shield",
+        label: 'acorn shield',
         attack: 0,
-        defense: 5
+        defense: 5,
       },
-    ]
+    ],
   },
   {
     label: 'TORT',
@@ -362,15 +390,15 @@ export const enemies: EnemyInfo[] = [
     attackIdx: 0,
     attackDefs: [
       {
-        label: "bite",
+        label: 'bite',
         attack: 3,
-        defense: 0
+        defense: 0,
       },
       {
-        label: "shell up",
+        label: 'shell up',
         attack: 0,
-        defense: 10
-      }
-    ]
-  }
+        defense: 10,
+      },
+    ],
+  },
 ];

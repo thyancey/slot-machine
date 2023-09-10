@@ -491,7 +491,7 @@ const AppProvider = ({ children }: Props) => {
     },
     [reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore]
   );
-
+  
   // TODO - these should probably use useCallback, but it wasnt necessary when i first
   // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {

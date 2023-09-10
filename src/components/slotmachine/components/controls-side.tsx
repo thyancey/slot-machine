@@ -50,7 +50,7 @@ interface Props {
 }
 
 function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
-  const { upgradeTokens, setUiState, gameState } = useContext(AppContext);
+  const { upgradeTokens, enterEditMode, gameState } = useContext(AppContext);
 
   const onHover = (text: string) => {
     console.log('onHover', text);
@@ -74,7 +74,7 @@ function SideControls({ spinInProgress, spinTokens, triggerSpin }: Props) {
         </ScSpinTokens>
         <DisplayButton
           disabled={disableButtons || upgradeTokens <= 0}
-          onClick={() => setUiState('editor')}
+          onClick={() => enterEditMode()}
           onMouseEnter={() => onHover(`upgrade slot machine`)}
         >{`?`}</DisplayButton>
       </ScInner>

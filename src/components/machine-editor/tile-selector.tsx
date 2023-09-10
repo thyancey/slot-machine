@@ -82,6 +82,8 @@ interface Props {
 }
 function TileSelector({ selectedTileIdx, onSelectTile }: Props) {
   const { deckState, tileDeck } = useContext(AppContext);
+  // console.log('deckState', deckState, tileDeck);
+  console.log('selectedIdx', selectedTileIdx);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({

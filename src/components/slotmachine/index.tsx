@@ -175,6 +175,7 @@ function SlotMachine() {
     setReelLock,
     triggerSpin,
     spinCount,
+    drawCards,
     playerAttack,
     score,
   } = useContext(AppContext);
@@ -297,6 +298,7 @@ function SlotMachine() {
 
   const onBuyUpgrade = () => {
     setUiState('editor');
+    drawCards(4);
     incrementScore(-COST_UPGRADE);
   };
 
@@ -337,7 +339,7 @@ function SlotMachine() {
         </ScScoreBox>
         <ScScoreBoxButton
           className={score >= COST_UPGRADE ? 'active' : 'disabled'}
-          onClick={() => (score > COST_UPGRADE ? onBuyUpgrade() : {})}
+          onClick={() => (score >= COST_UPGRADE ? onBuyUpgrade() : {})}
         >
           <div>
             <p>{`UPGRADE`}</p>
