@@ -20,7 +20,7 @@ const ScWrapper = styled.div`
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: min-content min-content auto;
-  grid-gap: 1rem;
+  grid-gap: 2rem;
 `;
 
 export const ScReelContainer = styled.div`
@@ -43,14 +43,14 @@ export const ScReelContainer = styled.div`
   > ul {
     display: flex;
   }
-  
+
   opacity: var(--opacity-editorfade);
   /* forces this to stay lit when others are faded */
   &.editor-reel {
     opacity: 1;
   }
 
-  transition: opacity .3s;
+  transition: opacity 0.3s;
 `;
 
 const ScReelSegment = styled.div`
@@ -83,7 +83,7 @@ const ScScoreBoxContainer = styled.div`
   gap: 1rem;
 
   opacity: var(--opacity-editorfade);
-  transition: opacity .3s;
+  transition: opacity 0.3s;
 `;
 
 const ScScoreBoxButton = styled.div`
@@ -99,16 +99,14 @@ const ScScoreBoxButton = styled.div`
   /* max-width: 10rem; */
   text-align: right;
 
-
-
   color: var(--color-white-dark);
 
-  >div {
+  > div {
     background-color: var(--color-black);
     width: 100%;
     height: 100%;
     padding: 0.75rem 1rem 1rem 1.25rem;
-    
+
     > p:last-child {
       font-size: 1rem;
       font-style: italic;
@@ -122,7 +120,7 @@ const ScScoreBoxButton = styled.div`
   }
 
   &.active {
-    >div {
+    > div {
       background-color: var(--color-black-light);
     }
 
@@ -137,7 +135,6 @@ const ScScoreBoxButton = styled.div`
       color: var(--color-green-dark);
     }
   }
-
 `;
 
 const ScScoreBox = styled.div`
@@ -156,9 +153,9 @@ const ScDisplay = styled.div`
   border-radius: 0.75rem;
 
   max-width: var(--var-reels-width, 100%);
-  
+
   opacity: var(--opacity-editorfade);
-  transition: opacity .3s;
+  transition: opacity 0.3s;
 `;
 
 const ScDisplayWrapper = styled.div`
@@ -194,9 +191,10 @@ function SlotMachine() {
     insertIntoReel,
     score,
     uiState,
+    gameState,
     editorState,
     triggerSpin,
-    finishTurn
+    finishTurn,
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -265,7 +263,16 @@ function SlotMachine() {
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, spinCount, sound_reelComplete, setReelLock, finishSpinTurn, setSpinInProgress, finishTurn]);
+  }, [
+    reelResults,
+    reelStates,
+    spinCount,
+    sound_reelComplete,
+    setReelLock,
+    finishSpinTurn,
+    setSpinInProgress,
+    finishTurn,
+  ]);
 
   useEffect(() => {
     if (activeCombos.length > 0) {
@@ -287,11 +294,12 @@ function SlotMachine() {
   }, [spinScore, incrementScore]);
 
   useEffect(() => {
-    if(playerAttack && (playerAttack.attack > 0 || playerAttack.defense > 0)) {
+    if (playerAttack && (playerAttack.attack > 0 || playerAttack.defense > 0)) {
+      if (gameState !== 'SPIN') return;
       const mssgs = [];
 
       // first get the title, this should be refactored
-      if (playerAttack.label){
+      if (playerAttack.label) {
         mssgs.push(`*${playerAttack.label}* READY`);
       } else if (playerAttack.attack > 0 && playerAttack.defense > 0) {
         mssgs.push('*ATTACK + BUFF READY*');
@@ -313,18 +321,16 @@ function SlotMachine() {
       // }
       trigger('playerDisplay', mssgs);
     }
-
-  }, [playerAttack]);
+  }, [playerAttack, gameState]);
 
   // gamemode: spin, editormode: insert into reel
   const onReelClick = (reelIdx: number) => {
-    if(uiState === 'editor' && editorState === 'reel'){
+    if (uiState === 'editor' && editorState === 'reel') {
       insertIntoReel(reelIdx, -1);
-      
     } else if (uiState === 'game' && !reelResults.includes(-1)) {
       triggerSpin(reelIdx);
     }
-  }
+  };
 
   const onBuyUpgrade = () => {
     setUiState('editor');

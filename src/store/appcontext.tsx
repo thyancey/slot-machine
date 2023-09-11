@@ -23,12 +23,7 @@ import {
   EditorState,
 } from './data';
 import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
-import {
-  getTileFromDeckIdx,
-  insertAfterPosition,
-  insertReelStateIntoReelStates,
-  removeAtPosition,
-} from './utils';
+import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
   computeAttack,
   discardTiles,
@@ -209,10 +204,6 @@ const AppProvider = ({ children }: Props) => {
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setUpgradeTokensState, setReelResults]);
 
-  // const finishRound = useCallback(() => {
-  //   setRound((prev) => prev + 1);
-  // }, [setRound]);
-
   useEffect(() => {
     if (turnRef.current !== turn && enemyInfo && enemyAttack) {
       turnRef.current = turn;
@@ -237,7 +228,6 @@ const AppProvider = ({ children }: Props) => {
       enemyChooseAttack();
     }
   }, [enemyInfo, enemyAttack, enemyChooseAttack]);
-
 
   // DO SOME FIGHTING
   const finishTurn = useCallback(() => {
@@ -295,10 +285,15 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.hpDelta < 0) mssg.push(`${attackResult.hpDelta} HP`);
 
         if (mssg.length > 0) {
+          if (playerAttack?.attack) {
+            trigger('playerDisplay', ['PLAYER ATTACKS WITH', `+${playerAttack.attack} damage`]);
+          } else {
+            trigger('playerDisplay', [`PLAYER ATTACKS!`])
+          }
           trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
         } else {
-          // trigger('enemyDisplay', '');
           trigger('playerDisplay', ['PLAYER STUMBLED!']);
+          trigger('enemyDisplay', ['ENEMY UNSCATHED!']);
         }
 
         setEnemyInfo((prev) => {
@@ -330,13 +325,18 @@ const AppProvider = ({ children }: Props) => {
     } else {
       trigger('enemyDisplay', ['ENEMY PREPARING ATTACK...']);
     }
+
+    //  for some early prompting
+    // if (enemyAttack?.attack && enemyAttack.attack > 0) {
+    //   trigger('playerDisplay', ['ENEMY PREPARING ATTACK...']);
+    // }
     return 'ENEMY_ATTACK';
   }, [enemyAttack]);
 
   const triggerEnemyAttack = useCallback(() => {
     if (enemyInfo) {
       const attackResult = computeAttack(playerInfo, enemyAttack);
-      if(enemyAttack?.label && enemyAttack.attack > 0){
+      if (enemyAttack?.label && enemyAttack.attack > 0) {
         trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`]);
       }
 
@@ -350,9 +350,11 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.defenseDelta < 0) playerMssg.push(`${attackResult.defenseDelta} DEFENSE`);
         if (attackResult.hpDelta < 0) playerMssg.push(`${attackResult.hpDelta} HP`);
 
-        if(playerMssg.length > 0){
+        if (playerMssg.length > 0) {
           const combinedPlayerMssg = ['PLAYER WAS ATTACKED!'].concat(playerMssg);
           trigger('playerDisplay', combinedPlayerMssg);
+        } else {
+          trigger('playerDisplay', ['PLAYER UNSCATHED!']);
         }
 
         setPlayerInfo((prev) => {
@@ -375,10 +377,14 @@ const AppProvider = ({ children }: Props) => {
     },
     [setScore]
   );
-  
+
   const newTurn = useCallback(() => {
     // just in case these don't get re-populated while theres bugs...
-    trigger('playerDisplay', ['! SPIN TO WIN !', `SPINS COST ${convertToDollaridoos(COST_SPIN)}`, `FIGHTING PAYS ${convertToDollaridoos(INITIAL_SCORE)}`]);
+    trigger('playerDisplay', [
+      '! SPIN TO WIN !',
+      `SPINS COST ${convertToDollaridoos(COST_SPIN)}`,
+      `FIGHTING PAYS ${convertToDollaridoos(INITIAL_SCORE)}`,
+    ]);
     trigger('enemyDisplay', []);
 
     setTurn((prev) => prev + 1);
@@ -473,6 +479,7 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerSpin = useCallback(
     (onlyThisReelIdx?: number) => {
+      console.log('triggerSpin');
       trigger('playerDisplay', [`LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`]);
 
       if (onlyThisReelIdx !== undefined) {
@@ -500,7 +507,7 @@ const AppProvider = ({ children }: Props) => {
     },
     [reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore]
   );
-  
+
   // TODO - these should probably use useCallback, but it wasnt necessary when i first
   // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {

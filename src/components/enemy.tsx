@@ -12,7 +12,7 @@ const ScCard = styled.div`
 
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: min-content auto;
+  grid-template-rows: auto min-content;
   grid-gap: 0.5rem;
 
   color: var(--color-black);
@@ -26,7 +26,7 @@ const ScCard = styled.div`
 `;
 
 const ScEnemy = styled.div`
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
   position: relative;
 
@@ -43,7 +43,7 @@ const ScLabel = styled.h3`
 `;
 
 const ScDisplay = styled.div`
-  grid-row: 1;
+  grid-row: 2;
   grid-column: 1;
 
   ${MixinBorders('--co-enemy-bordertop', '--co-enemy-borderside')}

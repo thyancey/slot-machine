@@ -38,6 +38,11 @@
   --hsl-yellow-l: 60%;
   --hsl-yellow: var(--hsl-yellow-h), var(--hsl-yellow-s), var(--hsl-yellow-l);
  
+  --hsl-gold-h: 44;
+  --hsl-gold-s: 46%;
+  --hsl-gold-l: 43%;
+  --hsl-gold: var(--hsl-gold-h), var(--hsl-gold-s), var(--hsl-gold-l);
+ 
   --hsl-green-h: 155;
   --hsl-green-s: 90%;
   --hsl-green-l: 45%;
@@ -95,6 +100,10 @@
   --color-yellow-dark: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) * .8));
   --color-yellow-light: hsl(var(--hsl-yellow-h), var(--hsl-yellow-s), calc(var(--hsl-yellow-l) / .85));
 
+  --color-gold: hsl(var(--hsl-gold-h), var(--hsl-gold-s), var(--hsl-gold-l), 1);
+  --color-gold-dark: hsl(var(--hsl-gold-h), var(--hsl-gold-s), calc(var(--hsl-gold-l) * .8));
+  --color-gold-light: hsl(var(--hsl-gold-h), var(--hsl-gold-s), calc(var(--hsl-gold-l) / .85));
+
 
   --color-black: hsl(var(--hsl-black-h), var(--hsl-black-s), var(--hsl-black-l), 1);
   --color-black-dark: hsl(var(--hsl-black-h), var(--hsl-black-s), 5%);
@@ -114,18 +123,18 @@
 
 
 
-  --co-enemy: var(--color-red);
-  --co-enemy-borderside: var(--color-red-light);
+  --co-enemy: var(--color-red-dark);
   --co-enemy-bordertop: var(--color-red-dark);
+  --co-enemy-borderside: var(--color-red-light);
   --co-enemy-highlight: var(--color-red-light);
-  --co-enemy-door: var(--color-red-dark);
+  --co-enemy-door: var(--color-red);
 
-  --co-player: var(--color-white);
-  --co-player-bordertop: var(--color-white-dark);
-  --co-player-borderside: var(--color-white-light);
-  --co-player-border: var(--color-white-dark);
-  --co-player-highlight: var(--color-white);
-  --co-player-door: var(--color-white-dark);
+  --co-player: var(--color-gold);
+  --co-player-bordertop: var(--color-yellow-dark);
+  --co-player-borderside: var(--color-yellow-light);
+  --co-player-border: var(--color-grey-dark);
+  --co-player-highlight: var(--color-gold-light);
+  --co-player-door: var(--color-yellow);
 
 
   --co-health: var(--color-red);
@@ -141,7 +150,7 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-black-dark);
+  --co-bg-secondary: var(--color-black);
   --co-bg-primary: var(--color-black-light);
   --co-bg-secondary-lit: var(--color-black-dark);
   --co-bg-primary-lit: var(--color-black);
