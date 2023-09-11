@@ -171,6 +171,7 @@ function SimpleEditor() {
         <ScCancelButton
           onClick={() => {
             discardCards(-1);
+            setEditorState('');
             setUiState('game');
           }}
         >

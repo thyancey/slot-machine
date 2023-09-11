@@ -16,7 +16,7 @@ const ScWrapper = styled.main`
   overflow: hidden;
 
   &.mode-editor {
-    --opacity-editorfade: 0.2;
+    --opacity-editorfade: .2;
   }
 
   &.editor-reel {
@@ -36,15 +36,9 @@ const ScComboContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  /* overflow-y:auto; */
-  /* justify-content: start; */
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
 `;
-
-// const ScSpacing = styled.div`
-//   min-height: 7rem;
-// `;
 
 const ScFooter = styled.div`
   position: absolute;
@@ -60,6 +54,7 @@ const ScCombo = styled.div`
   padding: 3rem;
 
   border-radius: 1rem;
+  flex: 1;
 `;
 
 const ScShadowDiv = styled.div`
@@ -104,13 +99,13 @@ const ScEnemy = styled.div<ScEnemyProps>`
       top: ${ENEMY_HEIGHT}px;
     }
     100% {
-      top: 2rem;
+      top: 0rem;
     }
   }
   
   @keyframes pop-in2 {
     0% {
-      top: 2rem;
+      top: 0rem;
     }
     100% {
       top: -5rem;
@@ -134,6 +129,10 @@ const ScEnemy = styled.div<ScEnemyProps>`
 const ScEnemyPlaceholder = styled.div`
   height: ${ENEMY_HEIGHT}px;
   position: relative;
+  
+  .mode-editor & {
+    height: 0px;
+  }
 `;
 
 const ScPlayer = styled.div`
@@ -179,6 +178,8 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
   width: 7rem;
   top: 0rem;
   cursor: pointer;
+  
+  opacity: var(--opacity-editorfade);
 
   ${(p) =>
     p.$disabled &&
@@ -264,7 +265,7 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
   ${(p) =>
     p.$type === 'attack'
       ? css`
-          background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-purple) 70%);
+          background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-red) 70%);
           border: 0.25rem solid var(--co-sidebtn-primary);
         `
       : css`
@@ -351,8 +352,10 @@ function Layout() {
     paletteActive = window.location.search.indexOf('palette') > -1;
   });
 
-  const spinDisabled = gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
-  const attackDisabled = gameState !== 'SPIN' || spinInProgress;
+  console.log('uiSTate', uiState);
+
+  const spinDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
+  const attackDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress;
 
   const classNames = [`mode-${uiState}`];
   editorState === 'reel' && classNames.push('editor-reel');

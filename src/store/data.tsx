@@ -328,10 +328,15 @@ export type DeckState = {
   discard: number[];
 };
 
+// export const defaultReelState: DeckIdxCollection[] = [
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+// ];
 export const defaultReelState: DeckIdxCollection[] = [
-  [0, 1, 2, 3, 4, 5, 8, 9, 13],
-  [0, 1, 2, 3, 4, 5, 8, 9, 13],
-  [0, 1, 2, 3, 4, 5, 8, 9, 13],
+  [0, 9, 10],
+  [0, 9, 10],
+  [0, 9, 10],
 ];
 /*
 export const defaultReelState: DeckIdxCollection[] = [

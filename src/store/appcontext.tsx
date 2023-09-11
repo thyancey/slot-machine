@@ -290,7 +290,7 @@ const AppProvider = ({ children }: Props) => {
           } else {
             trigger('playerDisplay', [`PLAYER ATTACKS!`])
           }
-          trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
+          trigger('enemyAlert', ['ENEMY WAS ATTACKED!'].concat(mssg));
         } else {
           trigger('playerDisplay', ['PLAYER STUMBLED!']);
           trigger('enemyDisplay', ['ENEMY UNSCATHED!']);

@@ -150,10 +150,10 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-black);
-  --co-bg-primary: var(--color-black-light);
-  --co-bg-secondary-lit: var(--color-black-dark);
-  --co-bg-primary-lit: var(--color-black);
+  --co-bg-secondary: var(--color-black-light);
+  --co-bg-primary: var(--color-red-dark);
+  --co-bg-secondary-lit: var(--color-gold-dark);
+  --co-bg-primary-lit: var(--color-gold);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;

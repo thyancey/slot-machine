@@ -62,32 +62,32 @@ const ScReelEditorHover = styled.a`
       left: 0;
       width: 100%;
       z-index: 1;
-      background-color: var(--color-black);
-      color: var(--co-editor-primary);
       border-left: 0;
       border-right: 0;
       display: block;
+      border: .25rem dashed var(--co-player);
+      color: var(--co-player);
+      background-color: var(--color-white);
 
-      box-shadow: 0 0 2rem 1.5rem var(--color-black);
-      transition: box-shadow 0.3s;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     > div {
-      opacity: 0.3;
+      opacity: 0;
       position: absolute;
       z-index: -1;
       inset: 0;
-      background-color: var(--co-editor-primary);
       transition: opacity 0.3s;
     }
 
     &:hover {
       span {
-        box-shadow: 0 0 4rem 3rem var(--color-black);
+        background-color: var(--co-player-highlight);
+        color: var(--color-white);
       }
 
       > div {
-        opacity: 1;
+        opacity: 0;
       }
     }
   }
@@ -139,7 +139,7 @@ export const ScReelBg = styled.div<ScReelBgProps>`
   z-index: -1;
 
   .editor-reel & {
-    background-color: var(--co-editor-primary);
+    background-color: var(--color-white);
   }
 `;
 
