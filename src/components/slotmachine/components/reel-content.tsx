@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { Tile } from '../../../store/data';
+import { EffectGroup, Tile } from '../../../store/data';
 import StatLabel from './stat-label';
+import { ReactElement, useMemo } from 'react';
 
 interface ScProps {
   $height: number;
@@ -21,6 +22,7 @@ const ScWrapper = styled.div<ScProps>`
   padding: 1rem;
   position: relative;
 
+
   p {
     position: absolute;
     top: 0;
@@ -33,7 +35,7 @@ const ScWrapper = styled.div<ScProps>`
       -2px 2px 0 var(--color-black), 2px 2px 0 var(--color-black);
   }
 
-  >img {
+  > img {
     width: 100%;
     filter: var(--filter-shadow1);
   }
@@ -45,7 +47,9 @@ const ScStatLabels = styled.ul`
   text-align: center;
   z-index: 1;
   opacity: 0;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
+
+  background-color: var(--color-black);
 
   > li {
     display: inline-block;
@@ -58,23 +62,33 @@ const ScStatLabels = styled.ul`
   }
 `;
 
-type Props = {
+interface Props {
   tile: Tile;
   height: number;
   isActive: boolean;
-};
+}
 
 function ReelContent({ tile, height, isActive }: Props) {
+
+  // get x StatLabels for each value
+  // const items = useMemo(() => {
+  //   return tile.effects.reduce((acc: ReactElement[], effect: EffectGroup) => {
+  //     return acc.concat(
+  //       Array.from({ length: effect.value }).map((_, idx) => (
+  //         <StatLabel key={idx} type={effect.type} value={effect.value} />
+  //       ))
+  //     );
+  //   }, []);
+  // }, [tile.effects]);
+
+  const items = useMemo(() => {
+    return tile.effects.map((effect, idx) => <StatLabel key={idx} type={effect.type} value={effect.value} />)
+  }, [tile.effects]);
+
   return (
     <ScWrapper $height={height}>
       <img src={tile.img || ''} />
-      {isActive && (
-        <ScStatLabels>
-          {tile.effects.map((effect) => (
-            <StatLabel key={effect.type} type={effect.type} value={effect.value} />
-          ))}
-        </ScStatLabels>
-      )}
+      {isActive && <ScStatLabels>{items.map((i) => i)}</ScStatLabels>}
     </ScWrapper>
   );
 }

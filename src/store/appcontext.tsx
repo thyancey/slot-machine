@@ -238,6 +238,17 @@ const AppProvider = ({ children }: Props) => {
     }
   }, [enemyInfo, enemyAttack, enemyChooseAttack]);
 
+
+  // DO SOME FIGHTING
+  const finishTurn = useCallback(() => {
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
+      return;
+    }
+
+    setGameState('PLAYER_BUFF');
+  }, [setGameState, enemyInfo, setTurn]);
+
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
     const defense = getEffectDelta('defense', activeTiles, activeCombos);
@@ -247,6 +258,9 @@ const AppProvider = ({ children }: Props) => {
       attack: attack,
       defense: defense,
     });
+
+    // if you wanted to attack immediately after each spin
+    // if(gameState === 'SPIN') finishTurn();
   }, [activeTiles, activeCombos]);
 
   // handles states during round and turn transitions
@@ -380,16 +394,6 @@ const AppProvider = ({ children }: Props) => {
     setRound((prev) => prev + 1);
     setGameState('NEW_TURN');
   }, [setRound, round]);
-
-  // DO SOME FIGHTING
-  const finishTurn = useCallback(() => {
-    if (!enemyInfo) {
-      setTurn((prev) => prev + 1);
-      return;
-    }
-
-    setGameState('PLAYER_BUFF');
-  }, [setGameState, enemyInfo, setTurn]);
 
   useEffect(() => {
     // the timeouts here are brittle and likely to cause problems later

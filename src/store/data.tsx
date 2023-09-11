@@ -169,7 +169,7 @@ export const tileGlossary: TileGlossary = {
     img: AssetMap.Rbar1,
     attributes: ['bar', '*'],
     score: 100,
-    effects: [{ type: 'defense', value: 1 }],
+    effects: [{ type: 'defense', value: 6 }],
   },
   slot_bar2: {
     label: 'BAR II',
@@ -177,7 +177,7 @@ export const tileGlossary: TileGlossary = {
     img: AssetMap.Rbar2,
     attributes: ['bar', '*'],
     score: 200,
-    effects: [{ type: 'defense', value: 2 }],
+    effects: [{ type: 'defense', value: 6 }],
   },
   slot_bar3: {
     label: 'BAR III',
@@ -185,7 +185,7 @@ export const tileGlossary: TileGlossary = {
     img: AssetMap.Rbar3,
     attributes: ['bar', '*'],
     score: 300,
-    effects: [{ type: 'defense', value: 3 }],
+    effects: [{ type: 'defense', value: 6 }],
   },
   snowflake: {
     label: 'Freeze',

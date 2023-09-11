@@ -195,7 +195,8 @@ function SlotMachine() {
     score,
     uiState,
     editorState,
-    triggerSpin
+    triggerSpin,
+    finishTurn
   } = useContext(AppContext);
 
   const [sound_reelComplete] = useSound(Sound.beep, {
@@ -252,6 +253,7 @@ function SlotMachine() {
         sound_reelComplete();
         setReelLock(reelStates.map(() => true));
         setSpinInProgress(false);
+        console.log('from slotmachine.useEffect');
         finishSpinTurn();
       } else if (
         // one reel is done spinning, this doesnt always hit for some reason
@@ -263,7 +265,7 @@ function SlotMachine() {
       }
       // otherwise stuff like a reel is spinning, etc
     }
-  }, [reelResults, reelStates, spinCount, sound_reelComplete, setReelLock, finishSpinTurn, setSpinInProgress]);
+  }, [reelResults, reelStates, spinCount, sound_reelComplete, setReelLock, finishSpinTurn, setSpinInProgress, finishTurn]);
 
   useEffect(() => {
     if (activeCombos.length > 0) {
