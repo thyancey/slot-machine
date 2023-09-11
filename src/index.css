@@ -103,8 +103,8 @@
 
 
 
-  --co-player: var(--color-blue);
-  --co-player-secondary: var(--color-green);
+  --co-player: var(--color-white);
+  --co-player-secondary: var(--color-blue);
 
   --co-player-bordertop: var(--color-grey-dark);
   --co-player-borderside: var(--color-grey-light);
@@ -112,21 +112,21 @@
   --co-player-highlight: var(--color-green-light);
   --co-player-door: var(--color-grey-dark);
 
-  --co-sidebtn-spin: var(--color-white);
+  --co-sidebtn-spin: var(--color-blue);
   --co-sidebtn-spin-secondary: var(--color-blue);
-  --co-sidebtn-spin-text: var(--color-blue);
+  --co-sidebtn-spin-text: var(--color-white);
 
-  --co-sidebtn-attack: var(--color-white);
+  --co-sidebtn-attack: var(--color-red);
   --co-sidebtn-attack-secondary: var(--color-red);
-  --co-sidebtn-attack-text: var(--color-red);
+  --co-sidebtn-attack-text: var(--color-white);
 
 
   --co-health: var(--color-red);
   --co-defense: var(--color-blue);
 
   --co-reel-divider: var(--color-blue-light);
-  --co-editor-primary: var(--color-green);
-  --co-editor-secondary: var(--color-green-light);
+  --co-editor-primary: var(--color-blue);
+  --co-editor-secondary: var(--color-white);
 
   --co-reel-bg: var(--color-white);
 
@@ -136,10 +136,10 @@
   --co-button-disabled-primary: var(--color-grey-light);
   --co-button-disabled-secondary: var(--color-grey);
 
-  --co-bg-secondary: var(--color-grey-dark);
-  --co-bg-primary: var(--color-grey-dark);
-  --co-bg-secondary-lit: var(--color-grey-dark);
-  --co-bg-primary-lit: var(--color-grey-dark);
+  --co-bg-secondary: var(--color-black-dark);
+  --co-bg-secondary-lit: var(--color-black-dark);
+  --co-bg-primary: var(--color-black);
+  --co-bg-primary-lit: var(--color-black);
 
   --font-8bit: 'Press Start 2P', cursive;
   --font-8bit2: 'Silkscreen', cursive;
@@ -152,8 +152,8 @@
   --filter-shadow1: drop-shadow(0.2rem 0.2rem 0.1rem var(--color-black));
   --filter-shadow2: drop-shadow(0.5rem 0.5rem 0.5rem var(--color-black));
 
-  --val-reel-width: 100px;
-  --val-reel-height: 80px; /* SHOULD MATCH REEL_HEIGHT */
+  --val-reel-width: 110px;
+  --val-reel-height: 100px; /* SHOULD MATCH REEL_HEIGHT */
   --val-reel-peek: 60px; /* how much you can see adjacent items */
 
   --val-depth: 1.25rem;

@@ -10,10 +10,11 @@ const ScWrapper = styled.aside`
 
   width: 100%;
 
-  gap: 0.5rem;
+  gap: .5rem;
 
   background-color: var(--color-black);
-  border: 0.25rem solid var(--co-editor-primary);
+  /* border: 0.25rem solid var(--co-editor-primary); */
+  border-top: .5rem solid var(--co-editor-primary);
 `;
 
 const ScSelectedInfo = styled.div`
@@ -76,7 +77,9 @@ const ScCard = styled.li`
 
   width: 25%;
   height: 100%;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
+  padding: .5rem;
+
   overflow: hidden;
 
   cursor: pointer;
@@ -85,6 +88,7 @@ const ScCard = styled.li`
 
   &.chosen {
     background-color: var(--co-editor-primary);
+    border: .75rem solid var(--co-editor-secondary);
   }
 
   &:hover {

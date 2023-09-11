@@ -38,7 +38,6 @@ export const ScReelWrapper = styled.div`
     cursor: pointer;
     transition: filter 0.5s ease;
     &:hover {
-      background-color: green;
       filter: brightness(1.5);
     }
   }
@@ -65,8 +64,8 @@ const ScReelEditorHover = styled.a`
       border-left: 0;
       border-right: 0;
       display: block;
-      border: .25rem dashed var(--co-player);
-      color: var(--co-player);
+      border: .25rem dashed var(--co-editor-primary);
+      color: var(--co-editor-primary);
       background-color: var(--color-white);
 
       transition: background-color 0.3s, color 0.3s;
@@ -82,7 +81,7 @@ const ScReelEditorHover = styled.a`
 
     &:hover {
       span {
-        background-color: var(--co-player-highlight);
+        background-color: var(--co-editor-primary);
         color: var(--color-white);
       }
 

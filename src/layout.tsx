@@ -3,7 +3,7 @@ import Bg from './components/bg';
 import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
-import MetalGlint, { ScGlintWrapper } from './components/metal-glint';
+import { ScGlintWrapper } from './components/metal-glint';
 import SlotMachine, { ScReelContainer } from './components/slotmachine';
 import { COST_SPIN, ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
@@ -16,7 +16,7 @@ const ScWrapper = styled.main`
   overflow: hidden;
 
   &.mode-editor {
-    --opacity-editorfade: .2;
+    --opacity-editorfade: 0.2;
   }
 
   &.editor-reel {
@@ -38,9 +38,8 @@ const ScComboContainer = styled.div`
 
   align-items: center;
   justify-content: space-around;
-  
 
-  filter: drop-shadow(.5rem .5rem 1rem black);
+  filter: drop-shadow(0.5rem 0.5rem 1rem black);
 `;
 
 const ScFooter = styled.div`
@@ -52,12 +51,8 @@ const ScFooter = styled.div`
 
 const ScCombo = styled.div`
   position: relative;
-
-  /* box-shadow: 0px 0px 5px var(--co-enemy); */
   padding: 3rem;
-
   border-radius: 1rem;
-  flex: 1;
 `;
 
 const ScShadowDiv = styled.div`
@@ -75,8 +70,8 @@ const ScEnemy = styled.div<ScEnemyProps>`
   position: absolute;
   top: ${ENEMY_HEIGHT}px;
 
-  left: 3rem;
-  right: 3rem;
+  left: 4rem;
+  right: 4rem;
   /* 100 is extra buffer for the bounce anim so the bar doesnt look clipped */
   height: ${ENEMY_HEIGHT + 100}px;
 
@@ -102,13 +97,13 @@ const ScEnemy = styled.div<ScEnemyProps>`
       top: ${ENEMY_HEIGHT}px;
     }
     100% {
-      top: 0rem;
+      top: -1rem;
     }
   }
-  
+
   @keyframes pop-in2 {
     0% {
-      top: 0rem;
+      top: -1rem;
     }
     100% {
       top: -5rem;
@@ -132,7 +127,7 @@ const ScEnemy = styled.div<ScEnemyProps>`
 const ScEnemyPlaceholder = styled.div`
   height: ${ENEMY_HEIGHT}px;
   position: relative;
-  
+
   .mode-editor & {
     height: 0px;
   }
@@ -181,7 +176,7 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
   width: 7rem;
   top: 0rem;
   cursor: pointer;
-  
+
   opacity: var(--opacity-editorfade);
 
   ${(p) =>
@@ -201,28 +196,22 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
 
   @media (hover: hover) {
     &:hover > div {
-      span {
-        /* color: var(--color-grey); */
-      }
-
       ${(p) =>
         p.$position === 'left' &&
         css`
-          background-color: var(--color-red-dark);
+          background-color: var(--color-red-light);
+          border-color: var(--color-red-light);
           right: 2rem;
-          /* span: { */
-            color: var(--color-white);
-          /* } */
+          color: var(--color-white);
         `}
 
       ${(p) =>
         p.$position === 'right' &&
         css`
-          background-color: var(--color-blue-dark);
+          background-color: var(--color-blue-light);
+          border-color: var(--color-blue-light);
           left: 2rem;
-          /* span: { */
-            color: var(--color-white);
-          /* } */
+          color: var(--color-white);
         `}
     }
   }
@@ -278,17 +267,17 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
       ? css`
           background-color: var(--co-sidebtn-attack);
           /* background: radial-gradient(ellipse at bottom, var(--color-red), var(--color-red-dark) 70%); */
-          border: 0.5rem solid var(--co-sidebtn-attack-secondary);
+          border: 0.5rem solid var(--co-sidebtn-attack);
           /* span { */
-            color: var(--co-sidebtn-attack-text);
+          color: var(--co-sidebtn-attack-text);
           /* } */
         `
       : css`
           /* background: radial-gradient(ellipse at bottom, var(--color-green), var(--color-green-dark) 70%); */
           background-color: var(--co-sidebtn-spin);
-          border: 0.5rem solid var(--co-sidebtn-spin-secondary);
+          border: 0.5rem solid var(--co-sidebtn-spin);
           /* span { */
-            color: var(--co-sidebtn-spin-text);
+          color: var(--co-sidebtn-spin-text);
           /* } */
         `}
 
@@ -305,6 +294,7 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     display: block;
     font-size: 4rem;
     text-align: center;
+    margin-top: -0.5rem;
   }
 
   ${(p) =>
@@ -312,7 +302,7 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     css`
       transform-origin: left;
       border-radius: 4rem 4rem 0 0;
-      left: 1rem;
+      left: 1.5rem;
       top: -3.25rem;
       margin-left: 0rem;
       transform: rotate(90deg);
@@ -328,9 +318,20 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
       transform: rotate(-90deg);
       transition: right 0.3s;
 
-      right: 1rem;
+      right: 1.5rem;
       top: -3.25rem;
     `}
+`;
+
+const ScBackTopPanel = styled.div`
+  position: absolute;
+  background-color: var(--color-white);
+  height: 10rem;
+  top: -1rem;
+  left: 3rem;
+  right: 3rem;
+  border-radius: .5rem;
+  z-index:-1;
 `;
 
 const ScBackPanels = styled.div`
@@ -345,16 +346,11 @@ const ScBackPanels = styled.div`
 
     background-color: var(--co-player);
     padding: 2rem;
-    border-radius: 1rem;
+    /* border-radius: 1rem; */
+    border-radius: .5rem;
 
-    &:nth-child(1) {
-      top: 5rem;
-      height: ${PANEL_HEIGHT}rem;
-    }
-    &:nth-child(2) {
-      bottom: -2rem;
-      height: 8rem;
-    }
+    top: 8rem;
+    height: ${PANEL_HEIGHT}rem;
   }
 `;
 
@@ -397,6 +393,7 @@ function Layout() {
             <SlotMachine />
             {/* <MetalGlint glintTheme='player' /> */}
             {/* <ScShadowDiv /> */}
+            <ScBackTopPanel />
             <ScBackPanels>
               <div>
                 <ScSideBtnContainer
@@ -420,13 +417,13 @@ function Layout() {
                   </ScSideBtn>
                 </ScSideBtnContainer>
               </div>
-              <div></div>
+              {/* <div></div> */}
             </ScBackPanels>
           </ScPlayer>
         </ScCombo>
         <ScFooter>{uiState === 'editor' && <SimpleEditor />}</ScFooter>
       </ScComboContainer>
-      {/* <Bg /> */}
+      <Bg />
       {/* <MachineEditor /> */}
     </ScWrapper>
   );

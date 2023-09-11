@@ -20,11 +20,10 @@ const ScWrapper = styled.div`
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: min-content min-content auto;
-  grid-gap: 2rem;
 
   background-color: var(--co-player-secondary);
   border-radius: 1rem;
-  padding: 1rem .5rem;
+  padding: 1rem 0.5rem;
 `;
 
 export const ScReelContainer = styled.div`
@@ -108,10 +107,6 @@ const ScScoreBoxButton = styled.div`
   }
 
   &.active {
-    > div {
-      background-color: var(--color-black-light);
-    }
-
     color: var(--color-yellow-light);
     p {
       opacity: 1;
@@ -119,8 +114,7 @@ const ScScoreBoxButton = styled.div`
     cursor: pointer;
 
     &:hover {
-      background-color: var(--color-grey-dark);
-      color: var(--color-green-dark);
+      color: var(--color-white);
     }
   }
 `;
