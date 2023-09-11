@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 import AssetMap from '../../../assets';
-import { EffectGroup } from '../../../store/data';
-import { useMemo } from 'react';
 
 const ScWrapper = styled.li`
   z-index: 1;

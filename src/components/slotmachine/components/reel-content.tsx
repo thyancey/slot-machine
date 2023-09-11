@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { EffectGroup, Tile } from '../../../store/data';
+import { Tile } from '../../../store/data';
 import StatLabel from './stat-label';
-import { ReactElement, useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface ScProps {
   $height: number;
