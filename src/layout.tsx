@@ -38,6 +38,9 @@ const ScComboContainer = styled.div`
 
   align-items: center;
   justify-content: space-around;
+  
+
+  filter: drop-shadow(.5rem .5rem 1rem black);
 `;
 
 const ScFooter = styled.div`
@@ -80,7 +83,7 @@ const ScEnemy = styled.div<ScEnemyProps>`
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
   padding: 1.5rem 2rem 1rem 2rem;
-  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
+  /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
 
   transition: bottom 0.3s ease;
 
@@ -140,17 +143,17 @@ const ScPlayer = styled.div`
   padding: 1.75rem;
   padding-bottom: 2.25rem;
   z-index: 0;
+  background-color: var(--co-player);
 
   /* margin-top: ${ENEMY_HEIGHT}px; */
 
   /* refactor this shadow hack w/glint */
-  box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black);
+  /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
   border-radius: 1.5rem 1.5rem 1rem 1rem;
 
   ${ScGlintWrapper} {
     border-radius: 1.5rem 1.5rem 1rem 1rem;
   }
-  background-color: transparent;
 
   ${ScShadowDiv} {
     /* box-shadow: 0 0 6rem 3rem var(--co-player-highlight); */
@@ -199,19 +202,27 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
   @media (hover: hover) {
     &:hover > div {
       span {
-        color: var(--color-grey);
+        /* color: var(--color-grey); */
       }
 
       ${(p) =>
         p.$position === 'left' &&
         css`
+          background-color: var(--color-red-dark);
           right: 2rem;
+          /* span: { */
+            color: var(--color-white);
+          /* } */
         `}
 
       ${(p) =>
         p.$position === 'right' &&
         css`
+          background-color: var(--color-blue-dark);
           left: 2rem;
+          /* span: { */
+            color: var(--color-white);
+          /* } */
         `}
     }
   }
@@ -219,7 +230,7 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
   &:active {
     > div {
       span {
-        color: var(--color-grey);
+        /* color: var(--color-grey); */
       }
 
       ${(p) =>
@@ -265,26 +276,34 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
   ${(p) =>
     p.$type === 'attack'
       ? css`
-          background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-red) 70%);
-          border: 0.25rem solid var(--co-sidebtn-primary);
+          background-color: var(--co-sidebtn-attack);
+          /* background: radial-gradient(ellipse at bottom, var(--color-red), var(--color-red-dark) 70%); */
+          border: 0.5rem solid var(--co-sidebtn-attack-secondary);
+          /* span { */
+            color: var(--co-sidebtn-attack-text);
+          /* } */
         `
       : css`
-          background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-green) 70%);
-          border: 0.25rem solid var(--co-sidebtn-primary);
+          /* background: radial-gradient(ellipse at bottom, var(--color-green), var(--color-green-dark) 70%); */
+          background-color: var(--co-sidebtn-spin);
+          border: 0.5rem solid var(--co-sidebtn-spin-secondary);
+          /* span { */
+            color: var(--co-sidebtn-spin-text);
+          /* } */
         `}
 
   ${(p) =>
     p.$disabled &&
     css`
-      background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-grey) 70%);
+      /* background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-grey) 70%); */
+      background-color: var(--color-grey);
       border: 0.25rem solid var(--co-sidebtn-primary);
     `}
 
   span {
-    color: var(--color-black);
+    /* color: var(--co-sidebtn-attack-text); */
     display: block;
     font-size: 4rem;
-    width: 100%;
     text-align: center;
   }
 
@@ -324,7 +343,7 @@ const ScBackPanels = styled.div`
     left: -1rem;
     right: -1rem;
 
-    background-color: var(--co-player-door);
+    background-color: var(--co-player);
     padding: 2rem;
     border-radius: 1rem;
 
@@ -371,13 +390,13 @@ function Layout() {
           <ScEnemyPlaceholder>
             <ScEnemy $isActive={enemyActive} $isAlive={!!enemyInfo}>
               <Enemy />
-              <ScShadowDiv />
+              {/* <ScShadowDiv /> */}
             </ScEnemy>
           </ScEnemyPlaceholder>
           <ScPlayer>
             <SlotMachine />
-            <MetalGlint glintTheme='player' />
-            <ScShadowDiv />
+            {/* <MetalGlint glintTheme='player' /> */}
+            {/* <ScShadowDiv /> */}
             <ScBackPanels>
               <div>
                 <ScSideBtnContainer
@@ -407,7 +426,7 @@ function Layout() {
         </ScCombo>
         <ScFooter>{uiState === 'editor' && <SimpleEditor />}</ScFooter>
       </ScComboContainer>
-      <Bg />
+      {/* <Bg /> */}
       {/* <MachineEditor /> */}
     </ScWrapper>
   );

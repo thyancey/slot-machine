@@ -21,6 +21,10 @@ const ScWrapper = styled.div`
   grid-template-columns: auto;
   grid-template-rows: min-content min-content auto;
   grid-gap: 2rem;
+
+  background-color: var(--co-player-secondary);
+  border-radius: 1rem;
+  padding: 1rem .5rem;
 `;
 
 export const ScReelContainer = styled.div`
@@ -32,7 +36,6 @@ export const ScReelContainer = styled.div`
   position: relative;
 
   padding: 1rem 1.75rem;
-  background-color: var(--co-player-door);
   border-radius: 0.75rem;
 
   align-items: center;
@@ -42,6 +45,7 @@ export const ScReelContainer = styled.div`
 
   > ul {
     display: flex;
+    gap: 1rem;
   }
 
   opacity: var(--opacity-editorfade);
@@ -54,20 +58,8 @@ export const ScReelContainer = styled.div`
 `;
 
 const ScReelSegment = styled.div`
-  background-color: var(--co-player-border);
-  margin: 0rem 0.75rem;
-
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  border-top: 0;
-
-  &:first-child {
-    border-right: 0;
-    margin-left: 0;
-  }
-  &:last-child {
-    border-left: 0;
-    margin-right: 0;
-  }
+  border-radius: var(--val-depth-radius);
 `;
 
 const ScScoreBoxContainer = styled.div`
@@ -76,7 +68,6 @@ const ScScoreBoxContainer = styled.div`
 
   position: relative;
   padding: 1rem 1.75rem;
-  background-color: var(--co-player-door);
   border-radius: 0.75rem;
 
   display: flex;
@@ -90,13 +81,10 @@ const ScScoreBoxButton = styled.div`
   transition: all 0.3s;
 
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  border-left: 0;
-  border-top: 0;
 
   font-size: 1.5rem;
   line-height: 1.25rem;
   white-space: pre-wrap; /* interpret /n as line breaks */
-  /* max-width: 10rem; */
   text-align: right;
 
   color: var(--color-white-dark);
@@ -139,7 +127,7 @@ const ScScoreBoxButton = styled.div`
 
 const ScScoreBox = styled.div`
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  border-top: 0;
+  /* border-top: 0; */
   flex: 1;
 `;
 
@@ -149,8 +137,8 @@ const ScDisplay = styled.div`
   grid-column: 1;
 
   padding: 1rem 1.75rem;
-  background-color: var(--co-player-door);
-  border-radius: 0.75rem;
+  /* background-color: var(--co-player-door); */
+  /* border-radius: 0.75rem; */
 
   max-width: var(--var-reels-width, 100%);
 

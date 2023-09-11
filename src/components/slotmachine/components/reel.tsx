@@ -134,12 +134,12 @@ export const ScReelBg = styled.div<ScReelBgProps>`
     css`
       background: url(${props.$bg});
     `};
-  background-color: var(--color-white);
+  background-color: var(--co-reel-bg);
   background-size: contain;
   z-index: -1;
 
   .editor-reel & {
-    background-color: var(--color-white);
+    background-color: var(--co-reel-bg);
   }
 `;
 

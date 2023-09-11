@@ -19,7 +19,7 @@ const ScCard = styled.div`
 
   position: relative;
   padding: 1rem 1.75rem;
-  background-color: var(--co-enemy-door);
+  background-color: var(--co-enemy-secondary);
   border-radius: 0.75rem;
 
   opacity: var(--opacity-editorfade);

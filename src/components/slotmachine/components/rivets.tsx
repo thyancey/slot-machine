@@ -6,6 +6,7 @@ const ScWrapper = styled.div`
   position:absolute;
   inset: .5rem 0.5rem;
   pointer-events: none;
+  opacity: 0;
 `;
 
 const ScRivet = styled.div`

@@ -1,14 +1,12 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PlayerInfo } from '../../store/data';
-import { MixinBorders } from '../../utils/styles';
 import { off, on } from '../../utils/events';
 import DisplayScreen from './display-screen';
 
 const ScDisplay = styled.div`
   background-color: var(--color-black);
 
-  /* ${MixinBorders('--co-player-bordertop', '--co-player-borderside')} */
   border-top: 0;
   text-align:center;
 `;

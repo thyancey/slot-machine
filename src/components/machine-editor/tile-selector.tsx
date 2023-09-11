@@ -24,13 +24,13 @@ const ScTiles = styled.ul`
 const ScTile = styled.li`
   background-color: var(--color-white);
   /* border: var(--border-width-small) solid var(--color-); */
-  box-shadow: 0px 3px 2px 6px var(--color-purple-dark);
+  box-shadow: 0px 3px 2px 6px var(--color-green-dark);
 
   &:first-child {
-    box-shadow: 3px 3px 2px 6px var(--color-purple-dark);
+    box-shadow: 3px 3px 2px 6px var(--color-green-dark);
   }
   &:last-child {
-    box-shadow: -3px 3px 2px 6px var(--color-purple-dark);
+    box-shadow: -3px 3px 2px 6px var(--color-green-dark);
   }
 
   padding: 0;

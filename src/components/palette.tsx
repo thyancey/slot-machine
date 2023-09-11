@@ -43,7 +43,7 @@ function PaletteItem({ color }: PaletteProps) {
 }
 
 function Palette() {
-  const colors = [ 'purple', 'red', 'blue', 'green', 'yellow', 'grey', 'black', 'white', 'offwhite'];
+  const colors = [ 'red', 'blue', 'green', 'yellow', 'grey', 'black', 'white'];
   const numColors = 200;
 
   const randColors = Array(numColors)
