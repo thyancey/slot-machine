@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
-import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
+import { DeckIdxCollection, GameState, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';
@@ -64,7 +64,7 @@ const ScReelEditorHover = styled.a`
       border-left: 0;
       border-right: 0;
       display: block;
-      border: .25rem dashed var(--co-editor-primary);
+      border: 0.25rem dashed var(--co-editor-primary);
       color: var(--co-editor-primary);
       background-color: var(--color-white);
 
@@ -152,7 +152,6 @@ type Props = {
   isEnabled: boolean; // can click to spin this weel
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
   onClick: () => void;
-  // triggerSpin: (reelIdx: number) => void;
 };
 function Reel({
   reelIdx,
@@ -162,15 +161,14 @@ function Reel({
   reelLock,
   spinCount,
   onSpinComplete,
-  // triggerSpin,
   onClick,
-  isEnabled,
+  isEnabled
 }: Props) {
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
-  const [spinProgress, setSpinProgress] = useState(1);
+  const [spinProgress, setSpinProgress] = useState(0);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
   const reelBg = ''; // eventually, stored in reel data
   // const reelBg = AssetMap.Reel_BG;
@@ -254,7 +252,7 @@ function Reel({
               key={`s${reelIdx}-${idx}`}
               tile={tile}
               height={REEL_HEIGHT}
-              isActive={targetSlotIdx > -1 && idx - REEL_OVERLAP === targetSlotIdx && spinProgress >= 1}
+              isActive={isEnabled && idx - REEL_OVERLAP === targetSlotIdx}
             />
           ))}
           <ScReelBg $bg={reelBg} />

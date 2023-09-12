@@ -233,7 +233,6 @@ function SlotMachine() {
         sound_reelComplete();
         setReelLock(reelStates.map(() => true));
         setSpinInProgress(false);
-        console.log('from slotmachine.useEffect');
         finishSpinTurn();
       } else if (
         // one reel is done spinning, this doesnt always hit for some reason
@@ -282,28 +281,40 @@ function SlotMachine() {
 
       // first get the title, this should be refactored
       if (playerAttack.label) {
-        mssgs.push(`*${playerAttack.label}* READY`);
+        // mssgs.push(`*${playerAttack.label}* READY`);
       } else if (playerAttack.attack > 0 && playerAttack.defense > 0) {
-        mssgs.push('*ATTACK + BUFF READY*');
+        // mssgs.push('*ATTACK + BUFF READY*');
       } else if (playerAttack.attack > 0) {
-        mssgs.push('*ATTACK READY*');
+        // mssgs.push('*ATTACK READY*');
       } else {
-        mssgs.push('*BUFF READY*');
-      }
-
-      if (playerAttack.attack > 0) {
-        mssgs.push(`+${playerAttack.attack} DAMAGE`);
-      }
-      if (playerAttack.defense > 0) {
-        mssgs.push(`+${playerAttack.defense} DEFENSE`);
+        // mssgs.push('*BUFF READY*');
       }
 
       // if (activeCombos.length > 0) {
-      //   mssgs.push(`${activeCombos[0].label}`, `x${activeCombos[0].bonus?.multiplier} multiplier`);
+      //   mssgs.push(`*${activeCombos[0].label}: x${activeCombos[0].bonus?.multiplier}*`);
       // }
+
+      const attackCombos = activeCombos.filter((ac) => ac.attribute === 'attack');
+      if (playerAttack.attack > 0) {
+        for (let i = 0; i < attackCombos.length; i++) {
+          mssgs.push(`*${attackCombos[i].label} - x${attackCombos[i].bonus?.multiplier || 1} attack*`);
+        }
+
+        mssgs.push(`+${playerAttack.attack} DAMAGE`);
+      }
+
+      const defenseCombos = activeCombos.filter((ac) => ac.attribute === 'defense');
+      if (playerAttack.defense > 0) {
+        for (let i = 0; i < defenseCombos.length; i++) {
+          mssgs.push(`*${defenseCombos[i].label} - x${defenseCombos[i].bonus?.multiplier || 1} defense*`);
+        }
+
+        mssgs.push(`+${playerAttack.defense} DEFENSE`);
+      }
+
       trigger('playerDisplay', mssgs);
     }
-  }, [playerAttack, gameState]);
+  }, [playerAttack, gameState, activeCombos]);
 
   // gamemode: spin, editormode: insert into reel
   const onReelClick = (reelIdx: number) => {

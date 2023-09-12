@@ -9,7 +9,7 @@ import {
   EffectType,
   DeckState,
   AttackDef,
-  EMPTY_ATTACK,
+  EMPTY_ATTACK
 } from '../../store/data';
 
 export type ReelTarget = [tileIdx: number, spinCount: number];
@@ -150,27 +150,28 @@ export const getSpinTarget = (curLoopedIdx: number, targSlotIdx: number, reelLen
 };
 
 export const getEffectDelta = (effectType: EffectType, activeTiles: Tile[], activeCombos: ReelComboResult[]) => {
-  console.log('getEffectDelta', effectType, activeTiles, activeCombos)
   const rawValue = activeTiles.reduce((val, rS) => {
     // if (activeCombos.length === 0) return 0;
     const atk = rS?.effects.find((ef) => ef.type === effectType);
     if (atk) {
-      console.log(`atk found givin back ${val} + ${atk.value}`);
       return val + atk.value;
     }
     return val;
   }, 0);
-  return rawValue;
 
-  if(activeCombos.length === 0) return rawValue;
-  return activeCombos.reduce((fullValue, combo) => {
-    if(combo.attribute === effectType){
-      if(combo.bonus?.multiplier) {
-        return fullValue * combo.bonus.multiplier;
-      }
+  const totalValue = activeCombos.reduce((accValue, combo) => {
+    if(combo.bonus?.multiplier) {
+      return accValue * combo.bonus.multiplier
     }
-    return fullValue;
-  }, rawValue)
+    return accValue;
+  }, rawValue);
+
+  return {
+    value: totalValue,
+    rawValue: rawValue
+  };
+
+  // const multipliers = activeCombos.filter(ac => !!ac.bonus?.multiplier).map(ac => ac.bonus?.multiplier);
 };
 
 export const calcAttackAndBlock = (

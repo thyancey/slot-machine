@@ -205,7 +205,9 @@ const AppProvider = ({ children }: Props) => {
   }, [turn, setUpgradeTokensState, setReelResults]);
 
   useEffect(() => {
+    // console.log(turnRef.current, turn, enemyInfo, enemyAttack)
     if (turnRef.current !== turn && enemyInfo && enemyAttack) {
+      // console.log('check enemy attack');
       turnRef.current = turn;
 
       const mssg = [`${enemyInfo.label} WILL USE`, `*${enemyAttack.label}*`];
@@ -240,14 +242,16 @@ const AppProvider = ({ children }: Props) => {
   }, [setGameState, enemyInfo, setTurn]);
 
   const finishSpinTurn = useCallback(() => {
-    const attack = getEffectDelta('attack', activeTiles, activeCombos);
-    const defense = getEffectDelta('defense', activeTiles, activeCombos);
-    console.log('finishSpinTurn', activeTiles, activeCombos)
+    const attack = getEffectDelta('attack', activeTiles, activeCombos.filter(ac => ac.attribute === 'attack'));
+    const defense = getEffectDelta('defense', activeTiles, activeCombos.filter(ac => ac.attribute === 'defense'));
+    // console.log('finishSpinTurn', activeTiles, activeCombos);
 
     setPlayerAttack({
       label: '',
-      attack: attack,
-      defense: defense,
+      attack: attack.value,
+      rawAttack: attack.rawValue,
+      defense: defense.value,
+      rawDefense: defense.rawValue
     });
 
     // if you wanted to attack immediately after each spin
@@ -286,12 +290,12 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.hpDelta < 0) mssg.push(`${attackResult.hpDelta} HP`);
 
         if (mssg.length > 0) {
-          if (playerAttack?.attack) {
+          if (playerAttack?.attack && playerAttack.attack > 0) {
             trigger('playerDisplay', ['PLAYER ATTACKS WITH', `+${playerAttack.attack} damage`]);
           } else {
             trigger('playerDisplay', [`PLAYER ATTACKS!`])
           }
-          trigger('enemyAlert', ['ENEMY WAS ATTACKED!'].concat(mssg));
+          trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
         } else {
           trigger('playerDisplay', ['PLAYER STUMBLED!']);
           trigger('enemyDisplay', ['ENEMY UNSCATHED!']);
@@ -399,8 +403,9 @@ const AppProvider = ({ children }: Props) => {
   const newRound = useCallback(() => {
     trigger('playerDisplay', [`ROUND ${round + 1} COMPLETE!`]);
     setRound((prev) => prev + 1);
+    turnRef.current = -1;
     setGameState('NEW_TURN');
-  }, [setRound, round]);
+  }, [setRound, round, turnRef]);
 
   useEffect(() => {
     // the timeouts here are brittle and likely to cause problems later

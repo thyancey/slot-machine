@@ -18,7 +18,9 @@ export const COST_UPGRADE = 10000;
 export const EMPTY_ATTACK = {
   label: '',
   attack: 0,
+  rawAttack: 0,
   defense: 0,
+  rawDefense: 0
 };
 
 export type UiState = 'game' | 'editor';
@@ -286,6 +288,7 @@ export const reelComboDef: ReelCombo[] = [
   },
 ];
 
+
 /**
  * Holds a collection of tiles that the player will draw from. Typically contains a subset of all Tiles in the TileGlossary,
  * and will contain duplicates of tiles
@@ -358,6 +361,8 @@ export type AttackDef = {
   label: string;
   attack: number;
   defense: number;
+  rawAttack?: number;
+  rawDefense?: number;
 };
 
 export type EnemyInfo = PlayerInfo & {
@@ -378,12 +383,12 @@ export const enemies: EnemyInfo[] = [
       {
         label: 'tail whip',
         attack: 3,
-        defense: 0,
+        defense: 0
       },
       {
         label: 'acorn shield',
         attack: 0,
-        defense: 5,
+        defense: 5
       },
     ],
   },
@@ -398,12 +403,12 @@ export const enemies: EnemyInfo[] = [
       {
         label: 'bite',
         attack: 3,
-        defense: 0,
+        defense: 0
       },
       {
         label: 'shell up',
         attack: 0,
-        defense: 10,
+        defense: 10
       },
     ],
   },
