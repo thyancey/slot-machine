@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { AppContext } from '../../store/appcontext';
-import { Tile, tileGlossary } from '../../store/data';
+import { AppContext } from '../store/appcontext';
+import { Tile, tileGlossary } from '../store/data';
 
 const ScWrapper = styled.aside`
   display: grid;

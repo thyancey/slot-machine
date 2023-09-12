@@ -9,7 +9,6 @@ import useSound from 'use-sound';
 import Sound from '../../assets/sounds';
 import ScoreBox from './components/scorebox';
 import { MixinBorders } from '../../utils/styles';
-import Rivets from './components/rivets';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
 import { convertToDollaridoos } from '../../utils';
@@ -343,7 +342,6 @@ function SlotMachine() {
         <ScDisplayWrapper>
           <DisplayPanel playerType='player' playerInfo={playerInfo} />
         </ScDisplayWrapper>
-        <Rivets />
       </ScDisplay>
       <ScReelContainer id='reels-container'>
         <ul>
@@ -365,7 +363,6 @@ function SlotMachine() {
             </ScReelSegment>
           ))}
         </ul>
-        <Rivets />
       </ScReelContainer>
 
       <ScScoreBoxContainer>
@@ -381,7 +378,6 @@ function SlotMachine() {
             <p>{`-${convertToDollaridoos(COST_UPGRADE)}`}</p>
           </div>
         </ScScoreBoxButton>
-        <Rivets />
       </ScScoreBoxContainer>
     </ScWrapper>
   );
