@@ -64,8 +64,6 @@ const ScDefenseBox = styled.div`
   color: var(--color-white);
   
   /* filter: drop-shadow(0.2rem 0.2rem 0.25rem var(--color-grey)); */
-  /* sit over bar */
-  z-index: 1;
 
   line-height: 2.25rem;
   font-size: 1.5rem;
@@ -106,11 +104,11 @@ const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
 
   return (
     <ScWrapper className={defense !== 0 ? 'defended' : ''}>
-      <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
       <ScHealthBar>
         <ScHealthBarBg style={{ width: `${healthPerc}%` }} />
         <p>{`${hp} / ${hpMax}`}</p>
       </ScHealthBar>
+      <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
     </ScWrapper>
   );
 };

@@ -369,8 +369,6 @@ function Layout() {
     paletteActive = window.location.search.indexOf('palette') > -1;
   });
 
-  console.log('uiSTate', uiState);
-
   const spinDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
   const attackDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress;
 

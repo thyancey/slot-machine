@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Tile } from '../../../store/data';
 import StatLabel from './stat-label';
 import { useMemo } from 'react';
@@ -22,7 +22,6 @@ const ScWrapper = styled.div<ScProps>`
   padding: 1rem;
   position: relative;
 
-
   p {
     position: absolute;
     top: 0;
@@ -41,13 +40,16 @@ const ScWrapper = styled.div<ScProps>`
   }
 `;
 
-const ScStatLabels = styled.ul`
+interface ScStatLabelsProps {
+  $isActive?: boolean;
+}
+const ScStatLabels = styled.ul<ScStatLabelsProps>`
   position: absolute;
   bottom: -0.5rem;
   text-align: center;
   z-index: 1;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.5s;
 
   background-color: var(--color-black);
 
@@ -57,9 +59,11 @@ const ScStatLabels = styled.ul`
     width: 2rem;
   }
 
-  .lit-up & {
-    opacity: 1;
-  }
+  ${(p) =>
+    p.$isActive &&
+    css`
+      opacity: 1;
+    `}
 `;
 
 interface Props {
@@ -69,26 +73,14 @@ interface Props {
 }
 
 function ReelContent({ tile, height, isActive }: Props) {
-
-  // get x StatLabels for each value
-  // const items = useMemo(() => {
-  //   return tile.effects.reduce((acc: ReactElement[], effect: EffectGroup) => {
-  //     return acc.concat(
-  //       Array.from({ length: effect.value }).map((_, idx) => (
-  //         <StatLabel key={idx} type={effect.type} value={effect.value} />
-  //       ))
-  //     );
-  //   }, []);
-  // }, [tile.effects]);
-
   const items = useMemo(() => {
-    return tile.effects.map((effect, idx) => <StatLabel key={idx} type={effect.type} value={effect.value} />)
+    return tile.effects.map((effect, idx) => <StatLabel key={idx} type={effect.type} value={effect.value} />);
   }, [tile.effects]);
 
   return (
     <ScWrapper $height={height}>
       <img src={tile.img || ''} />
-      {isActive && <ScStatLabels>{items.map((i) => i)}</ScStatLabels>}
+      <ScStatLabels $isActive={isActive}>{items.map((i) => i)}</ScStatLabels>
     </ScWrapper>
   );
 }

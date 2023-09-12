@@ -165,27 +165,27 @@ export const tileGlossary: TileGlossary = {
   },
   slot_bar1: {
     label: 'BAR',
-    debugLabel: 'wildcard, defend self +1',
+    debugLabel: 'wildcard',
     img: AssetMap.Rbar1,
     attributes: ['bar', '*'],
     score: 100,
-    effects: [{ type: 'defense', value: 6 }],
+    effects: [],
   },
   slot_bar2: {
     label: 'BAR II',
-    debugLabel: 'wildcard, defend self +2',
+    debugLabel: 'wildcard,',
     img: AssetMap.Rbar2,
     attributes: ['bar', '*'],
     score: 200,
-    effects: [{ type: 'defense', value: 6 }],
+    effects: [],
   },
   slot_bar3: {
     label: 'BAR III',
-    debugLabel: 'wildcard, defend self +3',
+    debugLabel: 'wildcard',
     img: AssetMap.Rbar3,
     attributes: ['bar', '*'],
     score: 300,
-    effects: [{ type: 'defense', value: 6 }],
+    effects: [],
   },
   snowflake: {
     label: 'Freeze',
@@ -199,7 +199,7 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   sword: {
-    label: 'Attack Boost',
+    label: 'Sword',
     debugLabel: 'attack x2',
     img: AssetMap.Rsword,
     attributes: ['attack'],
@@ -334,9 +334,9 @@ export type DeckState = {
 //   [0, 1, 2, 3, 4, 5, 8, 9, 13],
 // ];
 export const defaultReelState: DeckIdxCollection[] = [
-  [0, 9, 10],
-  [0, 9, 10],
-  [0, 9, 10],
+  [9],
+  [9],
+  [9],
 ];
 /*
 export const defaultReelState: DeckIdxCollection[] = [

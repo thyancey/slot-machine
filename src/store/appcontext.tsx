@@ -242,6 +242,7 @@ const AppProvider = ({ children }: Props) => {
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos);
     const defense = getEffectDelta('defense', activeTiles, activeCombos);
+    console.log('finishSpinTurn', activeTiles, activeCombos)
 
     setPlayerAttack({
       label: '',
@@ -479,7 +480,6 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerSpin = useCallback(
     (onlyThisReelIdx?: number) => {
-      console.log('triggerSpin');
       trigger('playerDisplay', [`LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`]);
 
       if (onlyThisReelIdx !== undefined) {

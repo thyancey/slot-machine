@@ -234,8 +234,6 @@ function Reel({
     }
   };
 
-  console.log()
-
   return (
     <ScReelWrapper
       // onClick={() => isEnabled && triggerSpin(reelIdx)}
@@ -256,7 +254,7 @@ function Reel({
               key={`s${reelIdx}-${idx}`}
               tile={tile}
               height={REEL_HEIGHT}
-              isActive={idx - REEL_OVERLAP === targetSlotIdx}
+              isActive={targetSlotIdx > -1 && idx - REEL_OVERLAP === targetSlotIdx && spinProgress >= 1}
             />
           ))}
           <ScReelBg $bg={reelBg} />
