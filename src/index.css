@@ -40,7 +40,7 @@
  
   --hsl-green-h: 169;
   --hsl-green-s: 89%;
-  --hsl-green-l: 50%;
+  --hsl-green-l: 40%;
   --hsl-green: var(--hsl-green-h), var(--hsl-green-s), var(--hsl-green-l);
   
   --hsl-blue-h: 202;

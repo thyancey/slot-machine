@@ -4,9 +4,9 @@ import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
 import SlotMachine, { ScReelContainer } from './components/slotmachine';
-import { COST_SPIN, ENEMY_HEIGHT } from './store/data';
+import { COST_SPIN, COST_UPGRADE, ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
-import MachineEditor from './components/machine-editor';
+import MachineEditor from './components/editor';
 
 const PANEL_HEIGHT = 32;
 const ScWrapper = styled.main`
@@ -29,20 +29,17 @@ const ScWrapper = styled.main`
 const ScComboContainer = styled.div`
   width: 100%;
   height: 100%;
-  height: calc(100% - 2rem);
-  margin-top: 2rem;
 
   display: flex;
   flex-direction: column;
 
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 
   filter: drop-shadow(0.5rem 0.5rem 1rem black);
 `;
 
 const ScFooter = styled.div`
-  position: absolute;
   width: 100%;
   bottom: 0;
   z-index: 1;
@@ -52,6 +49,11 @@ const ScCombo = styled.div`
   position: relative;
   padding: 3rem;
   border-radius: 1rem;
+
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 interface ScEnemyProps {
@@ -91,7 +93,7 @@ const ScEnemy = styled.div<ScEnemyProps>`
       top: -5rem;
     }
   }
-    
+
   ${(p) =>
     p.$isAlive &&
     css`
@@ -111,26 +113,32 @@ const ScEnemy = styled.div<ScEnemyProps>`
       animation: none;
       animation-timing-function: none;
       top: ${ENEMY_HEIGHT}px;
-      transition: top .3s ease;
+      transition: top 0.3s ease;
     `}
 `;
 
 const ScEnemyPlaceholder = styled.div`
   height: ${ENEMY_HEIGHT}px;
+  width: 100%;
   position: relative;
 
+  /* position: absolute;
+  bottom:100%;
+  width: 100%;
+  z-index:-1; */
+
   .mode-editor & {
-    height: 0px;
+    /* height: 0px; */
   }
 `;
 
 const ScPlayer = styled.div`
   position: relative;
-  padding: .75rem;
-  padding-bottom: 3rem;
+  padding: 0.75rem;
+  padding-bottom: 2rem;
   z-index: 0;
   background-color: var(--co-player);
-  filter: drop-shadow(0 -.25rem .5rem var(--color-black));
+  filter: drop-shadow(0 -0.25rem 0.5rem var(--color-black));
 
   /* refactor this shadow hack w/glint */
   border-radius: 1.5rem 1.5rem 1rem 1rem;
@@ -235,12 +243,10 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     p.$type === 'attack'
       ? css`
           background-color: var(--co-sidebtn-attack);
-          border: 0.5rem solid var(--co-sidebtn-attack);
           color: var(--co-sidebtn-attack-text);
         `
       : css`
           background-color: var(--co-sidebtn-spin);
-          border: 0.5rem solid var(--co-sidebtn-spin);
           color: var(--co-sidebtn-spin-text);
         `}
 
@@ -248,7 +254,7 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     p.$disabled &&
     css`
       background-color: var(--color-grey);
-      border: 0.25rem solid var(--co-sidebtn-primary);
+      color: var(--color-black);
     `}
 
   span {
@@ -284,15 +290,82 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     `}
 `;
 
+interface ScBottomButtonProps {
+  $disabled?: boolean;
+}
+
+const ScBottomButtonContainer = styled.div<ScBottomButtonProps>`
+  margin-top: 3rem;
+  height: 7rem;
+  left: 4rem;
+  right: 4rem;
+  z-index: -2;
+  position: absolute;
+  cursor: pointer;
+  
+  opacity: var(--opacity-editorfade);
+
+  > div {
+    margin-top: -2.25rem;
+  }
+
+  ${(p) =>
+    p.$disabled &&
+    css`
+      pointer-events: none;
+      > div {
+        margin-top: -5.5rem;
+        background-color: var(--color-grey);
+        color: var(--color-black);
+      }
+    `}
+
+  @media (hover: hover) {
+    &:hover > div {
+      background-color: var(--color-green-light);
+      /* color: var(--color-grey-light); */
+      margin-top: -1.75rem;
+    }
+  }
+
+  &:active {
+    > div {
+      margin-top: -5.5rem;
+    }
+  }
+`;
+
+const ScBottomButton = styled.div`
+  position: absolute;
+  background-color: var(--color-green);
+  top: 0;
+  padding: 1rem;
+  padding-top: 3rem;
+  width: 100%;
+  z-index: 9;
+  color: var(--color-white);
+
+  border-radius: 0 0 3rem 3rem;
+
+  transition: margin-top 0.3s ease;
+
+  span {
+    display: block;
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+`;
+
 const ScBackTopPanel = styled.div`
   position: absolute;
   background-color: var(--color-white);
-  height: 10rem;
   top: -1rem;
+  bottom: -1rem;
   left: 3rem;
   right: 3rem;
-  border-radius: .5rem;
-  z-index:-1;
+  border-radius: 0.5rem;
+  z-index: -1;
 `;
 
 const ScBackPanels = styled.div`
@@ -308,7 +381,7 @@ const ScBackPanels = styled.div`
     background-color: var(--co-player);
     padding: 2rem;
     /* border-radius: 1rem; */
-    border-radius: .5rem;
+    border-radius: 0.5rem;
 
     top: 8rem;
     height: ${PANEL_HEIGHT}rem;
@@ -318,8 +391,18 @@ const ScBackPanels = styled.div`
 let paletteActive = false;
 
 function Layout() {
-  const { activeCombos, uiState, editorState, enemyInfo, gameState, score, spinInProgress, triggerSpin, finishTurn } =
-    useContext(AppContext);
+  const {
+    activeCombos,
+    uiState,
+    editorState,
+    enemyInfo,
+    gameState,
+    score,
+    spinInProgress,
+    triggerSpin,
+    finishTurn,
+    openEditor,
+  } = useContext(AppContext);
   const litUp = useMemo(() => {
     return activeCombos.length > 0;
   }, [activeCombos.length]);
@@ -330,6 +413,7 @@ function Layout() {
 
   const spinDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress || score < COST_SPIN;
   const attackDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress;
+  const upgradeDisabled = uiState === 'editor' || gameState !== 'SPIN' || spinInProgress || score < COST_UPGRADE;
 
   const classNames = [`mode-${uiState}`];
   editorState === 'reel' && classNames.push('editor-reel');
@@ -374,6 +458,11 @@ function Layout() {
                 </ScSideBtnContainer>
               </div>
             </ScBackPanels>
+            <ScBottomButtonContainer $disabled={upgradeDisabled} onClick={() => openEditor()}>
+              <ScBottomButton>
+                <span>{'UPGRADE'}</span>
+              </ScBottomButton>
+            </ScBottomButtonContainer>
           </ScPlayer>
         </ScCombo>
         <ScFooter>{uiState === 'editor' && <MachineEditor />}</ScFooter>

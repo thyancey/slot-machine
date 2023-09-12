@@ -39,6 +39,8 @@ const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   activeTiles: Tile[];
 
+  openEditor: () => void;
+
   spinCount: number;
   triggerSpin: (onlyThisReelIdx?: number) => void;
 
@@ -540,11 +542,20 @@ const AppProvider = ({ children }: Props) => {
     }
   };
 
+  const openEditor = () => {
+    setUiState('editor');
+    setEditorState('hand');
+    drawCards(4);
+    // incrementScore(-COST_UPGRADE);
+  }
+
   return (
     <AppContext.Provider
       value={
         {
           activeTiles,
+
+          openEditor,
 
           spinCount,
           triggerSpin,

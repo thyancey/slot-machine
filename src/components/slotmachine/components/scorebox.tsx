@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { convertToDollaridoos } from '../../../utils';
 
 const ScScorebox = styled.div`
-  padding: .5rem 0.25rem 0.25rem 0.25rem;
+  padding: .75rem 0.5rem 1rem 0.5rem;
   background-color: var(--color-black);
   overflow:hidden;
   text-align: right;

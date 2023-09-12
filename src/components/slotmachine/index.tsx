@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext } from 'react';
-import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE, COST_SPIN } from '../../store/data';
+import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE, COST_SPIN, EMPTY_ATTACK } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore } from './utils';
 // @ts-ignore
@@ -11,7 +11,6 @@ import ScoreBox from './components/scorebox';
 import { MixinBorders } from '../../utils/styles';
 import { trigger } from '../../utils/events';
 import DisplayPanel from '../display-panel';
-import { convertToDollaridoos } from '../../utils';
 
 const ScWrapper = styled.div`
   text-align: center;
@@ -75,52 +74,8 @@ const ScScoreBoxContainer = styled.div`
   transition: opacity 0.3s;
 `;
 
-const ScScoreBoxButton = styled.div`
-  transition: all 0.3s;
-
-  ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-
-  font-size: 1.5rem;
-  line-height: 1.25rem;
-  white-space: pre-wrap; /* interpret /n as line breaks */
-  text-align: right;
-
-  color: var(--color-white-dark);
-
-  > div {
-    background-color: var(--color-black);
-    width: 100%;
-    height: 100%;
-    padding: 0.75rem 1rem 1rem 1.25rem;
-
-    > p:last-child {
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--color-red-light);
-      margin-bottom: -1rem;
-    }
-  }
-
-  p {
-    opacity: 0.5;
-  }
-
-  &.active {
-    color: var(--color-yellow-light);
-    p {
-      opacity: 1;
-    }
-    cursor: pointer;
-
-    &:hover {
-      color: var(--color-white);
-    }
-  }
-`;
-
 const ScScoreBox = styled.div`
   ${MixinBorders('--co-player-bordertop', '--co-player-borderside')}
-  /* border-top: 0; */
   flex: 1;
 `;
 
@@ -130,8 +85,6 @@ const ScDisplay = styled.div`
   grid-column: 1;
 
   padding: 1rem 1.75rem;
-  /* background-color: var(--co-player-door); */
-  /* border-radius: 0.75rem; */
 
   max-width: var(--var-reels-width, 100%);
 
@@ -160,16 +113,14 @@ function SlotMachine() {
     incrementScore,
     finishSpinTurn,
     playerInfo,
-    setUiState,
-    setEditorState,
     setSpinInProgress,
     targetSlotIdxs,
     reelLock,
     setReelLock,
     spinCount,
-    drawCards,
     playerAttack,
     insertIntoReel,
+    setPlayerAttack,
     score,
     uiState,
     gameState,
@@ -323,17 +274,13 @@ function SlotMachine() {
   // gamemode: spin, editormode: insert into reel
   const onReelClick = (reelIdx: number) => {
     if (uiState === 'editor' && editorState === 'reel') {
+      setPlayerAttack(EMPTY_ATTACK);
+      incrementScore(-COST_UPGRADE);
       insertIntoReel(reelIdx, -1);
+      trigger('playerDisplay', ['*thanks for the upgrade*']);
     } else if (uiState === 'game' && !reelResults.includes(-1) && score >= COST_SPIN) {
       triggerSpin(reelIdx);
     }
-  };
-
-  const onBuyUpgrade = () => {
-    setUiState('editor');
-    setEditorState('hand');
-    drawCards(4);
-    incrementScore(-COST_UPGRADE);
   };
 
   return (
@@ -369,15 +316,6 @@ function SlotMachine() {
         <ScScoreBox>
           <ScoreBox />
         </ScScoreBox>
-        <ScScoreBoxButton
-          className={score >= COST_UPGRADE ? 'active' : 'disabled'}
-          onClick={() => (score >= COST_UPGRADE ? onBuyUpgrade() : {})}
-        >
-          <div>
-            <p>{`UPGRADE`}</p>
-            <p>{`-${convertToDollaridoos(COST_UPGRADE)}`}</p>
-          </div>
-        </ScScoreBoxButton>
       </ScScoreBoxContainer>
     </ScWrapper>
   );
