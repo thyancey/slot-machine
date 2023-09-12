@@ -24,8 +24,11 @@ import {
   EditorState,
   HINTS,
 } from './data';
+// @ts-ignore
+import useSound from 'use-sound';
 import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
+import Sound from '../assets/sounds';
 import {
   computeAttack,
   discardTiles,
@@ -38,6 +41,8 @@ import { trigger } from '../utils/events';
 const AppContext = createContext({} as AppContextType);
 interface AppContextType {
   activeTiles: Tile[];
+
+  openEditor: () => void;
 
   spinCount: number;
   triggerSpin: (onlyThisReelIdx?: number) => void;
@@ -152,6 +157,9 @@ const AppProvider = ({ children }: Props) => {
     draw: [],
     discard: [],
   });
+
+  const [sound_thump2] = useSound(Sound.thump2);
+  const [sound_boop] = useSound(Sound.boop);
 
   const activeTiles = useMemo(() => {
     if (reelResults.includes(-1)) return [];
@@ -295,9 +303,11 @@ const AppProvider = ({ children }: Props) => {
             trigger('playerDisplay', [`PLAYER ATTACKS!`])
           }
           trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
+          sound_thump2();
         } else {
           trigger('playerDisplay', ['PLAYER STUMBLED!']);
           trigger('enemyDisplay', ['ENEMY UNSCATHED!']);
+          sound_boop();
         }
 
         setEnemyInfo((prev) => {
@@ -313,7 +323,7 @@ const AppProvider = ({ children }: Props) => {
     } else {
       return 'NEW_ROUND';
     }
-  }, [enemyInfo, playerAttack]);
+  }, [enemyInfo, playerAttack, sound_thump2, sound_boop]);
 
   const triggerEnemyBuff = useCallback(() => {
     if (enemyAttack?.defense && enemyAttack.defense > 0) {
@@ -357,8 +367,10 @@ const AppProvider = ({ children }: Props) => {
         if (playerMssg.length > 0) {
           const combinedPlayerMssg = ['PLAYER WAS ATTACKED!'].concat(playerMssg);
           trigger('playerDisplay', combinedPlayerMssg);
+          sound_thump2();
         } else {
           trigger('playerDisplay', ['PLAYER UNSCATHED!']);
+          sound_boop();
         }
 
         setPlayerInfo((prev) => {
@@ -373,7 +385,7 @@ const AppProvider = ({ children }: Props) => {
     } else {
       return 'NEW_ROUND';
     }
-  }, [playerInfo, enemyInfo, enemyAttack]);
+  }, [playerInfo, enemyInfo, enemyAttack, sound_thump2, sound_boop]);
 
   const incrementScore = useCallback(
     (increment = 0) => {
@@ -540,11 +552,20 @@ const AppProvider = ({ children }: Props) => {
     }
   };
 
+  const openEditor = () => {
+    setUiState('editor');
+    setEditorState('hand');
+    drawCards(4);
+    // incrementScore(-COST_UPGRADE);
+  }
+
   return (
     <AppContext.Provider
       value={
         {
           activeTiles,
+
+          openEditor,
 
           spinCount,
           triggerSpin,

@@ -1,26 +1,45 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../store/appcontext';
-import { Tile, tileGlossary } from '../store/data';
+import { COST_UPGRADE, Tile, tileGlossary } from '../store/data';
+import { convertToDollaridoos } from '../utils';
 
 const ScWrapper = styled.aside`
   display: grid;
   grid-template-columns: auto 6rem;
-  grid-template-rows: min-content 10rem minmax(1rem, min-content);
+  grid-template-rows: min-content 10rem minmax(5rem, min-content);
 
   width: 100%;
 
-  gap: .5rem;
+  gap: 0.5rem;
+  padding: 1rem;
 
   background-color: var(--color-black);
-  border-top: .5rem solid var(--co-editor-primary);
+  border-top: 0.75rem solid var(--color-green);
+
+  > h2 {
+    font-size: 2.5rem;
+  }
 `;
 
 const ScSelectedInfo = styled.div`
   grid-column: 1 / span 1;
   grid-row: 3;
-  padding: 0.5rem 1rem 1rem 1rem;
+  /* padding: 0.5rem 1rem 1rem 1rem; */
   text-align: center;
+
+  border: .75rem dashed var(--color-green);
+  margin: 0 1rem 0 1rem;
+  border-radius: 2rem;
+  padding: 1rem;
+  padding-bottom: 1.5rem;
+
+  > h3{
+    font-size: 2.5rem;
+  }
+  > p {
+    font-size: 1.5rem;
+  }
 `;
 const ScHand = styled.div`
   grid-column: 1;
@@ -76,7 +95,7 @@ const ScCard = styled.li`
   width: 25%;
   height: 100%;
   border-radius: 2rem;
-  padding: .5rem;
+  padding: 0.5rem;
 
   overflow: hidden;
 
@@ -85,8 +104,7 @@ const ScCard = styled.li`
   transition: background-color 0.2s;
 
   &.chosen {
-    background-color: var(--co-editor-primary);
-    border: .75rem solid var(--co-editor-secondary);
+    border: 0.75rem dashed var(--color-green);
   }
 
   &:hover {
@@ -109,13 +127,12 @@ interface HandTile {
   tile: Tile;
 }
 
-function SimpleEditor() {
+function Editor() {
   const {
     uiState,
     setUiState,
     selectedTileIdx,
     setSelectedTileIdx,
-    editorState,
     setEditorState,
     discardCards,
     deckState,
@@ -143,11 +160,13 @@ function SimpleEditor() {
     }
   };
 
-  console.log(`selectedTileIdx: ${selectedTileIdx}, uiState: ${uiState}, editorState: ${editorState}`);
+  // console.log(`selectedTileIdx: ${selectedTileIdx}, uiState: ${uiState}, editorState: ${editorState}`);
 
   return (
     <ScWrapper className={uiState.indexOf('editor') > -1 ? 'panel-open' : ''}>
-      <ScInstructions>{selectedHandTile ? '2: Select a reel' : '1: Select a tile'}</ScInstructions>
+      <ScInstructions>
+        {selectedHandTile ? `2: Select a reel -${convertToDollaridoos(COST_UPGRADE)}` : '1: Select a tile'}
+      </ScInstructions>
       <ScHand>
         <ScCards>
           {tiles.map((handTile) => (
@@ -184,4 +203,4 @@ function SimpleEditor() {
   );
 }
 
-export default SimpleEditor;
+export default Editor;
