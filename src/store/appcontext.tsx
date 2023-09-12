@@ -19,6 +19,7 @@ import {
   AttackDef,
   EMPTY_ATTACK,
   COST_SPIN,
+  COST_UPGRADE,
   INITIAL_SCORE,
   EditorState,
 } from './data';
@@ -170,8 +171,11 @@ const AppProvider = ({ children }: Props) => {
 
   const enemyChooseAttack = useCallback(() => {
     if (enemyInfo) {
+      // console.log('enemyChooseAttack', enemyInfo)
       const attackDef = pickRandomFromArray(enemyInfo.attackDefs) as AttackDef;
       setEnemyAttack(() => attackDef);
+    } else {
+      // console.log('no enemyInfo', enemyInfo)
     }
   }, [enemyInfo, setEnemyAttack]);
 
@@ -226,7 +230,9 @@ const AppProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // fixes initial load bug
-    if (enemyInfo && !enemyAttack) {
+    if(!enemyInfo){
+      setEnemyAttack(undefined);
+    } else if (!enemyAttack) {
       enemyChooseAttack();
     }
   }, [enemyInfo, enemyAttack, enemyChooseAttack]);
@@ -384,11 +390,14 @@ const AppProvider = ({ children }: Props) => {
   );
 
   const newTurn = useCallback(() => {
+    // console.log('newTurn')
     // just in case these don't get re-populated while theres bugs...
     trigger('playerDisplay', [
-      '! SPIN TO WIN !',
+      `SPIN TO GET POINTS AND COMBOS`,
       `SPINS COST ${convertToDollaridoos(COST_SPIN)}`,
-      `FIGHTING PAYS ${convertToDollaridoos(INITIAL_SCORE)}`,
+      `UPGRADE TO GET BETTER CHANGES`,
+      `UPGRADES COST ${convertToDollaridoos(COST_UPGRADE)}`,
+      `ATTACK TO WIN, EVERY ATTACK PAYS OUT ${convertToDollaridoos(INITIAL_SCORE)}!`,
     ]);
     trigger('enemyDisplay', []);
 
@@ -462,9 +471,10 @@ const AppProvider = ({ children }: Props) => {
   const setReelStates = useCallback(
     (reelStates: DeckIdxCollection[]) => {
       setReelStatesState(reelStates);
+      setPlayerAttack(EMPTY_ATTACK);
       numReelsRef.current = reelStates.length;
     },
-    [setReelStatesState]
+    [setReelStatesState, setPlayerAttack]
   );
 
   const drawCards = useCallback(

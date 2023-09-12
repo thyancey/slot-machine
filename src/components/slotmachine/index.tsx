@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Reel from './components/reel';
 import { useCallback, useEffect, useState, useContext } from 'react';
-import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE } from '../../store/data';
+import { defaultReelState, reelComboDef, defaultTileDeck, COST_UPGRADE, COST_SPIN } from '../../store/data';
 import { AppContext } from '../../store/appcontext';
 import { getBasicScore, getComboScore } from './utils';
 // @ts-ignore
@@ -290,11 +290,17 @@ function SlotMachine() {
         // mssgs.push('*BUFF READY*');
       }
 
-      // if (activeCombos.length > 0) {
-      //   mssgs.push(`*${activeCombos[0].label}: x${activeCombos[0].bonus?.multiplier}*`);
+      // for(let i = 0; i < activeCombos.length; i++){
+      //   mssgs.push(`*${activeCombos[i].label}: x${activeCombos[i].bonus?.multiplier}*`);
       // }
 
       const attackCombos = activeCombos.filter((ac) => ac.attribute === 'attack');
+      const defenseCombos = activeCombos.filter((ac) => ac.attribute === 'defense');
+      // just a title when combos arent there to look title-y
+      if (attackCombos.length === 0 && defenseCombos.length === 0) {
+        mssgs.push(`*ATTACK READY*`);
+      }
+
       if (playerAttack.attack > 0) {
         for (let i = 0; i < attackCombos.length; i++) {
           mssgs.push(`*${attackCombos[i].label} - x${attackCombos[i].bonus?.multiplier || 1} attack*`);
@@ -303,7 +309,6 @@ function SlotMachine() {
         mssgs.push(`+${playerAttack.attack} DAMAGE`);
       }
 
-      const defenseCombos = activeCombos.filter((ac) => ac.attribute === 'defense');
       if (playerAttack.defense > 0) {
         for (let i = 0; i < defenseCombos.length; i++) {
           mssgs.push(`*${defenseCombos[i].label} - x${defenseCombos[i].bonus?.multiplier || 1} defense*`);
@@ -320,7 +325,7 @@ function SlotMachine() {
   const onReelClick = (reelIdx: number) => {
     if (uiState === 'editor' && editorState === 'reel') {
       insertIntoReel(reelIdx, -1);
-    } else if (uiState === 'game' && !reelResults.includes(-1)) {
+    } else if (uiState === 'game' && !reelResults.includes(-1) && score >= COST_SPIN) {
       triggerSpin(reelIdx);
     }
   };

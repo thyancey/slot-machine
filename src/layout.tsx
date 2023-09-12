@@ -110,7 +110,7 @@ const ScEnemy = styled.div<ScEnemyProps>`
       top: -5rem;
     }
   }
-
+    
   ${(p) =>
     p.$isAlive &&
     css`
@@ -122,6 +122,15 @@ const ScEnemy = styled.div<ScEnemyProps>`
     css`
       animation: pop-in2 1s linear forwards;
       animation-timing-function: linear(0, 1.483 10.4%, 0.766, 1.113, 0.945, 1.027, 0.987 63.3%, 1.001);
+    `}
+    
+  ${(p) =>
+    !p.$isAlive &&
+    css`
+      animation: none;
+      animation-timing-function: none;
+      top: ${ENEMY_HEIGHT}px;
+      transition: top .3s ease;
     `}
 `;
 

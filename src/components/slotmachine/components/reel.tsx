@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ReelContent from './reel-content';
-import { DeckIdxCollection, GameState, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
+import { DeckIdxCollection, REEL_HEIGHT, REEL_OVERLAP, TileKeyCollection } from '../../../store/data';
 import { getReelTileStateFromReelState } from '../../../store/utils';
 import { getLoopedReel, getProgressiveSpinAngle, getSpinTarget } from '../utils';
 import { MinMaxTouple, clamp, randInRange } from '../../../utils';

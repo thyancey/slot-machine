@@ -50,7 +50,6 @@ export const getActiveCombos = (tiles: Tile[], reelCombos: ReelCombo[]) => {
   // loop each combo
   const activeCombos = reelCombos.reduce((combos, rC) => {
     for (let a = 0; a < rC.attributes.length; a++) {
-      // if every tile has a matching attribute
       if (compareAttributes(tiles, rC.attributes[a])) {
         // you found one, this combo is validated
         combos.push({

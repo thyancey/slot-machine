@@ -12,7 +12,7 @@ export const TRANSITION_DELAY_TURN_END = 2000; // how long to see round results 
 
 export const ENEMY_HEIGHT = 170; // enemy is currently absolute to allow for animation, maybe make this responsive in the future
 
-export const COST_SPIN = 10000;
+export const COST_SPIN = 5000;
 export const COST_UPGRADE = 10000;
 
 export const EMPTY_ATTACK = {
@@ -55,6 +55,7 @@ export type GameState =
  * An item that fits within a slot in a reel.
  */
 export type Tile = {
+  key: string;
   label: string;
   debugLabel?: string;
   img?: string;
@@ -77,6 +78,7 @@ export interface TileGlossary {
 }
 export const tileGlossary: TileGlossary = {
   bat: {
+    key: 'bat',
     label: 'Bat',
     debugLabel: 'attack +1, steal 3hp',
     img: AssetMap.Rbat,
@@ -85,6 +87,7 @@ export const tileGlossary: TileGlossary = {
     effects: [{ type: 'attack', value: 1 }],
   },
   coins: {
+    key: 'coins',
     label: 'Coins',
     debugLabel: '1000 points',
     img: AssetMap.Rcoins,
@@ -93,6 +96,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   crazy: {
+    key: 'crazy',
     label: 'Confusion',
     debugLabel: 'add 1 disoriented to enemy',
     img: AssetMap.Rcrazy,
@@ -101,6 +105,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   flame: {
+    key: 'flame',
     label: 'Flame',
     debugLabel: 'attack +1, hurt self -1',
     img: AssetMap.Rflame,
@@ -112,6 +117,7 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   halo: {
+    key: 'halo',
     label: 'Halo',
     debugLabel: 'heal self +10',
     img: AssetMap.Rhalo,
@@ -120,6 +126,7 @@ export const tileGlossary: TileGlossary = {
     effects: [{ type: 'health', value: 10 }],
   },
   heart: {
+    key: 'heart',
     label: 'Heart',
     debugLabel: 'heal self +2',
     img: AssetMap.Rheart,
@@ -128,6 +135,7 @@ export const tileGlossary: TileGlossary = {
     effects: [{ type: 'health', value: 2 }],
   },
   lightning: {
+    key: 'lightning',
     label: 'Lightning',
     debugLabel: 'attack +3, hurt self -1',
     img: AssetMap.Rlightning,
@@ -139,6 +147,7 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   poison: {
+    key: 'poison',
     label: 'Poison',
     debugLabel: 'apply 2 poison, hurt self -1',
     img: AssetMap.Rpoison,
@@ -150,14 +159,16 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   shield: {
+    key: 'shield',
     label: 'Shield',
     debugLabel: 'attack +1, defend self +1',
     img: AssetMap.Rshield,
-    attributes: ['buff'],
+    attributes: ['defense'],
     score: 100,
     effects: [{ type: 'defense', value: 1 }],
   },
   slot_seven: {
+    key: 'slot_seven',
     label: 'seven',
     debugLabel: 'just a regular old 7, whatever that means',
     img: AssetMap.R7,
@@ -166,6 +177,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   slot_bar1: {
+    key: 'slot_bar1',
     label: 'BAR',
     debugLabel: 'wildcard',
     img: AssetMap.Rbar1,
@@ -174,6 +186,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   slot_bar2: {
+    key: 'slot_bar2',
     label: 'BAR II',
     debugLabel: 'wildcard,',
     img: AssetMap.Rbar2,
@@ -182,6 +195,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   slot_bar3: {
+    key: 'slot_bar3',
     label: 'BAR III',
     debugLabel: 'wildcard',
     img: AssetMap.Rbar3,
@@ -190,6 +204,7 @@ export const tileGlossary: TileGlossary = {
     effects: [],
   },
   snowflake: {
+    key: 'snowflake',
     label: 'Freeze',
     debugLabel: 'attack +2, ice shield +1',
     img: AssetMap.Rsnowflake,
@@ -201,6 +216,7 @@ export const tileGlossary: TileGlossary = {
     ],
   },
   sword: {
+    key: 'sword',
     label: 'Sword',
     debugLabel: 'attack x2',
     img: AssetMap.Rsword,
@@ -250,30 +266,30 @@ export const reelComboDef: ReelCombo[] = [
     label: '"bar" combo',
     attributes: ['bar'],
     bonuses: [
-      { bonusType: 'unique', multiplier: 1.2 },
-      { bonusType: 'same', multiplier: 1.4 },
-      { bonusType: 'any', multiplier: 1.3 },
-      { bonusType: '*', multiplier: 1.2 },
+      { bonusType: 'unique', multiplier: 2 },
+      { bonusType: 'same', multiplier: 3 },
+      { bonusType: 'any', multiplier: 2 },
+      { bonusType: '*', multiplier: 2 },
     ],
   },
-  // {
-  //   label: '"buff" combo',
-  //   attributes: ['buff'],
-  //   bonuses: [
-  //     { bonusType: 'unique', multiplier: 2 },
-  //     { bonusType: 'same', multiplier: 3 },
-  //     { bonusType: 'any', multiplier: 1.5 },
-  //     { bonusType: '*', multiplier: 1.2 },
-  //   ],
-  // },
+  {
+    label: '"defense" combo',
+    attributes: ['defense'],
+    bonuses: [
+      { bonusType: 'unique', multiplier: 2 },
+      { bonusType: 'same', multiplier: 3 },
+      { bonusType: 'any', multiplier: 2 },
+      { bonusType: '*', multiplier: 2 },
+    ],
+  },
   {
     label: '"attack" combo',
     attributes: ['attack'],
     bonuses: [
       { bonusType: 'unique', multiplier: 2 },
       { bonusType: 'same', multiplier: 3 },
-      { bonusType: 'any', multiplier: 1.5 },
-      { bonusType: '*', multiplier: 1.2 },
+      { bonusType: 'any', multiplier: 2 },
+      { bonusType: '*', multiplier: 2 },
     ],
   },
   {
@@ -282,10 +298,10 @@ export const reelComboDef: ReelCombo[] = [
     bonuses: [
       { bonusType: 'unique', multiplier: 2 },
       { bonusType: 'same', multiplier: 3 },
-      { bonusType: 'any', multiplier: 1.5 },
-      { bonusType: '*', multiplier: 1.2 },
+      { bonusType: 'any', multiplier: 2 },
+      { bonusType: '*', multiplier: 2 },
     ],
-  },
+  }
 ];
 
 
@@ -336,18 +352,18 @@ export type DeckState = {
 //   [0, 1, 2, 3, 4, 5, 8, 9, 13],
 //   [0, 1, 2, 3, 4, 5, 8, 9, 13],
 // ];
+// export const defaultReelState: DeckIdxCollection[] = [
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+//   [0, 1, 2, 3, 4, 5, 8, 9, 13],
+// ];
+
 export const defaultReelState: DeckIdxCollection[] = [
-  [9],
-  [9],
-  [9],
+  [5],
+  [5],
+  [5],
 ];
-/*
-export const defaultReelState: DeckIdxCollection[] = [
-  [0, 1, 2],
-  [0, 1, 2],
-  [0, 1, 2],
-];
-*/
+
 
 // for the player and enemies, will need to be expanded in the future
 export type PlayerInfo = {
@@ -374,8 +390,8 @@ export type EnemyInfo = PlayerInfo & {
 export const enemies: EnemyInfo[] = [
   {
     label: 'SQUIRREL',
-    hp: 6,
-    hpMax: 6,
+    hp: 15,
+    hpMax: 15,
     defense: 0,
     img: AssetMap.Enemy_Squirrel,
     attackIdx: 0,
@@ -394,9 +410,9 @@ export const enemies: EnemyInfo[] = [
   },
   {
     label: 'TORT',
-    hp: 10,
-    hpMax: 10,
-    defense: 10,
+    hp: 30,
+    hpMax: 30,
+    defense: 20,
     img: AssetMap.Enemy_Tortoise,
     attackIdx: 0,
     attackDefs: [
