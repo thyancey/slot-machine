@@ -77,7 +77,8 @@ const ScEnemy = styled.div<ScEnemyProps>`
 
   background-color: var(--co-enemy);
   border-radius: 1rem 1rem 0 0;
-  padding: 1.5rem 2rem 1rem 2rem;
+  padding: 0.75rem;
+  padding-bottom: 5rem;
   /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
 
   transition: bottom 0.3s ease;
@@ -135,10 +136,11 @@ const ScEnemyPlaceholder = styled.div`
 
 const ScPlayer = styled.div`
   position: relative;
-  padding: 1.75rem;
-  padding-bottom: 2.25rem;
+  padding: .75rem;
+  padding-bottom: 3rem;
   z-index: 0;
   background-color: var(--co-player);
+  filter: drop-shadow(0 -.25rem .5rem var(--color-black));
 
   /* margin-top: ${ENEMY_HEIGHT}px; */
 
@@ -292,16 +294,16 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
   span {
     /* color: var(--co-sidebtn-attack-text); */
     display: block;
-    font-size: 4rem;
+    font-size: 3rem;
     text-align: center;
-    margin-top: -0.5rem;
+    margin-top: 0.25rem;
   }
 
   ${(p) =>
     p.$position === 'right' &&
     css`
       transform-origin: left;
-      border-radius: 4rem 4rem 0 0;
+      border-radius: 3rem 3rem 0 0;
       left: 1.5rem;
       top: -3.25rem;
       margin-left: 0rem;
@@ -313,7 +315,7 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     p.$position === 'left' &&
     css`
       transform-origin: right;
-      border-radius: 4rem 4rem 0 0;
+      border-radius: 3rem 3rem 0 0;
       margin-right: 0rem;
       transform: rotate(-90deg);
       transition: right 0.3s;
