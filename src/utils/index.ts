@@ -49,3 +49,8 @@ export const pickRandomFromArray = (array: unknown[]) => {
 export const convertToDollaridoos = (amount: number) => {
   return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
+
+// export const roundToDecimal = (number: number, decimalPlaces: number) => {
+//   const factor = 10 ** decimalPlaces;
+//   return Math.round(number * factor) / factor;
+// }

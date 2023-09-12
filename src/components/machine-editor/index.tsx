@@ -72,7 +72,7 @@ const ScBody = styled.div`
 const ScBg = styled.div`
   position: absolute;
   inset: 0;
-  background-color: black;
+  background-color: var(--color-black);
   opacity: 0.5;
 `;
 

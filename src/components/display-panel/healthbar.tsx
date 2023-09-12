@@ -8,7 +8,7 @@ const ScWrapper = styled.div`
 
   top: -1.5rem;
   padding: 0 0rem;
-  z-index: 1;
+  /* z-index: 1; */
 `;
 
 const ScHealthBar = styled.div`
@@ -28,7 +28,7 @@ const ScHealthBar = styled.div`
   p {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    /* z-index: 1; */
     font-size: 1.5rem;
     margin-top: -0.4rem;
   }
@@ -64,8 +64,6 @@ const ScDefenseBox = styled.div`
   color: var(--color-white);
   
   /* filter: drop-shadow(0.2rem 0.2rem 0.25rem var(--color-grey)); */
-  /* sit over bar */
-  z-index: 1;
 
   line-height: 2.25rem;
   font-size: 1.5rem;
@@ -106,11 +104,11 @@ const HealthBar = ({ hp, hpMax, defense }: PropsEntityStats) => {
 
   return (
     <ScWrapper className={defense !== 0 ? 'defended' : ''}>
-      <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
       <ScHealthBar>
-        <p>{`${hp} / ${hpMax}`}</p>
         <ScHealthBarBg style={{ width: `${healthPerc}%` }} />
+        <p>{`${hp} / ${hpMax}`}</p>
       </ScHealthBar>
+      <ScDefenseBox>{defense !== 0 && <p>{defense}</p>}</ScDefenseBox>
     </ScWrapper>
   );
 };

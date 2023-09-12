@@ -19,15 +19,12 @@ import {
   AttackDef,
   EMPTY_ATTACK,
   COST_SPIN,
+  COST_UPGRADE,
   INITIAL_SCORE,
+  EditorState,
 } from './data';
 import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
-import {
-  getTileFromDeckIdx,
-  insertAfterPosition,
-  insertReelStateIntoReelStates,
-  removeAtPosition,
-} from './utils';
+import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
 import {
   computeAttack,
   discardTiles,
@@ -103,6 +100,9 @@ interface AppContextType {
   uiState: UiState;
   setUiState: (value: SetStateAction<UiState>) => void;
 
+  editorState: EditorState;
+  setEditorState: (value: SetStateAction<EditorState>) => void;
+
   insertIntoReel: (reelIdx: number, positionIdx: number) => void;
   removeFromReel: (reelIdx: number, positionIdx: number) => void;
   insertReel: (positionIdx: number) => void;
@@ -135,6 +135,7 @@ const AppProvider = ({ children }: Props) => {
   });
   const [enemyInfo, setEnemyInfo] = useState<EnemyInfo | null>(null);
   const [uiState, setUiState] = useState<UiState>('game');
+  const [editorState, setEditorState] = useState<EditorState>('');
   const [upgradeTokens, setUpgradeTokensState] = useState(INITIAL_UPGRADE_TOKENS);
   const [selectedTileIdx, setSelectedTileIdx] = useState(-1);
   const [reelCombos, setReelCombos] = useState<ReelCombo[]>([]);
@@ -170,8 +171,11 @@ const AppProvider = ({ children }: Props) => {
 
   const enemyChooseAttack = useCallback(() => {
     if (enemyInfo) {
+      // console.log('enemyChooseAttack', enemyInfo)
       const attackDef = pickRandomFromArray(enemyInfo.attackDefs) as AttackDef;
       setEnemyAttack(() => attackDef);
+    } else {
+      // console.log('no enemyInfo', enemyInfo)
     }
   }, [enemyInfo, setEnemyAttack]);
 
@@ -204,12 +208,10 @@ const AppProvider = ({ children }: Props) => {
     setReelResults(Array(numReelsRef.current).fill(-1));
   }, [turn, setUpgradeTokensState, setReelResults]);
 
-  // const finishRound = useCallback(() => {
-  //   setRound((prev) => prev + 1);
-  // }, [setRound]);
-
   useEffect(() => {
+    // console.log(turnRef.current, turn, enemyInfo, enemyAttack)
     if (turnRef.current !== turn && enemyInfo && enemyAttack) {
+      // console.log('check enemy attack');
       turnRef.current = turn;
 
       const mssg = [`${enemyInfo.label} WILL USE`, `*${enemyAttack.label}*`];
@@ -228,20 +230,38 @@ const AppProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // fixes initial load bug
-    if (enemyInfo && !enemyAttack) {
+    if(!enemyInfo){
+      setEnemyAttack(undefined);
+    } else if (!enemyAttack) {
       enemyChooseAttack();
     }
   }, [enemyInfo, enemyAttack, enemyChooseAttack]);
 
+  // DO SOME FIGHTING
+  const finishTurn = useCallback(() => {
+    if (!enemyInfo) {
+      setTurn((prev) => prev + 1);
+      return;
+    }
+
+    setGameState('PLAYER_BUFF');
+  }, [setGameState, enemyInfo, setTurn]);
+
   const finishSpinTurn = useCallback(() => {
-    const attack = getEffectDelta('attack', activeTiles, activeCombos);
-    const defense = getEffectDelta('defense', activeTiles, activeCombos);
+    const attack = getEffectDelta('attack', activeTiles, activeCombos.filter(ac => ac.attribute === 'attack'));
+    const defense = getEffectDelta('defense', activeTiles, activeCombos.filter(ac => ac.attribute === 'defense'));
+    // console.log('finishSpinTurn', activeTiles, activeCombos);
 
     setPlayerAttack({
       label: '',
-      attack: attack,
-      defense: defense,
+      attack: attack.value,
+      rawAttack: attack.rawValue,
+      defense: defense.value,
+      rawDefense: defense.rawValue
     });
+
+    // if you wanted to attack immediately after each spin
+    // if(gameState === 'SPIN') finishTurn();
   }, [activeTiles, activeCombos]);
 
   // handles states during round and turn transitions
@@ -276,10 +296,15 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.hpDelta < 0) mssg.push(`${attackResult.hpDelta} HP`);
 
         if (mssg.length > 0) {
+          if (playerAttack?.attack && playerAttack.attack > 0) {
+            trigger('playerDisplay', ['PLAYER ATTACKS WITH', `+${playerAttack.attack} damage`]);
+          } else {
+            trigger('playerDisplay', [`PLAYER ATTACKS!`])
+          }
           trigger('enemyDisplay', ['ENEMY WAS ATTACKED!'].concat(mssg));
         } else {
-          // trigger('enemyDisplay', '');
           trigger('playerDisplay', ['PLAYER STUMBLED!']);
+          trigger('enemyDisplay', ['ENEMY UNSCATHED!']);
         }
 
         setEnemyInfo((prev) => {
@@ -311,13 +336,18 @@ const AppProvider = ({ children }: Props) => {
     } else {
       trigger('enemyDisplay', ['ENEMY PREPARING ATTACK...']);
     }
+
+    //  for some early prompting
+    // if (enemyAttack?.attack && enemyAttack.attack > 0) {
+    //   trigger('playerDisplay', ['ENEMY PREPARING ATTACK...']);
+    // }
     return 'ENEMY_ATTACK';
   }, [enemyAttack]);
 
   const triggerEnemyAttack = useCallback(() => {
     if (enemyInfo) {
       const attackResult = computeAttack(playerInfo, enemyAttack);
-      if(enemyAttack?.label && enemyAttack.attack > 0){
+      if (enemyAttack?.label && enemyAttack.attack > 0) {
         trigger('enemyDisplay', [`ENEMY USES`, `*${enemyAttack?.label}*`]);
       }
 
@@ -331,9 +361,11 @@ const AppProvider = ({ children }: Props) => {
         if (attackResult.defenseDelta < 0) playerMssg.push(`${attackResult.defenseDelta} DEFENSE`);
         if (attackResult.hpDelta < 0) playerMssg.push(`${attackResult.hpDelta} HP`);
 
-        if(playerMssg.length > 0){
+        if (playerMssg.length > 0) {
           const combinedPlayerMssg = ['PLAYER WAS ATTACKED!'].concat(playerMssg);
           trigger('playerDisplay', combinedPlayerMssg);
+        } else {
+          trigger('playerDisplay', ['PLAYER UNSCATHED!']);
         }
 
         setPlayerInfo((prev) => {
@@ -356,10 +388,17 @@ const AppProvider = ({ children }: Props) => {
     },
     [setScore]
   );
-  
+
   const newTurn = useCallback(() => {
+    // console.log('newTurn')
     // just in case these don't get re-populated while theres bugs...
-    trigger('playerDisplay', ['! SPIN TO WIN !', `SPINS COST ${convertToDollaridoos(COST_SPIN)}`, `FIGHTING PAYS ${convertToDollaridoos(INITIAL_SCORE)}`]);
+    trigger('playerDisplay', [
+      `SPIN TO GET POINTS AND COMBOS`,
+      `SPINS COST ${convertToDollaridoos(COST_SPIN)}`,
+      `UPGRADE TO GET BETTER CHANGES`,
+      `UPGRADES COST ${convertToDollaridoos(COST_UPGRADE)}`,
+      `ATTACK TO WIN, EVERY ATTACK PAYS OUT ${convertToDollaridoos(INITIAL_SCORE)}!`,
+    ]);
     trigger('enemyDisplay', []);
 
     setTurn((prev) => prev + 1);
@@ -373,18 +412,9 @@ const AppProvider = ({ children }: Props) => {
   const newRound = useCallback(() => {
     trigger('playerDisplay', [`ROUND ${round + 1} COMPLETE!`]);
     setRound((prev) => prev + 1);
+    turnRef.current = -1;
     setGameState('NEW_TURN');
-  }, [setRound, round]);
-
-  // DO SOME FIGHTING
-  const finishTurn = useCallback(() => {
-    if (!enemyInfo) {
-      setTurn((prev) => prev + 1);
-      return;
-    }
-
-    setGameState('PLAYER_BUFF');
-  }, [setGameState, enemyInfo, setTurn]);
+  }, [setRound, round, turnRef]);
 
   useEffect(() => {
     // the timeouts here are brittle and likely to cause problems later
@@ -441,9 +471,10 @@ const AppProvider = ({ children }: Props) => {
   const setReelStates = useCallback(
     (reelStates: DeckIdxCollection[]) => {
       setReelStatesState(reelStates);
+      setPlayerAttack(EMPTY_ATTACK);
       numReelsRef.current = reelStates.length;
     },
-    [setReelStatesState]
+    [setReelStatesState, setPlayerAttack]
   );
 
   const drawCards = useCallback(
@@ -496,6 +527,13 @@ const AppProvider = ({ children }: Props) => {
   // put them in here.
   const insertIntoReel = (reelIdx: number, positionIdx: number) => {
     setReelStates(insertAfterPosition(reelIdx, positionIdx, selectedTileIdx, reelStates));
+    discardCards(positionIdx);
+
+    // TODO: move this somewhere else
+    setSelectedTileIdx(-1);
+    setDeckState(discardTiles(deckState.drawn, deckState));
+    setUiState('game');
+    setEditorState('');
   };
 
   const removeFromReel = (reelIdx: number, positionIdx: number) => {
@@ -579,6 +617,9 @@ const AppProvider = ({ children }: Props) => {
 
           uiState,
           setUiState,
+
+          editorState,
+          setEditorState,
 
           insertIntoReel,
           removeFromReel,

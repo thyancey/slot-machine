@@ -16,11 +16,11 @@ const ScWrapper = styled.div`
     cursor: pointer;
 
     li {
-      background-color: var(--color-purple-dark);
+      background-color: var(--color-green-dark);
       color: var(--color-white);
     }
     li:hover {
-      background-color: var(--color-purple-light);
+      background-color: var(--color-green-light);
     }
   }
 `;

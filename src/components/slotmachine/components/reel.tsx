@@ -23,7 +23,7 @@ if (debug) {
 }
 
 // kinda like the cutout you can see the reel through
-const ScWrapper = styled.div`
+export const ScReelWrapper = styled.div`
   /* border: 0.5rem solid var(--color-white); */
   width: var(--val-reel-width);
   height: calc(var(--val-reel-height) + var(--val-reel-peek));
@@ -38,8 +38,56 @@ const ScWrapper = styled.div`
     cursor: pointer;
     transition: filter 0.5s ease;
     &:hover {
-      background-color: green;
       filter: brightness(1.5);
+    }
+  }
+`;
+
+const ScReelEditorHover = styled.a`
+  .editor-reel & {
+    position: absolute;
+    inset: 0;
+    /* TODO, conflicting with stat labels, which need to hover for tooltips */
+    z-index: 2;
+
+    text-align: center;
+    font-size: 1.5rem;
+    padding-top: 2rem;
+    cursor: pointer;
+
+    span {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 0;
+      width: 100%;
+      z-index: 1;
+      border-left: 0;
+      border-right: 0;
+      display: block;
+      border: 0.25rem dashed var(--co-editor-primary);
+      color: var(--co-editor-primary);
+      background-color: var(--color-white);
+
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    > div {
+      opacity: 0;
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      transition: opacity 0.3s;
+    }
+
+    &:hover {
+      span {
+        background-color: var(--co-editor-primary);
+        color: var(--color-white);
+      }
+
+      > div {
+        opacity: 0;
+      }
     }
   }
 `;
@@ -75,19 +123,23 @@ const ScReelTape = styled.div`
 `;
 
 interface ScReelBgProps {
-  bg?: string;
+  $bg?: string;
 }
-const ScReelBg = styled.div<ScReelBgProps>`
+export const ScReelBg = styled.div<ScReelBgProps>`
   position: absolute;
   inset: 0;
   ${(props) =>
-    props.bg &&
+    props.$bg &&
     css`
-      background: url(${props.bg});
+      background: url(${props.$bg});
     `};
-  background-color: var(--color-white);
+  background-color: var(--co-reel-bg);
   background-size: contain;
   z-index: -1;
+
+  .editor-reel & {
+    background-color: var(--co-reel-bg);
+  }
 `;
 
 type Props = {
@@ -99,7 +151,7 @@ type Props = {
   reelLock: boolean;
   isEnabled: boolean; // can click to spin this weel
   onSpinComplete: (reelIdx: number, slotIdx: number) => void;
-  triggerSpin: (reelIdx: number) => void;
+  onClick: () => void;
 };
 function Reel({
   reelIdx,
@@ -109,14 +161,14 @@ function Reel({
   reelLock,
   spinCount,
   onSpinComplete,
-  triggerSpin,
-  isEnabled,
+  onClick,
+  isEnabled
 }: Props) {
   // (looped) idx of current item, number grows to infinity
   // ex, if reel is 2 items long, two spins to the first index would be a value of 4
   // [ 0, 1 ] > [ 2, 3 ] > [ 4, 5 ]
   const [loopedIdxs, setLoopedIdxs] = useState<MinMaxTouple>([-1, 0]); // current, next
-  const [spinProgress, setSpinProgress] = useState(1);
+  const [spinProgress, setSpinProgress] = useState(0);
   const [spinSpeed, setSpinSpeed] = useState(0.1);
   const reelBg = ''; // eventually, stored in reel data
   // const reelBg = AssetMap.Reel_BG;
@@ -175,17 +227,24 @@ function Reel({
   }, [reelState, tileDeck]);
 
   const onHover = () => {
-    if(isEnabled){
+    if (isEnabled) {
       // console.log(`spin reel #${reelIdx + 1}`);
     }
   };
 
   return (
-    <ScWrapper
-      onClick={() => isEnabled && triggerSpin(reelIdx)}
+    <ScReelWrapper
+      // onClick={() => isEnabled && triggerSpin(reelIdx)}
+      onClick={() => onClick()}
       className={isEnabled ? 'enabled' : ''}
       onMouseEnter={onHover}
     >
+      {/* <ScReelEditorHover onClick={() => insertIntoReel(reelIdx, -1)}> */}
+      <ScReelEditorHover>
+        <span>{'ADD ITEM'}</span>
+        <div />
+      </ScReelEditorHover>
+      <ScReelOverlay />
       <ScReelCenterer>
         <ScReelTape id={`reel-${reelIdx}`} style={{ top: `${reelTop}px` }}>
           {reelTileStates.map((tile, idx) => (
@@ -193,14 +252,13 @@ function Reel({
               key={`s${reelIdx}-${idx}`}
               tile={tile}
               height={REEL_HEIGHT}
-              isActive={idx - REEL_OVERLAP === targetSlotIdx}
+              isActive={isEnabled && idx - REEL_OVERLAP === targetSlotIdx}
             />
           ))}
-          <ScReelBg bg={reelBg} />
+          <ScReelBg $bg={reelBg} />
         </ScReelTape>
       </ScReelCenterer>
-      <ScReelOverlay />
-    </ScWrapper>
+    </ScReelWrapper>
   );
 }
 

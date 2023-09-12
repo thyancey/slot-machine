@@ -33,7 +33,7 @@ const ScTiles = styled.ul``;
 const ScInsertTileButton = styled.button`
   font-size: 1rem;
   background-color: var(--color-black);
-  border: 0.125rem dashed var(--color-purple-dark);
+  border: 0.125rem dashed var(--color-green-dark);
   
 
   margin-bottom: 0.25rem;

@@ -4,10 +4,12 @@ import { useContext, useEffect, useState } from 'react';
 import { convertToDollaridoos } from '../../../utils';
 
 const ScScorebox = styled.div`
-  border: var(--border-width-small) solid var(--color-black);
-  padding: 0.25rem 0.25rem 0.5rem 0.25rem;
+  /* border: var(--border-width-small) solid var(--color-black); */
+  padding: .5rem 0.25rem 0.25rem 0.25rem;
   background-color: var(--color-black);
-  border-radius: 0 0 0.5rem 0;
+  overflow:hidden;
+  /* border-radius: 0 0 0.5rem 0; */
+  /* padding-top: 1rem; */
   text-align: right;
   width:100%;
   height:100%;

@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import AssetMap from '../../../assets';
 
 const ScWrapper = styled.li`
-  z-index:1;
-  position:relative;
+  z-index: 1;
+  position: relative;
   filter: var(--filter-shadow1);
-  
-  &:hover{
+
+  &:hover {
     filter: var(--filter-shadow2);
-    z-index:2;
+    z-index: 2;
   }
 
   color: var(--color-black);
@@ -43,15 +43,15 @@ const ScCenterer = styled.div`
   font-weight: bold;
   text-align: center;
 
-  .size-lg >& {
+  .size-lg > & {
     width: 4rem;
     height: 4rem;
     line-height: 4rem;
 
     font-size: 1.5rem;
   }
-  
-  >img{
+
+  > img {
     position: absolute;
     inset: 0;
     width: 200%;
@@ -63,7 +63,6 @@ const ScCenterer = styled.div`
     pointer-events: none;
   }
 `;
-
 
 const getAssetFromType = (type: string) => {
   switch (type) {
@@ -87,8 +86,12 @@ type Props = {
 };
 function StatLabel({ type, value, size = 'sm' }: Props) {
   const asset = getAssetFromType(type);
+  let title = type;
+  if(value && typeof value === 'number'){
+    title = `${value >= 0 ? '+' : ''}${value} ${type}`;
+  }
   return (
-    <ScWrapper className={`st-${type} size-${size}`} title={type}>
+    <ScWrapper className={`st-${type} size-${size}`} title={title}>
       <ScCenterer>
         {value !== undefined && <span>{value}</span>}
         <img src={asset} />

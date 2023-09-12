@@ -15,7 +15,7 @@ const getMetalColors = (theme?: GlintTheme) => {
       `;
     case 'silver':
       return css`
-        --co-metal: var(--color-offwhite);
+        --co-metal: var(--color-white-light);
         --co-glint: var(--color-white);
       `;
     case 'green':

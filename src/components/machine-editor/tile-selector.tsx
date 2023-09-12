@@ -24,13 +24,13 @@ const ScTiles = styled.ul`
 const ScTile = styled.li`
   background-color: var(--color-white);
   /* border: var(--border-width-small) solid var(--color-); */
-  box-shadow: 0px 3px 2px 6px var(--color-purple-dark);
+  box-shadow: 0px 3px 2px 6px var(--color-green-dark);
 
   &:first-child {
-    box-shadow: 3px 3px 2px 6px var(--color-purple-dark);
+    box-shadow: 3px 3px 2px 6px var(--color-green-dark);
   }
   &:last-child {
-    box-shadow: -3px 3px 2px 6px var(--color-purple-dark);
+    box-shadow: -3px 3px 2px 6px var(--color-green-dark);
   }
 
   padding: 0;
@@ -82,6 +82,8 @@ interface Props {
 }
 function TileSelector({ selectedTileIdx, onSelectTile }: Props) {
   const { deckState, tileDeck } = useContext(AppContext);
+  // console.log('deckState', deckState, tileDeck);
+  // console.log('selectedIdx', selectedTileIdx);
 
   const tiles: HandTile[] = useMemo(() => {
     return deckState.drawn.map((deckIdx) => ({
