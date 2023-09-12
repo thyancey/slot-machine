@@ -54,13 +54,6 @@ const ScCombo = styled.div`
   border-radius: 1rem;
 `;
 
-const ScShadowDiv = styled.div`
-  position: absolute;
-  inset: 0;
-  border-radius: 1rem;
-  z-index: -1;
-`;
-
 interface ScEnemyProps {
   $isAlive?: boolean;
   $isActive?: boolean;
@@ -78,19 +71,8 @@ const ScEnemy = styled.div<ScEnemyProps>`
   border-radius: 1rem 1rem 0 0;
   padding: 0.75rem;
   padding-bottom: 5rem;
-  /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
 
   transition: bottom 0.3s ease;
-
-  ${ScShadowDiv} {
-    /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
-  }
-
-  /* .lit-up & {
-    ${ScShadowDiv} {
-      box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight);
-    }
-  } */
 
   @keyframes pop-in {
     0% {
@@ -209,10 +191,6 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
 
   &:active {
     > div {
-      span {
-        /* color: var(--color-grey); */
-      }
-
       ${(p) =>
         p.$position === 'left' &&
         css`
@@ -391,7 +369,7 @@ function Layout() {
                   $disabled={attackDisabled}
                 >
                   <ScSideBtn $position='left' $type='attack' $disabled={attackDisabled}>
-                    <span>{'ATTACK'}</span>
+                    <span>{'FIGHT'}</span>
                   </ScSideBtn>
                 </ScSideBtnContainer>
               </div>

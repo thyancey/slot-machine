@@ -8,7 +8,6 @@ const ScWrapper = styled.div`
 
   top: -1.5rem;
   padding: 0 0rem;
-  /* z-index: 1; */
 `;
 
 const ScHealthBar = styled.div`
@@ -28,7 +27,6 @@ const ScHealthBar = styled.div`
   p {
     position: absolute;
     inset: 0;
-    /* z-index: 1; */
     font-size: 1.5rem;
     margin-top: -0.4rem;
   }
@@ -62,8 +60,6 @@ const ScDefenseBox = styled.div`
   opacity: 0;
   border: 0.25rem solid var(--color-white);
   color: var(--color-white);
-  
-  /* filter: drop-shadow(0.2rem 0.2rem 0.25rem var(--color-grey)); */
 
   line-height: 2.25rem;
   font-size: 1.5rem;
@@ -73,18 +69,6 @@ const ScDefenseBox = styled.div`
     opacity: 1;
   }
 `;
-
-// const ScNotification = styled.div`
-//   border: 0.5rem solid var(--color-green);
-//   background-color: var(--color-green);
-//   color: var(--color-black);
-//   border-radius: 2rem;
-//   position: absolute;
-//   padding: 0.5rem;
-//   z-index: 1;
-
-//   transition: top 0.5s, opacity 0.5s;
-// `;
 
 export interface StatInfo {
   [key: string]: number;
