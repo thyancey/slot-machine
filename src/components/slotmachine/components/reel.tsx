@@ -24,10 +24,8 @@ if (debug) {
 
 // kinda like the cutout you can see the reel through
 export const ScReelWrapper = styled.div`
-  /* border: 0.5rem solid var(--color-white); */
   width: var(--val-reel-width);
   height: calc(var(--val-reel-height) + var(--val-reel-peek));
-  /* height: 16rem; */
   position: relative;
 
   /* makes a cutout */

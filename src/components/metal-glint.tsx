@@ -84,20 +84,6 @@ export const ScGlintWrapper = styled.div<ScWrapperProps>`
   background-repeat: repeat;
   transition: background-size .5s ease-in-out;
 
-  @keyframes gradient-intermittent {
-    0% {
-      background-position: 50% -100%;
-    }
-    40% {
-      background-position: 50% -100%;
-    }
-    60% {
-      background-position: 50% 100%;
-    }
-    100% {
-      background-position: 50% 100%;
-    }
-  }
   @keyframes gradient-wrap {
     0% {
       background-position: 0% -100%;
@@ -107,8 +93,6 @@ export const ScGlintWrapper = styled.div<ScWrapperProps>`
     }
   }
 
-  /* background: radial-gradient(var(--co-metal), var(--co-glint)); */
-  /* animation: gradient2 5s ease-in-out infinite; */
   animation: gradient-wrap 30s linear infinite;
 `;
 

@@ -22,6 +22,7 @@ import {
   COST_UPGRADE,
   INITIAL_SCORE,
   EditorState,
+  HINTS,
 } from './data';
 import { clamp, convertToDollaridoos, getRandomIdx, pickRandomFromArray } from '../utils';
 import { getTileFromDeckIdx, insertAfterPosition, insertReelStateIntoReelStates, removeAtPosition } from './utils';
@@ -171,11 +172,8 @@ const AppProvider = ({ children }: Props) => {
 
   const enemyChooseAttack = useCallback(() => {
     if (enemyInfo) {
-      // console.log('enemyChooseAttack', enemyInfo)
       const attackDef = pickRandomFromArray(enemyInfo.attackDefs) as AttackDef;
       setEnemyAttack(() => attackDef);
-    } else {
-      // console.log('no enemyInfo', enemyInfo)
     }
   }, [enemyInfo, setEnemyAttack]);
 
@@ -209,9 +207,7 @@ const AppProvider = ({ children }: Props) => {
   }, [turn, setUpgradeTokensState, setReelResults]);
 
   useEffect(() => {
-    // console.log(turnRef.current, turn, enemyInfo, enemyAttack)
     if (turnRef.current !== turn && enemyInfo && enemyAttack) {
-      // console.log('check enemy attack');
       turnRef.current = turn;
 
       const mssg = [`${enemyInfo.label} WILL USE`, `*${enemyAttack.label}*`];
@@ -250,7 +246,6 @@ const AppProvider = ({ children }: Props) => {
   const finishSpinTurn = useCallback(() => {
     const attack = getEffectDelta('attack', activeTiles, activeCombos.filter(ac => ac.attribute === 'attack'));
     const defense = getEffectDelta('defense', activeTiles, activeCombos.filter(ac => ac.attribute === 'defense'));
-    // console.log('finishSpinTurn', activeTiles, activeCombos);
 
     setPlayerAttack({
       label: '',
@@ -281,9 +276,7 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerPlayerAttack = useCallback(() => {
     if (enemyInfo) {
-      // TODO playerAttack
       const attackResult = computeAttack(enemyInfo, playerAttack);
-      // trigger('playerDisplay', '');
 
       if (attackResult.hp <= 0) {
         trigger('playerDisplay', [`${enemyInfo.label} WAS DESTROYED!`]);
@@ -390,14 +383,11 @@ const AppProvider = ({ children }: Props) => {
   );
 
   const newTurn = useCallback(() => {
-    // console.log('newTurn')
     // just in case these don't get re-populated while theres bugs...
     trigger('playerDisplay', [
-      `SPIN TO GET POINTS AND COMBOS`,
-      `SPINS COST ${convertToDollaridoos(COST_SPIN)}`,
-      `UPGRADE TO GET BETTER CHANGES`,
-      `UPGRADES COST ${convertToDollaridoos(COST_UPGRADE)}`,
-      `ATTACK TO WIN, EVERY ATTACK PAYS OUT ${convertToDollaridoos(INITIAL_SCORE)}!`,
+      `SPIN (-${convertToDollaridoos(COST_SPIN)}) FOR MONEY AND ABILITIES`,
+      `UPGRADE (-${convertToDollaridoos(COST_UPGRADE)}) TO GET LUCKIER`,
+      `EVERY FIGHT PAYS OUT ${convertToDollaridoos(INITIAL_SCORE)}!`,
     ]);
     trigger('enemyDisplay', []);
 
@@ -495,7 +485,8 @@ const AppProvider = ({ children }: Props) => {
 
   const triggerSpin = useCallback(
     (onlyThisReelIdx?: number) => {
-      trigger('playerDisplay', [`LETS GOOOO \n YOU CAN SPIN INDIVIDUAL REELS TOO!`]);
+      setPlayerAttack(EMPTY_ATTACK);
+      trigger('playerDisplay', ['*LETS GOOOO*', pickRandomFromArray(HINTS)]);
 
       if (onlyThisReelIdx !== undefined) {
         setTargetSlotIdxs(
@@ -520,7 +511,7 @@ const AppProvider = ({ children }: Props) => {
 
       setSpinInProgress(true);
     },
-    [reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore]
+    [reelStates, targetSlotIdxs, setTargetSlotIdxs, incrementScore, setPlayerAttack]
   );
 
   // TODO - these should probably use useCallback, but it wasnt necessary when i first

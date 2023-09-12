@@ -3,11 +3,10 @@ import Bg from './components/bg';
 import { useMemo, useContext, useEffect } from 'react';
 import { AppContext } from './store/appcontext';
 import Enemy from './components/enemy';
-import { ScGlintWrapper } from './components/metal-glint';
 import SlotMachine, { ScReelContainer } from './components/slotmachine';
 import { COST_SPIN, ENEMY_HEIGHT } from './store/data';
 import Palette from './components/palette';
-import SimpleEditor from './components/machine-editor/simple';
+import MachineEditor from './components/machine-editor';
 
 const PANEL_HEIGHT = 32;
 const ScWrapper = styled.main`
@@ -55,13 +54,6 @@ const ScCombo = styled.div`
   border-radius: 1rem;
 `;
 
-const ScShadowDiv = styled.div`
-  position: absolute;
-  inset: 0;
-  border-radius: 1rem;
-  z-index: -1;
-`;
-
 interface ScEnemyProps {
   $isAlive?: boolean;
   $isActive?: boolean;
@@ -79,19 +71,8 @@ const ScEnemy = styled.div<ScEnemyProps>`
   border-radius: 1rem 1rem 0 0;
   padding: 0.75rem;
   padding-bottom: 5rem;
-  /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
 
   transition: bottom 0.3s ease;
-
-  ${ScShadowDiv} {
-    /* box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight); */
-  }
-
-  /* .lit-up & {
-    ${ScShadowDiv} {
-      box-shadow: 0 0 6rem 3rem var(--co-enemy-highlight);
-    }
-  } */
 
   @keyframes pop-in {
     0% {
@@ -151,27 +132,8 @@ const ScPlayer = styled.div`
   background-color: var(--co-player);
   filter: drop-shadow(0 -.25rem .5rem var(--color-black));
 
-  /* margin-top: ${ENEMY_HEIGHT}px; */
-
   /* refactor this shadow hack w/glint */
-  /* box-shadow: 0.25rem 0.25rem 0.5rem 0.3rem var(--color-black); */
   border-radius: 1.5rem 1.5rem 1rem 1rem;
-
-  ${ScGlintWrapper} {
-    border-radius: 1.5rem 1.5rem 1rem 1rem;
-  }
-
-  ${ScShadowDiv} {
-    /* box-shadow: 0 0 6rem 3rem var(--co-player-highlight); */
-  }
-
-  /*
-  .lit-up & {
-    ${ScShadowDiv} {
-      box-shadow: 0 0 6rem 2rem var(--co-player-highlight);
-    }
-  }
-  */
 `;
 
 interface ScSideBtnProps {
@@ -229,10 +191,6 @@ const ScSideBtnContainer = styled.div<ScSideBtnProps>`
 
   &:active {
     > div {
-      span {
-        /* color: var(--color-grey); */
-      }
-
       ${(p) =>
         p.$position === 'left' &&
         css`
@@ -277,31 +235,23 @@ const ScSideBtn = styled.div<ScSideBtnProps>`
     p.$type === 'attack'
       ? css`
           background-color: var(--co-sidebtn-attack);
-          /* background: radial-gradient(ellipse at bottom, var(--color-red), var(--color-red-dark) 70%); */
           border: 0.5rem solid var(--co-sidebtn-attack);
-          /* span { */
           color: var(--co-sidebtn-attack-text);
-          /* } */
         `
       : css`
-          /* background: radial-gradient(ellipse at bottom, var(--color-green), var(--color-green-dark) 70%); */
           background-color: var(--co-sidebtn-spin);
           border: 0.5rem solid var(--co-sidebtn-spin);
-          /* span { */
           color: var(--co-sidebtn-spin-text);
-          /* } */
         `}
 
   ${(p) =>
     p.$disabled &&
     css`
-      /* background: radial-gradient(ellipse at bottom, var(--color-white), var(--color-grey) 70%); */
       background-color: var(--color-grey);
       border: 0.25rem solid var(--co-sidebtn-primary);
     `}
 
   span {
-    /* color: var(--co-sidebtn-attack-text); */
     display: block;
     font-size: 3rem;
     text-align: center;
@@ -395,13 +345,10 @@ function Layout() {
           <ScEnemyPlaceholder>
             <ScEnemy $isActive={enemyActive} $isAlive={!!enemyInfo}>
               <Enemy />
-              {/* <ScShadowDiv /> */}
             </ScEnemy>
           </ScEnemyPlaceholder>
           <ScPlayer>
             <SlotMachine />
-            {/* <MetalGlint glintTheme='player' /> */}
-            {/* <ScShadowDiv /> */}
             <ScBackTopPanel />
             <ScBackPanels>
               <div>
@@ -422,18 +369,16 @@ function Layout() {
                   $disabled={attackDisabled}
                 >
                   <ScSideBtn $position='left' $type='attack' $disabled={attackDisabled}>
-                    <span>{'ATTACK'}</span>
+                    <span>{'FIGHT'}</span>
                   </ScSideBtn>
                 </ScSideBtnContainer>
               </div>
-              {/* <div></div> */}
             </ScBackPanels>
           </ScPlayer>
         </ScCombo>
-        <ScFooter>{uiState === 'editor' && <SimpleEditor />}</ScFooter>
+        <ScFooter>{uiState === 'editor' && <MachineEditor />}</ScFooter>
       </ScComboContainer>
       <Bg />
-      {/* <MachineEditor /> */}
     </ScWrapper>
   );
 }

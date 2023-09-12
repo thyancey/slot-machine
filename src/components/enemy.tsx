@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useContext, useMemo } from 'react';
 import { AppContext } from '../store/appcontext';
 import { MixinBorders } from '../utils/styles';
-import Rivets from './slotmachine/components/rivets';
 import DisplayPanel from './display-panel';
 
 const ScCard = styled.div`
@@ -75,7 +74,6 @@ export const Enemy = () => {
       <ScEnemy>
         <ScLabel>{`enemy: ${enemyInfo.label}`}</ScLabel>
       </ScEnemy>
-      <Rivets />
     </ScCard>
   );
 };

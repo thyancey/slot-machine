@@ -23,6 +23,12 @@ export const EMPTY_ATTACK = {
   rawDefense: 0
 };
 
+export const HINTS = [
+  'after the first spin, you can spin individual reels!',
+  'special combos get bonus multipliers!',
+  'block can be restored, but HP cannot!',
+]
+
 export type UiState = 'game' | 'editor';
 export type EditorState = '' | 'hand' | 'reel';
 
@@ -359,9 +365,9 @@ export type DeckState = {
 // ];
 
 export const defaultReelState: DeckIdxCollection[] = [
-  [5],
-  [5],
-  [5],
+  [5, 9],
+  [5, 10],
+  [5, 0],
 ];
 
 

@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { AppContext } from '../../store/appcontext';
-import { Tile, tileGlossary } from '../../store/data';
+import { AppContext } from '../store/appcontext';
+import { Tile, tileGlossary } from '../store/data';
 
 const ScWrapper = styled.aside`
   display: grid;
@@ -13,7 +13,6 @@ const ScWrapper = styled.aside`
   gap: .5rem;
 
   background-color: var(--color-black);
-  /* border: 0.25rem solid var(--co-editor-primary); */
   border-top: .5rem solid var(--co-editor-primary);
 `;
 
@@ -63,7 +62,6 @@ const ScCards = styled.ul`
   flex: 1;
   justify-content: space-around;
   padding: 1rem;
-  /* padding-right: 0; */
 
   gap: 1rem;
   height: 100%;
